@@ -13,6 +13,7 @@ import {
 import { buildForecast } from "./forecast";
 import { summarizeChange } from "./gemini";
 import { getDashboard, saveSnapshot } from "./repository";
+import { compareSnapshots } from "./comparison";
 
 async function fetchOfficial(url: string): Promise<Response> {
   const response = await fetch(url, {
@@ -90,7 +91,7 @@ export async function collectSnapshot(previous?: Snapshot): Promise<Snapshot> {
     forecast.summary_method = summary.method;
     if (summary.warning) warnings.push(summary.warning);
   }
-  return {
+  const snapshot: Snapshot = {
     rule: agenda.value.rule,
     signals,
     forecast,
@@ -100,13 +101,17 @@ export async function collectSnapshot(previous?: Snapshot): Promise<Snapshot> {
         ? observedAt
         : (previous?.federal_register_checked_at ?? null),
     warnings,
+    comparison: null,
   };
+  snapshot.comparison = compareSnapshots(snapshot, previous);
+  return snapshot;
 }
 
 let inFlight: Promise<DashboardData> | null = null;
 async function performSync(): Promise<DashboardData> {
   const previous = await getDashboard();
   const snapshot = await collectSnapshot(previous);
+  if (previous.storage === "snapshot") snapshot.comparison = null;
   const storage = await saveSnapshot(snapshot);
   return { ...snapshot, storage, as_of: Date.now() };
 }

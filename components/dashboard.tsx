@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { type DashboardData, type Signal } from "@/lib/model";
 import { formatDate, targetElapsed } from "@/lib/dates";
+import { currentBrief, proceduralLabels, reviewedContext } from "@/lib/brief";
 
 type Conclusion = "change" | "likelihood" | "timing";
-const readable = (value: string) =>
-  value.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
 
 export function Dashboard({
   initial,
@@ -27,6 +26,7 @@ export function Dashboard({
   }, []);
 
   const { rule, forecast, signals } = data;
+  const context = reviewedContext(data);
   const elapsed =
     forecast.next_action === "Proposed rule (NPRM)" &&
     targetElapsed(forecast.expected_action_date, new Date(now));
@@ -73,7 +73,9 @@ export function Dashboard({
           {refreshing ? "Refreshing…" : "Refresh official data"}
         </button>
       </header>
-      <p className="meta">Last checked: {formatDate(data.synced_at, true)}</p>
+      <p className="meta">
+        Sources last checked: {formatDate(data.synced_at, true)}
+      </p>
       <div role="status" aria-live="polite">
         {message && <p className="notice">{message}</p>}
       </div>
@@ -95,23 +97,56 @@ export function Dashboard({
       ))}
 
       <section className="rule" aria-labelledby="rule-title">
-        <h2 id="rule-title">{rule.title}</h2>
-        <p>CFPB · RIN {rule.rin} · Regulation Z</p>
+        <h2 id="rule-title">
+          {context ? "APOR backup calculations" : rule.title}
+        </h2>
+        <p>CFPB · RIN {rule.rin}</p>
+        <p className="key-finding">{currentBrief(data, now)}</p>
         <p>
-          <strong>Official status:</strong> {rule.stage}
+          <strong>Latest agenda stage:</strong> {rule.stage}
         </p>
         <p className="meta">
-          Affected CFR parts: {rule.cfr_citation.join(", ")}
+          Affected:{" "}
+          {rule.cfr_citation
+            .map((part) =>
+              part === "12 CFR 1003"
+                ? "Regulation C / 12 CFR 1003"
+                : part === "12 CFR 1026"
+                  ? "Regulation Z / 12 CFR 1026"
+                  : part,
+            )
+            .join(" · ")}
         </p>
+        <p className="meta">
+          The check time records when we fetched the sources, not when CFPB
+          updated its plan. Exact-RIN searches may miss publications without RIN
+          metadata.
+        </p>
+        <Why
+          signals={signals.filter((s) =>
+            [
+              "PROPOSED_RULE_STAGE",
+              "FINAL_RULE_STAGE",
+              "NPRM_SCHEDULED",
+              "NPRM_PUBLISHED",
+              "FINAL_RULE_PUBLISHED",
+              "FR_CHECK",
+              "REVIEW_REQUIRED",
+            ].includes(s.signal_type),
+          )}
+          label="Why this status?"
+        />
       </section>
 
       <section aria-labelledby="change-title">
-        <h2 id="change-title">Expected change</h2>
-        <p>{forecast.expected_change}</p>
+        <h2 id="change-title">What CFPB is considering</h2>
+        <p>{context?.change ?? forecast.expected_change}</p>
         <p className="meta">
-          {forecast.summary_method === "gemini"
-            ? "AI summary of the official abstract."
-            : "Excerpt from the official abstract."}
+          {context
+            ? "Plain-English explanation of the agenda abstract."
+            : forecast.summary_method === "gemini"
+              ? "AI summary of the official abstract."
+              : "Excerpt from the official abstract."}
         </p>
         <Why
           signals={evidenceFor("change")}
@@ -119,23 +154,44 @@ export function Dashboard({
         />
       </section>
 
-      <section aria-labelledby="likelihood-title">
-        <h2 id="likelihood-title">Likelihood</h2>
+      <section aria-labelledby="relevance-title">
+        <h2 id="relevance-title">Why it matters to your team</h2>
         <p>
-          <strong>{readable(forecast.likelihood)}</strong> ·{" "}
-          {forecast.confidence === "Confirmed"
-            ? "Publication confirmed"
-            : `${forecast.confidence} confidence`}
+          {context?.relevance ??
+            "The official abstract has changed. The previous explanation of team impact needs review against the new wording below."}
+        </p>
+        <p className="meta">
+          {context
+            ? "Our interpretation of the agenda’s stated scope. The agenda entry itself establishes no new calculation requirement."
+            : "No updated impact assessment is available."}
+        </p>
+        <p>
+          <strong>What to watch:</strong>{" "}
+          {forecast.likelihood === "FINALIZED" ||
+          forecast.likelihood === "REVIEW REQUIRED"
+            ? "Review the published documents and their scope before assessing any operational change."
+            : signals.some((s) => s.signal_type === "NPRM_PUBLISHED")
+              ? "Any comment deadline, revisions to the proposal, and further agency publications."
+              : "A published proposal explaining the fallback method, when it could be used, and any comment deadline."}
+        </p>
+        <Why signals={evidenceFor("change")} label="Why this relevance?" />
+      </section>
+
+      <section aria-labelledby="likelihood-title">
+        <h2 id="likelihood-title">Rulemaking progress</h2>
+        <p>
+          <strong>{proceduralLabels[forecast.likelihood]}</strong>
         </p>
         <p>{forecast.reasoning[0]}</p>
         {forecast.likelihood !== "FINALIZED" && (
           <p className="meta">
-            Our assessment of procedural progress, not an official probability.
+            Likelihood of adoption: not assessed. Procedural stage alone does
+            not establish how likely this is to become a final rule.
           </p>
         )}
         <Why
           signals={evidenceFor("likelihood")}
-          label="Why this forecast?"
+          label="Why this assessment?"
           reasoning={forecast.reasoning.slice(1)}
         />
       </section>
@@ -144,11 +200,11 @@ export function Dashboard({
         <h2 id="timing-title">Timing</h2>
         <dl className="dates">
           <div>
-            <dt>Expected next action</dt>
+            <dt>Next listed agency action</dt>
             <dd>{forecast.next_action}</dd>
           </div>
           <div>
-            <dt>{elapsed ? "Original agenda target" : "Next action date"}</dt>
+            <dt>{elapsed ? "Original agenda target" : "Listed action date"}</dt>
             <dd>
               {formatDate(forecast.expected_action_date)}
               {elapsed ? " — target has passed" : ""}
@@ -168,7 +224,10 @@ export function Dashboard({
           </div>
         </dl>
         {elapsed && (
-          <p>No replacement date is established by the checked evidence.</p>
+          <p>
+            Current timing is unconfirmed. No replacement date is established by
+            the checked evidence.
+          </p>
         )}
         <p className="meta">
           {rule.legal_deadline === "None"
@@ -181,8 +240,70 @@ export function Dashboard({
         <Why signals={evidenceFor("timing")} label="Why these dates?" />
       </section>
 
+      <section aria-labelledby="changes-title">
+        <h2 id="changes-title">Changes since the previous check</h2>
+        {data.comparison ? (
+          <>
+            <p className="meta">
+              Compared with{" "}
+              {formatDate(data.comparison.previous_checked_at, true)}.
+            </p>
+            {data.comparison.incomplete && (
+              <p>
+                Publication comparison is incomplete because one of the Federal
+                Register checks was unavailable. Only verified agenda changes
+                are compared.
+              </p>
+            )}
+            {data.comparison.changes.length ? (
+              <ul className="changes">
+                {data.comparison.changes.map((change, index) => (
+                  <li key={index}>
+                    <strong>{change.label}</strong>
+                    <p>Before: {change.before}</p>
+                    <p>Now: {change.after}</p>
+                    <a
+                      href={change.source_url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Current source
+                    </a>
+                    {" · "}
+                    <a
+                      href={change.previous_source_url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Previous source link
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>
+                {data.comparison.incomplete
+                  ? "No changes found in the compared agenda fields."
+                  : "No changes found in the tracked agenda fields or publication evidence."}
+              </p>
+            )}
+            <p className="meta">
+              Comparison uses saved source data. Source links may now show
+              updated wording. Check times and AI wording are not counted as
+              regulatory changes.
+            </p>
+          </>
+        ) : (
+          <p>
+            No comparison has been recorded for this snapshot. Refresh official
+            data to compare with the saved record.
+          </p>
+        )}
+      </section>
+
       <section aria-labelledby="sources-title">
         <h2 id="sources-title">Official sources</h2>
+        <p className="meta">Official title: {rule.title}</p>
         <ul className="sources">
           {sources.map((source) => (
             <li key={source.source_url}>

@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import baseline from "@/data/baseline.json";
 import { snapshotSchema, type Snapshot, type DashboardData } from "./model";
+import { buildForecast } from "./forecast";
 
 function supabase() {
   const url = process.env.SUPABASE_URL;
@@ -62,7 +63,16 @@ async function readDashboard(): Promise<Omit<DashboardData, "as_of">> {
   }
 }
 export async function getDashboard(): Promise<DashboardData> {
-  return { ...(await readDashboard()), as_of: Date.now() };
+  const data = await readDashboard();
+  // Apply current interpretation rules to old snapshots without changing source dates.
+  const forecast = buildForecast(
+    data.rule,
+    data.signals,
+    data.forecast.updated_at,
+  );
+  forecast.expected_change = data.forecast.expected_change;
+  forecast.summary_method = data.forecast.summary_method;
+  return { ...data, forecast, as_of: Date.now() };
 }
 export async function saveSnapshot(
   snapshot: Snapshot,

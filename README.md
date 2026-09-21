@@ -15,7 +15,8 @@ Open http://127.0.0.1:3000. Requires Node 22 or newer. **No credentials are requ
 
 ## What is implemented
 
-- Four answers: expected change, qualitative likelihood, timing, and linked evidence.
+- Plain-English agenda summary, observed rulemaking progress, timing, and linked evidence. Adoption likelihood is explicitly unassessed.
+- Prominent elapsed-target finding, sourced team relevance, and a comparison with the previous saved check. Official source changes are separated from retrieval timestamps and AI rewording.
 - One plain page with all four answers directly visible and a working refresh button. No navigation, filters, or secondary pages.
 - Inline “Why?” dropdowns with original wording, observation timestamps, and source links beside each conclusion.
 - `syncRule()`, `POST /api/sync`, and `GET /api/rule` in the same Next.js app.
@@ -58,22 +59,24 @@ npm run gemini:check
 npm run sync
 ```
 
-Gemini only rewrites the official abstract into a brief expected-change summary. The request sends no customer data, database content, or credentials other than the API authentication header. Model output cannot populate stage, likelihood, dates, or publication evidence. Failure, quota exhaustion, or invalid output falls back to the exact official excerpt. A successful summary is reused while the source abstract remains identical.
+Gemini only rewrites the official abstract into a brief expected-change summary. The request sends no customer data, database content, or credentials other than the API authentication header. Model output cannot populate stage, likelihood, dates, or publication evidence. Failure, quota exhaustion, or invalid output falls back to the exact official excerpt. A successful summary is reused while the source abstract remains identical. For the verified initial abstract, the dashboard uses a human-reviewed plain-English explanation and team relevance note. These apply only while that exact abstract is unchanged; a revised abstract falls back to its new summary and prompts review of team impact.
 
 **Live Gemini summarization and Supabase persistence were verified on September 21, 2026 (UTC).** The browser displayed the generated summary and the per-conclusion official evidence. Credentials remain local and are not included in this repository. Mocked success, out-of-scope output, and rate-limit failure paths are also tested.
 
 ## Forecast logic
 
-| Strongest current evidence            | Label            |
-| ------------------------------------- | ---------------- |
-| Agenda only                           | Early            |
-| Proposed Rule Stage                   | Developing       |
-| NPRM published                        | Strong           |
-| Published comment deadline has passed | High signal      |
-| Final Rule Stage                      | Very high signal |
-| Final rule published                  | Finalized        |
+| Current evidence | Displayed progress |
+| --- | --- |
+| Agenda only | Listed in the agenda |
+| Proposed Rule Stage | Proposal planned in the agenda |
+| NPRM published | Proposal published |
+| Published comment deadline has passed | Published comment deadline passed |
+| Final Rule Stage | Final rule planned in the agenda |
+| Final rule published | Final rule published |
 
-These are procedural labels, **not statistical probabilities**. Confidence is qualitative. Withdrawals, corrections, ambiguous additional publications, and unknown stages require manual review. Reopened comment windows take precedence over previously closed windows. The comment closing day is conservatively treated as open through that UTC calendar day because the API field contains no closing time.
+These describe observed procedure, not likelihood of adoption. The legacy database/API stage codes remain for compatibility, and the confidence field is always `Unassessed` in the current interpretation. No confidence rating is shown. Withdrawals, corrections, ambiguous additional publications, and unknown stages require manual review. Reopened comment windows take precedence over previously closed windows. The comment closing day is conservatively treated as open through that UTC calendar day because the API field contains no closing time.
+
+Each new snapshot stores a comparison with the previous saved check inside its JSON record, requiring no database migration. Comparisons cover agenda title, abstract, stage, CFR parts, legal deadline, edition, NPRM target, and publication evidence. Timestamps and generated summaries are excluded. Failed Federal Register checks make the comparison incomplete; missing publications are never described as withdrawals. Old snapshots without comparisons show an explicit empty state until refreshed.
 
 Dates retain source precision: Reginfo's `07/00/2026` is stored as `2026-07` and displayed as July 2026, never July 1. An effective date is shown only when attached to its matching published final rule. Unknown final timing stays unknown.
 

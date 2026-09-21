@@ -26,46 +26,40 @@ export function buildForecast(
     ofType("FINAL_RULE_PUBLISHED").length > 1 ||
     !!(final && latestProposal && latestProposal.date! > final.date!);
   let likelihood: Forecast["likelihood"] = "EARLY";
-  let confidence: Forecast["confidence"] = "Low";
   let reason =
     "This action appears in the Unified Agenda. Its inclusion alone does not establish that a proposed rule will be published.";
   let next = "Proposed rule (NPRM)";
   if (has("PROPOSED_RULE_STAGE")) {
     likelihood = "DEVELOPING";
-    confidence = "Medium";
     reason =
-      "The action is officially in Proposed Rule Stage and CFPB has described its intended change. This is evidence of development, not a commitment to finalize.";
+      "The latest Unified Agenda lists Proposed Rule Stage. This records the agency's stated plan; it does not establish that a proposal has been published or that a final rule will follow.";
   }
   if (has("NPRM_PUBLISHED")) {
     likelihood = "STRONG";
-    confidence = "High";
     next = openComments ? "Comment period closes" : "Next agency action";
     reason =
       "A proposed rule has been published in the Federal Register. Publication establishes a concrete proposal; finalization remains uncertain.";
   }
   if (has("COMMENT_PERIOD_CLOSED") && !openComments) {
     likelihood = "HIGH SIGNAL";
-    next = "Final rule stage or further proposal";
+    next = "Not listed in the checked evidence";
     reason =
       "A published proposal's comment deadline has passed. CFPB may consider comments before its next action; this does not guarantee a final rule.";
   }
   if (has("FINAL_RULE_STAGE")) {
     likelihood = "VERY HIGH SIGNAL";
-    confidence = "High";
     next = "Final rule";
     reason =
-      "The Unified Agenda places the action in Final Rule Stage. This is a strong procedural signal, but an agenda stage is not a published final rule.";
+      "The Unified Agenda lists Final Rule Stage. An agenda stage is not a published final rule, and does not establish a probability of adoption.";
   }
   if (final) {
     likelihood = "FINALIZED";
-    confidence = "Confirmed";
     next = "Effective date";
     reason =
       "A matching final rule is published in the Federal Register. Any effective date shown is taken from that published record.";
   }
   if (ambiguous) {
     likelihood = "REVIEW REQUIRED";
-    confidence = "Unassessed";
     next = "Review official publications";
     reason =
       "A withdrawal, amendment, additional publication, or unrecognized stage needs manual review. The automatic forecast is paused to avoid implying a simple progression.";
@@ -104,7 +98,8 @@ export function buildForecast(
     id: `forecast-${rule.id}`,
     rule_id: rule.id,
     likelihood,
-    confidence,
+    // Retained for database compatibility; adoption confidence is not assessed.
+    confidence: "Unassessed",
     expected_change: officialExcerpt(rule.summary),
     summary_method: "official-excerpt",
     next_action: next,

@@ -28,7 +28,7 @@ test("the verified baseline is developing, with a month-only NPRM target and unk
   assert.equal(f.expected_action_date, "2026-07");
   assert.equal(f.effective_date, null);
   assert.equal(f.final_rule_date, null);
-  assert.equal(f.confidence, "Medium");
+  assert.equal(f.confidence, "Unassessed");
 });
 test("deterministic stage precedence", () => {
   const cases: [SignalType[], string][] = [

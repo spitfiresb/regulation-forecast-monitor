@@ -54,6 +54,17 @@ section:last-child {
 .rule h2 {
   font-size: 20px;
 }
+.key-finding {
+  margin: 14px 0;
+  font-size: 17px;
+}
+.changes {
+  list-style: disc;
+  padding-left: 20px;
+}
+.changes li {
+  margin: 12px 0;
+}
 .meta {
   color: #62666a;
   font-size: 14px;

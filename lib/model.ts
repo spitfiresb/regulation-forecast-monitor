@@ -80,6 +80,19 @@ export const forecastSchema = z.object({
   }),
 });
 export type Forecast = z.infer<typeof forecastSchema>;
+export const comparisonSchema = z.object({
+  previous_checked_at: z.iso.datetime(),
+  incomplete: z.boolean(),
+  changes: z.array(
+    z.object({
+      label: z.string(),
+      before: z.string(),
+      after: z.string(),
+      source_url: z.url(),
+      previous_source_url: z.url(),
+    }),
+  ),
+});
 export const snapshotSchema = z.object({
   rule: ruleSchema,
   signals: z.array(signalSchema),
@@ -87,6 +100,7 @@ export const snapshotSchema = z.object({
   synced_at: z.iso.datetime(),
   federal_register_checked_at: z.iso.datetime().nullable(),
   warnings: z.array(z.string()),
+  comparison: comparisonSchema.nullable().default(null),
 });
 export type Snapshot = z.infer<typeof snapshotSchema>;
 export type DashboardData = Snapshot & {
