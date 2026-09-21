@@ -1,2 +1,1 @@
-# regulation-c-forecast-monitor
-Regulation C Forecast Monitor
+# Regulation C Forecast Monitor
