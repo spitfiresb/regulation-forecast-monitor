@@ -4,10 +4,12 @@ This is the current product scope. It supersedes the agenda-catalog discovery an
 
 ## User flow
 
-1. Search or browse by agency and publication type across Federal Register rules, proposals, and related regulatory notices **published during the past six calendar months**, inclusive through the current UTC date. A future deadline or recent retrieval timestamp cannot make an older publication eligible.
+1. Browse by agency and publication type across Federal Register rules, proposals, and related regulatory notices **published during the past six calendar months**, inclusive through the current UTC date. A future deadline or recent retrieval timestamp cannot make an older publication eligible.
 2. Select one dated update. The app retrieves earlier and later related publications through the present day, without applying the six-month lower bound to that history.
 3. Reconstruct the latest supported status from publication actions and dates. An effective-date delay is not another original final rule.
 4. Generate an explicitly experimental assessment of the next status, with evidence and alternatives. Six months is **not** a prediction deadline.
+5. Blue text and light-blue panels identify generated forecast prose and alternatives. Source facts and published dates remain neutral. Long official excerpts expand through **Read full listing**, and original publications remain linked.
+6. Floating navigation opens Home, How it Works, and the MVP purpose dialog. The data model view focuses on the two active tables and the JSONB fields for sources and AI provenance.
 
 ## Sources and coverage
 

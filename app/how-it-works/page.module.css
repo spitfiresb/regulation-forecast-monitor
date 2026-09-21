@@ -209,3 +209,10 @@
     border-bottom: 1px solid #dbe3e9;
   }
 }
+
+.mvpNote {
+  margin: 24px 0 0;
+  font-size: 12px;
+  color: #697782;
+  line-height: 1.7;
+}

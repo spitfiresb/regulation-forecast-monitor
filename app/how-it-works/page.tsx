@@ -14,7 +14,7 @@ const steps = [
     label: "Retrieve",
     title: "Official publications",
     detail:
-      "The Federal Register API supplies rules, proposals, and regulatory notices. Search covers the past six months.",
+      "The Federal Register API supplies rules, proposals, and regulatory notices. Browse by agency and publication type across the past six months.",
   },
   {
     label: "Link",
@@ -55,7 +55,7 @@ export default function HowItWorksPage() {
           to an AI forecast.
         </h1>
         <p>
-          A research tool for tracking regulatory changes and assessing the next
+          An early MVP for tracking regulatory changes and assessing the next
           procedural step, with the publications behind each assessment.
         </p>
       </div>
@@ -111,6 +111,10 @@ export default function HowItWorksPage() {
           Explore architecture <ArrowRight size={16} aria-hidden="true" />
         </Link>
       </section>
+      <p className={styles.mvpNote}>
+        This MVP demonstrates the workflow. Company-specific impact analysis,
+        alerts, and measured forecast accuracy are future work.
+      </p>
       <details className={styles.details}>
         <summary>Model inputs, validation & limitations</summary>
         <p>

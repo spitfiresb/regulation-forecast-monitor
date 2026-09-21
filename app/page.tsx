@@ -7,7 +7,6 @@ export default async function Home({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
-  const q = typeof params.q === "string" ? params.q.slice(0, 200) : "";
   const document =
     typeof params.document === "string" &&
     documentId.safeParse(params.document).success
@@ -15,7 +14,6 @@ export default async function Home({
       : "";
   return (
     <ActivityMonitor
-      initialQuery={q}
       initialDocument={document}
       initialAgency={
         typeof params.agency === "string" && /^\d+$/.test(params.agency)

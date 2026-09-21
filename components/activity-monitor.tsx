@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   type ActivityCase,
   type ActivitySearch,
@@ -7,25 +7,24 @@ import {
 } from "@/lib/activity/model";
 import { formatDate } from "@/lib/dates";
 import Link from "next/link";
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { ExpandableExcerpt } from "@/components/expandable-excerpt";
+import { displayText } from "@/lib/display-text";
 const commonAgencies = new Set([573, 136, 145, 188, 192, 199, 271, 466]);
 
 export function ActivityMonitor({
-  initialQuery,
   initialDocument,
   initialPage,
   initialAgency,
   initialType,
   window,
 }: {
-  initialQuery: string;
   initialDocument: string;
   initialPage: number;
   initialAgency: string;
   initialType: string;
   window: ActivityWindow;
 }) {
-  const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<ActivitySearch | null>(null);
   const [record, setRecord] = useState<ActivityCase | null>(null);
   const [open, setOpen] = useState(false);
@@ -48,7 +47,7 @@ export function ActivityMonitor({
       history.pushState(
         {},
         "",
-        `/?${new URLSearchParams({ q: query, document, agency, type: publicationType })}`,
+        `/?${new URLSearchParams({ document, agency, type: publicationType })}`,
       );
     try {
       const response = await fetch(
@@ -75,14 +74,7 @@ export function ActivityMonitor({
   useEffect(() => {
     const timer = setTimeout(() => {
       if (initialDocument) void choose(initialDocument, false, false);
-      else
-        void search(
-          initialQuery,
-          initialPage,
-          false,
-          initialAgency,
-          initialType,
-        );
+      else void browse(initialPage, false, initialAgency, initialType);
       void fetch("/api/activity/agencies")
         .then((response) => {
           if (!response.ok) throw new Error("Agencies unavailable");
@@ -93,15 +85,16 @@ export function ActivityMonitor({
     }, 0);
     const pop = () => location.reload();
     addEventListener("popstate", pop);
+    addEventListener("monitor:home", goHome);
     return () => {
       clearTimeout(timer);
       removeEventListener("popstate", pop);
+      removeEventListener("monitor:home", goHome);
     };
     // The initial bookmarked selection runs once; later selections are explicit.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  async function search(
-    text = query,
+  async function browse(
     page = 1,
     push = true,
     selectedAgency = "",
@@ -113,18 +106,17 @@ export function ActivityMonitor({
     setError("");
     setRecord(null);
     setOpen(true);
-    setQuery(text);
     setAgency(selectedAgency);
     setPublicationType(selectedType);
     if (push)
       history.pushState(
         {},
         "",
-        `/?${new URLSearchParams({ q: text, page: String(page), agency: selectedAgency, type: selectedType })}`,
+        `/?${new URLSearchParams({ page: String(page), agency: selectedAgency, type: selectedType })}`,
       );
     try {
       const r = await fetch(
-        `/api/activity?${new URLSearchParams({ q: text, page: String(page), agency: selectedAgency, type: selectedType })}`,
+        `/api/activity?${new URLSearchParams({ page: String(page), agency: selectedAgency, type: selectedType })}`,
         { signal: AbortSignal.timeout(40000) },
       );
       const data = await r.json();
@@ -133,53 +125,40 @@ export function ActivityMonitor({
     } catch (e) {
       if (ticket === serial.current) {
         setResults(null);
-        setError(e instanceof Error ? e.message : "Search failed.");
+        setError(
+          e instanceof Error ? e.message : "Changes could not be loaded.",
+        );
       }
     } finally {
       if (ticket === serial.current) setSearching(false);
     }
   }
-  function submit(e: FormEvent) {
-    e.preventDefault();
-    void search();
+  function goHome() {
+    history.pushState({}, "", "/");
+    void browse(1, false);
+    scrollTo({ top: 0 });
   }
   const scopeWindow = record?.window ?? results?.window ?? window;
   return (
     <main className="record-monitor activity-monitor">
       <header className="activity-header">
-        <Link className="brand" href="/">
+        <Link
+          className="brand"
+          href="/"
+          onClick={(event) => {
+            event.preventDefault();
+            goHome();
+          }}
+        >
           Regulatory Forecast Monitor
-        </Link>
-        <Link className="system-link" href="/how-it-works">
-          How it works <ArrowRight size={14} aria-hidden="true" />
         </Link>
       </header>
       <div className="activity-discovery">
-        <form className="record-search" onSubmit={submit}>
-          <label htmlFor="activity-query">Find a regulation</label>
-          <div className="record-search-input">
-            <Search size={18} aria-hidden="true" />
-            <input
-              id="activity-query"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              maxLength={200}
-              placeholder="Search by keyword or RIN"
-              autoComplete="off"
-            />
-            <button type="submit" disabled={searching}>
-              {searching ? "Searching…" : "Search"}
-            </button>
-          </div>
-        </form>
-        <div className="browse-divider">
-          <span>or</span>
-        </div>
         <form
           className="activity-browse"
           onSubmit={(e) => {
             e.preventDefault();
-            void search("", 1, true, agency, publicationType);
+            void browse(1, true, agency, publicationType);
           }}
         >
           <div className="browse-field">
@@ -235,7 +214,7 @@ export function ActivityMonitor({
         </form>
         {agencyError && (
           <p className="scope-note">
-            Agency options are unavailable. Search or browse all agencies.
+            Agency options are unavailable. You can still browse all agencies.
           </p>
         )}
       </div>
@@ -263,9 +242,7 @@ export function ActivityMonitor({
           aria-label="Recent regulatory changes"
         >
           <div className="activity-results-heading">
-            <h1>
-              {results.query ? "Search results" : "Recent regulatory changes"}
-            </h1>
+            <h1>Recent regulatory changes</h1>
             <span>Past six months</span>
           </div>
           {results.entries.map((event) => (
@@ -277,10 +254,10 @@ export function ActivityMonitor({
               <span className="event-meta">
                 {formatDate(event.document.publication_date)} · {event.label}
               </span>
-              <strong>{event.document.title}</strong>
+              <strong>{displayText(event.document.title)}</strong>
               <span>
                 {event.document.agencies
-                  .map((a) => a.name || a.raw_name)
+                  .map((a) => displayText(a.name || a.raw_name))
                   .filter(Boolean)
                   .join(" / ")}{" "}
                 · {event.document.document_number}
@@ -291,16 +268,15 @@ export function ActivityMonitor({
             <p>
               No matching regulatory changes.
               {results.next_page
-                ? " Continue to the next page, or narrow the search."
-                : " Try another search or filter."}
+                ? " Continue to the next page, or change the filters."
+                : " Try different filters."}
             </p>
           )}
           {results.page > 1 && (
             <button
               className="activity-more"
               onClick={() =>
-                void search(
-                  results.query,
+                void browse(
                   results.page - 1,
                   true,
                   results.agency,
@@ -315,8 +291,7 @@ export function ActivityMonitor({
             <button
               className="activity-more"
               onClick={() =>
-                void search(
-                  results.query,
+                void browse(
                   results.next_page!,
                   true,
                   results.agency,
@@ -339,7 +314,7 @@ export function ActivityMonitor({
             className="record-back"
             onClick={() => {
               if (!results) {
-                void search(query, 1, true, agency, publicationType);
+                void browse(1, true, agency, publicationType);
                 return;
               }
               ++serial.current;
@@ -347,13 +322,12 @@ export function ActivityMonitor({
               setRecord(null);
               setError("");
               setOpen(true);
-              setQuery(results.query);
               setAgency(results.agency ?? "");
               setPublicationType(results.publication_type ?? "");
               history.pushState(
                 {},
                 "",
-                `/?${new URLSearchParams({ q: results.query, page: String(results.page), agency: results.agency ?? "", type: results.publication_type ?? "" })}`,
+                `/?${new URLSearchParams({ page: String(results.page), agency: results.agency ?? "", type: results.publication_type ?? "" })}`,
               );
             }}
           >
@@ -362,7 +336,7 @@ export function ActivityMonitor({
           <div className="record-identity">
             <p>
               {record.selected.agencies
-                .map((a) => a.name || a.raw_name)
+                .map((a) => displayText(a.name || a.raw_name))
                 .filter(Boolean)
                 .join(" / ")}{" "}
               ·{" "}
@@ -370,12 +344,12 @@ export function ActivityMonitor({
                 record.selected.document_number}
             </p>
             <h1 ref={heading} tabIndex={-1}>
-              {record.selected.title}
+              {displayText(record.selected.title)}
             </h1>
           </div>
           <div className="current-status">
             <span className="provenance official">CURRENT STATUS</span>
-            <strong>{record.assessment.current_status}</strong>
+            <strong>{displayText(record.assessment.current_status)}</strong>
             <span>
               Latest linked update:{" "}
               {formatDate(
@@ -392,18 +366,28 @@ export function ActivityMonitor({
                   ? "FORECAST WITHHELD"
                   : "RULES-BASED FORECAST"}
             </div>
-            <h2>{record.assessment.next_status}</h2>
-            <p>{record.assessment.forecast}</p>
-            {record.assessment.ai?.reason && (
-              <p className="forecast-fallback">{record.assessment.ai.reason}</p>
-            )}
-            <ul className="activity-reasons">
-              {record.assessment.basis.map((reason) => (
-                <li key={reason}>{reason}</li>
-              ))}
-            </ul>
+            <div
+              className={
+                record.assessment.ai?.status === "generated"
+                  ? "ai-generated"
+                  : "forecast-text"
+              }
+            >
+              <h2>{displayText(record.assessment.next_status)}</h2>
+              <p>{displayText(record.assessment.forecast)}</p>
+              {record.assessment.ai?.reason && (
+                <p className="forecast-fallback">
+                  {displayText(record.assessment.ai.reason)}
+                </p>
+              )}
+              <ul className="activity-reasons">
+                {record.assessment.basis.map((reason) => (
+                  <li key={displayText(reason)}>{displayText(reason)}</li>
+                ))}
+              </ul>
+            </div>
             <p className="outlook-timing">
-              <strong>Timing:</strong> {record.assessment.timing}
+              <strong>Timing:</strong> {displayText(record.assessment.timing)}
             </p>
             <details>
               <summary>Evidence, alternatives & limitations</summary>
@@ -421,9 +405,17 @@ export function ActivityMonitor({
               <p>
                 <Link href="/how-it-works">How forecasts are generated →</Link>
               </p>
-              <ul>
+              <ul
+                className={
+                  record.assessment.ai?.status === "generated"
+                    ? "ai-generated ai-alternatives"
+                    : undefined
+                }
+              >
                 {record.assessment.alternatives.map((alternative) => (
-                  <li key={alternative}>{alternative}</li>
+                  <li key={displayText(alternative)}>
+                    {displayText(alternative)}
+                  </li>
                 ))}
               </ul>
               <ul>
@@ -446,11 +438,11 @@ export function ActivityMonitor({
                 })}
               </ul>
               {record.limitations.map((line) => (
-                <p key={line}>{line}</p>
+                <p key={displayText(line)}>{displayText(line)}</p>
               ))}
               <p>
-                The six-month limit defines which updates appear in search. It
-                is not a prediction deadline.
+                The six-month limit defines which updates appear in the listing.
+                It is not a prediction deadline.
               </p>
             </details>
           </section>
@@ -466,17 +458,20 @@ export function ActivityMonitor({
                 )?.label
               }
             </h2>
-            <p className="official-excerpt">
-              {record.summary.text ||
+            <ExpandableExcerpt
+              key={record.id}
+              text={
+                record.summary.text ||
                 record.selected.action ||
-                "No abstract supplied."}
-            </p>
+                "No abstract supplied."
+              }
+            />
             <details>
-              <summary>Read the source wording</summary>
-              <blockquote>{record.summary.text}</blockquote>
+              <summary>Publication details</summary>
               {record.selected.dates && (
                 <p>
-                  <strong>Published dates:</strong> {record.selected.dates}
+                  <strong>Published dates:</strong>{" "}
+                  {displayText(record.selected.dates)}
                 </p>
               )}
               <Source
@@ -509,7 +504,7 @@ export function ActivityMonitor({
                           : ""}
                       </time>
                     </div>
-                    <p>{event.document.action}</p>
+                    <p>{displayText(event.document.action)}</p>
                     {event.document.effective_on && (
                       <p>
                         Published effective date:{" "}
@@ -523,8 +518,8 @@ export function ActivityMonitor({
                     </Source>
                     <details>
                       <summary>Official wording</summary>
-                      <p>{event.document.abstract}</p>
-                      <p>{event.document.dates}</p>
+                      <p>{displayText(event.document.abstract)}</p>
+                      <p>{displayText(event.document.dates)}</p>
                     </details>
                   </li>
                 ))}

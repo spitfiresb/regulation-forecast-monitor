@@ -214,7 +214,7 @@ export function Dashboard({
             <dt>{elapsed ? "Original agenda target" : "Listed action date"}</dt>
             <dd>
               {formatDate(forecast.expected_action_date)}
-              {elapsed ? " — target has passed" : ""}
+              {elapsed ? "; target has passed" : ""}
             </dd>
           </div>
           <div>

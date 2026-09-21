@@ -6,75 +6,75 @@ import {
 
 const nodes: DiagramNode[] = [
   {
-    id: "search",
-    title: "Search or browse changes",
+    id: "browse",
+    title: "Browse official changes",
     description:
-      "Find Federal Register rules and notices published in the past six calendar months.",
+      "Agency and publication filters query the Federal Register API. Only publications from the past six months appear in the listing.",
     x: 25,
-    y: 50,
-  },
-  {
-    id: "history",
-    title: "Link publication history",
-    description:
-      "Select an update. Match related publications by identifiers, agency, and docket or title, including older history.",
-    x: 375,
-    y: 50,
+    y: 40,
     tone: "source",
   },
   {
-    id: "assessment",
-    title: "Generate an AI forecast",
+    id: "history",
+    title: "Link history and check status",
     description:
-      "Source checks establish status. Gemini proposes a next step with cited reasons; validation checks the output. Ambiguous history withholds AI.",
+      "RIN or docket lookup retrieves older context. Identity, completeness, action, and date checks establish status and decide forecast eligibility.",
+    x: 375,
+    y: 40,
+    tone: "source",
+  },
+  {
+    id: "ai",
+    title: "Generate with Gemini",
+    description:
+      "Eligible history, abstracts, actions, and dates go to Gemini. It returns a next-status scenario, cited reasons, and alternatives, or abstains.",
     x: 725,
-    y: 50,
+    y: 40,
+  },
+  {
+    id: "validation",
+    title: "Validate or use a fallback",
+    description:
+      "Validate JSON and source IDs, including a latest-publication citation. Reject numerical claims. AI failure produces a labeled rules-based fallback.",
+    x: 725,
+    y: 320,
   },
   {
     id: "storage",
-    title: "Save case and assessment",
+    title: "Save the evidence",
     description:
-      "Supabase saves the latest case and immutable assessment together. Local files are the development fallback.",
-    x: 725,
-    y: 350,
+      "Supabase atomically saves the latest case and an immutable assessment. The snapshot includes history, model, prompt version, input hash, and citations.",
+    x: 375,
+    y: 320,
     tone: "storage",
   },
   {
-    id: "monitor",
-    title: "Show the evidence",
+    id: "display",
+    title: "Display and refresh",
     description:
-      "Display source status, an AI forecast or labeled rules-based fallback, alternatives, and publication links.",
-    x: 375,
-    y: 350,
-  },
-  {
-    id: "recheck",
-    title: "Check again",
-    description:
-      "Saved cases can be reused briefly. An explicit recheck fetches source history again; identical evidence is deduplicated.",
+      "Only AI-generated text is blue. Official facts stay separate. Cases are cached for up to an hour; Refresh history retrieves and assesses sources again.",
     x: 25,
-    y: 350,
+    y: 320,
   },
 ];
 const edges: DiagramEdge[] = [
-  { path: "M305 140 H375" },
-  { path: "M655 140 H725" },
-  { path: "M865 230 V350" },
-  { path: "M725 440 H655" },
-  { path: "M375 440 H305" },
-  { path: "M165 350 V280 H515 V230" },
+  { path: "M325 135 H375" },
+  { path: "M675 135 H725" },
+  { path: "M875 230 V320" },
+  { path: "M725 415 H675" },
+  { path: "M375 415 H325" },
 ];
 export default function ArchitecturePage() {
   return (
     <ArchitectureDiagram
-      title="Current system flow"
-      description="Federal Register → history and status checks → Gemini → validation → Supabase → evidence-linked forecast."
+      title="System architecture"
+      description="Next.js on Cloudflare Workers connects official publications, source checks, Gemini, and Supabase. Incomplete or ambiguous evidence bypasses AI and withholds a forecast."
       nodes={nodes}
       edges={edges}
-      width={1030}
-      height={570}
-      nodeWidth={280}
-      nodeHeight={180}
+      width={1050}
+      height={550}
+      nodeWidth={300}
+      nodeHeight={190}
     />
   );
 }

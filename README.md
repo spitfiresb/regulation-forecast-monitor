@@ -1,12 +1,14 @@
 # Regulatory Forecast Monitor
 
-A searchable regulatory forecast monitor, initially built around CFPB **RIN 3170-AB57**, “Contingency Calculations for Determining Average Prime Offer Rate.” Built with Next.js App Router, TypeScript, Tailwind, and Supabase Postgres. All application and ingestion code lives in this repository.
+A regulatory change and forecast monitor, initially built around CFPB **RIN 3170-AB57**, “Contingency Calculations for Determining Average Prime Offer Rate.” Built with Next.js App Router, TypeScript, Tailwind, and Supabase Postgres. All application and ingestion code lives in this repository.
 
 ## Current product: recent activity and next-status assessments
 
-One search over Federal Register activity published in the **past six calendar months**. Select an update to retrieve its related history, including older publications, reconstruct its status, and generate an evidence-linked assessment of the next status change. Six months is the search radius, not a prediction deadline.
+Browse Federal Register activity published in the **past six calendar months**. Select an update to retrieve its related history, including older publications, reconstruct its status, and generate an evidence-linked assessment of the next status change. Six months is the browsing window, not a prediction deadline.
 
-Search by keyword or RIN, or browse using agency and publication dropdowns. **How it works** opens `/how-it-works`, a separate explanation of the AI forecast pipeline with links to architecture and data-model views.
+Browse using agency and publication dropdowns. Floating Home, How it Works, and purpose controls provide navigation. The purpose dialog explains the early MVP and future direction. `/how-it-works` explains the AI pipeline and links to the current system and data model.
+
+A centered legend identifies blue text and light-blue highlights as AI generated. Official facts, dates, and rules-based fallbacks remain neutral. Long official excerpts have an explicit **Read full listing** control; stored source text remains intact. Native selects use progressive CSS picker styling, with motion respecting reduced-motion preferences.
 
 The current flow uses `/api/activity` and `/api/activity/[document]/assess`, with server-only Supabase storage for retrieved cases and immutable assessments. Source publication dates, action descriptions, and effective dates are separate from the generated forecast. Repeated effective-date delays are no longer labeled as repeated original final rules.
 

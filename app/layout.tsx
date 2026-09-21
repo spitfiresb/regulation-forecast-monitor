@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./interface.css";
+import { AppNavigation } from "@/components/app-navigation";
 
 export const metadata: Metadata = {
   title: "Regulatory Forecast Monitor",
   description:
-    "Search rulemakings, inspect official evidence, and explore experimental forecasts of regulatory publication events.",
+    "Browse regulatory changes, inspect official evidence, and explore experimental forecasts of regulatory publication events.",
   robots: { index: false, follow: false },
 };
 export default function RootLayout({
@@ -12,7 +14,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AppNavigation />
+        <div className="app-content">{children}</div>
+      </body>
     </html>
   );
 }

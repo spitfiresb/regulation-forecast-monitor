@@ -334,6 +334,15 @@ export function ArchitectureDiagram({
           ))}
         </div>
       </div>
+      <ol className="diagram-mobile" aria-label={`${title} details`}>
+        {nodes.map((node) => (
+          <li key={node.id}>
+            <h2>{node.title}</h2>
+            <p>{node.description}</p>
+            {node.keys && <span className="diagram-keys">{node.keys}</span>}
+          </li>
+        ))}
+      </ol>
       <p className="canvas-help" id="canvas-help">
         Drag to pan · Scroll or + / − to zoom · Select a card to focus · Fit to
         reset
