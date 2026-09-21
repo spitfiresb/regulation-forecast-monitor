@@ -16,8 +16,8 @@ Open http://127.0.0.1:3000. Requires Node 22 or newer. **No credentials are requ
 ## What is implemented
 
 - Four answers: expected change, qualitative likelihood, timing, and linked evidence.
-- A responsive known / forecast / unknown timeline, with no invented milestones.
-- Per-conclusion “Why?” controls, filterable evidence, original wording, observation timestamps, source links, and methodology.
+- One plain page with all four answers directly visible and a working refresh button. No navigation, filters, or secondary pages.
+- Inline “Why?” dropdowns with original wording, observation timestamps, and source links beside each conclusion.
 - `syncRule()`, `POST /api/sync`, and `GET /api/rule` in the same Next.js app.
 - Current-agenda discovery for the exact RIN, avoiding a permanently pinned agenda edition.
 - Federal Register exact-RIN search and structured document checks. Missing RIN metadata can cause a publication to be missed; the UI states this limitation.
