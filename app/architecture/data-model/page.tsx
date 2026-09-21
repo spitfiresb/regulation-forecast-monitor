@@ -38,7 +38,7 @@ const nodes: DiagramNode[] = [
     id: "forecast",
     title: "Forecast fields in the payload",
     description:
-      "Next status, forecast, reasons, alternatives, and evidence IDs. AI metadata records status, model, prompt version, input hash, and reason-level citations.",
+      "Target event, issue date, window end, reasons, counterargument, and watch signals. AI metadata retains tool actions, source excerpts, comparisons, review, model, prompt, and input hash.",
     keys: "JSONB fields, not a separate table",
     x: 445,
     y: 365,

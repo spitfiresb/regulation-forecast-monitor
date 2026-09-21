@@ -28,7 +28,7 @@ const fields = [
   "agencies",
   "cfr_references",
 ];
-export async function officialJson(url: string) {
+export async function officialJson(url: string, timeoutMs = 30000) {
   const u = new URL(url);
   if (
     u.origin !== "https://www.federalregister.gov" ||
@@ -37,7 +37,7 @@ export async function officialJson(url: string) {
     throw new Error("Unexpected source URL");
   const response = await fetch(url, {
     cache: "no-store",
-    signal: AbortSignal.timeout(30000),
+    signal: AbortSignal.timeout(timeoutMs),
     headers: {
       "User-Agent": "RegulatoryForecastMonitor/2.0",
       Accept: "application/json",
@@ -117,6 +117,7 @@ export async function searchActivity(
 export async function collectRelated(
   selected: ActivityDocument,
   today: string,
+  deadline = Date.now() + 60000,
 ) {
   const lookup = selected.regulation_id_numbers.length
     ? "rin"
@@ -138,9 +139,8 @@ export async function collectRelated(
   ]);
   let complete = true;
   const limitations: string[] = [];
-  const started = Date.now();
   for (const query of queries) {
-    if (Date.now() - started > 60000) {
+    if (Date.now() >= deadline) {
       complete = false;
       limitations.push(
         "The source lookup exceeded its time budget; history is incomplete.",
@@ -151,7 +151,7 @@ export async function collectRelated(
     let count: number | undefined;
     try {
       for (let page = 1; page <= 10; page++) {
-        if (Date.now() - started > 60000) {
+        if (Date.now() >= deadline) {
           complete = false;
           break;
         }
@@ -165,6 +165,7 @@ export async function collectRelated(
             page,
             100,
           ),
+          Math.max(1, Math.min(15000, deadline - Date.now())),
         );
         if (!Number.isInteger(data.count))
           throw new Error("Invalid history count");
@@ -211,6 +212,7 @@ export async function collectRelated(
   return {
     documents: linked,
     complete: complete && !unresolvedLater,
+    retrieval_complete: complete,
     linkage: lookup as "rin" | "docket" | "title",
     excluded,
     limitations,

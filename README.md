@@ -2,17 +2,19 @@
 
 A regulatory change and forecast monitor, initially built around CFPB **RIN 3170-AB57**, “Contingency Calculations for Determining Average Prime Offer Rate.” Built with Next.js App Router, TypeScript, Tailwind, and Supabase Postgres. All application and ingestion code lives in this repository.
 
-## Current product: recent activity and next-status assessments
+## Current product: recent activity and research-backed forecasts
 
-Browse Federal Register activity published in the **past six calendar months**. Select an update to retrieve its related history, including older publications, reconstruct its status, and generate an evidence-linked assessment of the next status change. Six months is the browsing window, not a prediction deadline.
+Browse Federal Register activity published in the **past six calendar months**. Select an update to retrieve its related history, including older publications, reconstruct its status, and generate an evidence-linked forecast of a future publication event. Six months is the browsing window, not a prediction deadline.
 
 Browse using agency and publication dropdowns. Floating Home, How it Works, and purpose controls provide navigation. The purpose dialog explains the early MVP and future direction. `/how-it-works` explains the AI pipeline and links to the current system and data model.
 
-A centered legend identifies blue text and light-blue highlights as AI generated. Official facts, dates, and rules-based fallbacks remain neutral. Long official excerpts have an explicit **Read full listing** control; stored source text remains intact. Native selects use progressive CSS picker styling, with motion respecting reduced-motion preferences.
+A centered legend identifies blue text and light-blue highlights as AI generated. Official facts and dates remain neutral. Long official excerpts have an explicit **Read full listing** control; stored source text remains intact. Native selects use progressive CSS picker styling, with motion respecting reduced-motion preferences.
 
 The current flow uses `/api/activity` and `/api/activity/[document]/assess`, with server-only Supabase storage for retrieved cases and immutable assessments. Source publication dates, action descriptions, and effective dates are separate from the generated forecast. Repeated effective-date delays are no longer labeled as repeated original final rules.
 
-Gemini generates evidence-linked next-status scenarios after deterministic checks establish the current status and forecast eligibility. Outputs are validated and stored with model, prompt version, input hash, and citations. AI failures use an explicitly labeled rules-based fallback. Forecasts are experimental, not calibrated probabilities. Ambiguous relationships or incomplete history cause abstention. See [current scope and implementation](docs/recent-activity-scope.md) for coverage, linking, status rules, limitations, and storage. The previous agenda-catalog UI and six-month-forward probability experiment are legacy code and are not the homepage's product flow.
+Gemini runs a bounded research agent after deterministic checks establish current status. It chooses official text reads, historical searches, and comparison traces across up to three rounds and six source actions. It then proposes a future publication event in a 90, 180, or 365 day window, with cited reasons, a counterargument, and signals that would change its view. A second model call critiques the forecast. Failed research or review withholds the prediction; there is no heuristic prediction fallback.
+
+Forecasts are experimental, not calibrated probabilities. The research trail is inspectable in the UI. See [current scope and implementation](docs/recent-activity-scope.md) for coverage, evidence limits, and storage. The previous agenda-catalog UI and six-month-forward probability experiment are legacy code and are not the homepage's product flow.
 
 ## Run locally
 
@@ -66,11 +68,11 @@ No Edge Functions, Realtime, or Storage bucket is required. See [storage, retent
 
 Set `GEMINI_API_KEY` in `.env.local` and as a Cloudflare secret for production. `GEMINI_MODEL` defaults to `gemini-3.5-flash-lite`; there is no automatic model upgrade or paid-model fallback.
 
-The current activity flow sends public linked publication metadata, actions, abstracts, dates, checked status, and the assessment date to Gemini. The model returns a proposed next status, concise forecast, cited reasons, and alternatives. It cannot overwrite current status or published dates, or override source-check abstention. Validation requires the expected JSON shape, known citation IDs, and a latest-publication citation, and rejects numerical/date claims in generated prose. Citation checks do not verify every inference. Failed requests or invalid output retain the labeled deterministic assessment.
+The current activity flow uses structured JSON plans to select from three server tools: `read_publication`, `find_comparables`, and `trace_comparable`. The model receives the checked history and tool observations, then returns a future event, a bounded forecast window, cited reasons, a counterargument, alternatives, and watch signals. It cannot overwrite source status or dates. Citation checks reject uninspected comparison sources; a separate model review checks specificity and reasoning. Neither check proves predictive accuracy.
 
-Successful AI output saves its model, prompt version, input hash, and reason-level citations in the existing case JSON; no database migration is required. The homepage detail discloses the actual method. The older `npm run gemini:check` command still checks the separate legacy abstract summarizer.
+Research actions, exact inspected excerpts, comparison metadata, the forecast contract, model review, prompt version, and input hash are archived in the existing case JSON. No database migration is required. The current version is `research-event-agent-v3`, with prompt `research-event-forecast-v6`. The older `npm run gemini:check` still checks the separate legacy abstract summarizer.
 
-A live Gemini forecast for DOE document `2026-13305`, using six linked publications, was verified through the current activity endpoint on September 21, 2026. Mocked tests cover valid output, invented citations, missing latest evidence, numerical claims, extra fields, incomplete responses, rate limits, and abstention. Forecast accuracy has not been measured.
+Mocked tests cover the research loop, citation and event validation, review rejection, abstention, provider failure, official-source boundaries, comparison filtering, and future outcome resolution. Live verification is separate from deterministic CI. Forecast accuracy has not been measured.
 
 ## Forecast logic
 

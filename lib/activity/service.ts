@@ -30,6 +30,10 @@ export async function assessActivity(
     saved.assessment.ai?.model === activityAiModel() &&
     saved.assessment.ai?.prompt_version === ACTIVITY_AI_PROMPT &&
     saved.assessment.ai?.status !== "unavailable" &&
+    !(
+      saved.assessment.ai?.status === "withheld" &&
+      saved.assessment.ai?.research
+    ) &&
     saved.checked_at.slice(0, 10) === window.to &&
     Date.now() - Date.parse(saved.checked_at) < 3600000
   )
@@ -42,13 +46,14 @@ export async function assessActivity(
   return promise;
 }
 async function collect(id: string, now: Date): Promise<ActivityCase> {
+  const deadline = Date.now() + 105000;
   const window = activityWindow(now);
   const selected = await getDocument(id);
   if (!inWindow(selected.publication_date, window))
     throw new Error(
       "This publication is outside the last six months. Older documents are used only as supporting history.",
     );
-  const related = await collectRelated(selected, window.to);
+  const related = await collectRelated(selected, window.to, deadline - 60000);
   const history = related.documents
     .map(classifyDocument)
     .sort(
@@ -64,7 +69,12 @@ async function collect(id: string, now: Date): Promise<ActivityCase> {
     related.linkage !== "title",
     now.toISOString(),
   );
-  const assessment = await forecastWithAi(history, baseline, now.toISOString());
+  const assessment = await forecastWithAi(
+    history,
+    baseline,
+    now.toISOString(),
+    deadline,
+  );
   // The selected update is quoted, not rewritten as a claim of current legal effect.
   const excerpt = load(selected.abstract ?? "").text();
   const payload = {

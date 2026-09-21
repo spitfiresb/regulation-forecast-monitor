@@ -25,17 +25,17 @@ const nodes: DiagramNode[] = [
   },
   {
     id: "ai",
-    title: "Generate with Gemini",
+    title: "Agent researches evidence",
     description:
-      "Eligible history, abstracts, actions, and dates go to Gemini. It returns a next-status scenario, cited reasons, and alternatives, or abstains.",
+      "Gemini chooses official text reads, historical searches, and comparison traces. Up to three rounds adapt to returned evidence; six source actions maximum.",
     x: 725,
     y: 40,
   },
   {
     id: "validation",
-    title: "Validate or use a fallback",
+    title: "Forecast and challenge",
     description:
-      "Validate JSON and source IDs, including a latest-publication citation. Reject numerical claims. AI failure produces a labeled rules-based fallback.",
+      "Generate a future event and 90, 180, or 365 day window. Validate citations and eligibility; a second model call reviews reasoning. Failed checks withhold predictions.",
     x: 725,
     y: 320,
   },
@@ -43,7 +43,7 @@ const nodes: DiagramNode[] = [
     id: "storage",
     title: "Save the evidence",
     description:
-      "Supabase atomically saves the latest case and an immutable assessment. The snapshot includes history, model, prompt version, input hash, and citations.",
+      "Supabase atomically saves the latest case and an immutable assessment. The snapshot includes source passages, tool actions, comparisons, the forecast contract, review, model, prompt version, and input hash.",
     x: 375,
     y: 320,
     tone: "storage",

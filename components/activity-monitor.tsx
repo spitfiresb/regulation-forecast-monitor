@@ -1,4 +1,5 @@
 "use client";
+import { ForecastResearch } from "./forecast-research";
 import { useEffect, useRef, useState } from "react";
 import {
   type ActivityCase,
@@ -223,7 +224,9 @@ export function ActivityMonitor({
           <p className="record-status">Loading regulatory changes…</p>
         )}
         {busy && (
-          <p className="record-status">Analyzing publication history…</p>
+          <p className="record-status">
+            Researching publications and historical comparisons…
+          </p>
         )}
       </div>
       {error && (
@@ -361,7 +364,9 @@ export function ActivityMonitor({
           <section className="generated-outlook">
             <div className="provenance inference">
               {record.assessment.ai?.status === "generated"
-                ? "AI FORECAST"
+                ? record.assessment.ai.prediction
+                  ? "AI FORECAST"
+                  : "AI ASSESSMENT"
                 : record.assessment.kind === "insufficient_evidence"
                   ? "FORECAST WITHHELD"
                   : "RULES-BASED FORECAST"}
@@ -374,12 +379,26 @@ export function ActivityMonitor({
               }
             >
               <h2>{displayText(record.assessment.next_status)}</h2>
-              <p>{displayText(record.assessment.forecast)}</p>
-              {record.assessment.ai?.reason && (
-                <p className="forecast-fallback">
-                  {displayText(record.assessment.ai.reason)}
+              {record.assessment.ai?.prediction && (
+                <p className="forecast-window">
+                  Next {record.assessment.ai.prediction.horizon_days} days ·
+                  Through{" "}
+                  {formatDate(record.assessment.ai.prediction.window_end)}
                 </p>
               )}
+              <p>{displayText(record.assessment.forecast)}</p>
+              {record.assessment.ai?.reason &&
+                record.assessment.ai.reason !== record.assessment.forecast && (
+                  <p
+                    className={
+                      record.assessment.ai.review
+                        ? "forecast-fallback ai-inline"
+                        : "forecast-fallback"
+                    }
+                  >
+                    {displayText(record.assessment.ai.reason)}
+                  </p>
+                )}
               <ul className="activity-reasons">
                 {record.assessment.basis.map((reason) => (
                   <li key={displayText(reason)}>{displayText(reason)}</li>
@@ -387,64 +406,10 @@ export function ActivityMonitor({
               </ul>
             </div>
             <p className="outlook-timing">
-              <strong>Timing:</strong> {displayText(record.assessment.timing)}
+              <strong>Published timing:</strong>{" "}
+              {displayText(record.assessment.timing)}
             </p>
-            <details>
-              <summary>Evidence, alternatives & limitations</summary>
-              <p>
-                This assessment is not calibrated against observed outcomes.
-                Source citations identify supporting publications; they do not
-                verify every inference.
-              </p>
-              {record.assessment.ai?.status === "generated" && (
-                <p>
-                  Model: {record.assessment.ai.model} · Prompt:{" "}
-                  {record.assessment.ai.prompt_version}
-                </p>
-              )}
-              <p>
-                <Link href="/how-it-works">How forecasts are generated →</Link>
-              </p>
-              <ul
-                className={
-                  record.assessment.ai?.status === "generated"
-                    ? "ai-generated ai-alternatives"
-                    : undefined
-                }
-              >
-                {record.assessment.alternatives.map((alternative) => (
-                  <li key={displayText(alternative)}>
-                    {displayText(alternative)}
-                  </li>
-                ))}
-              </ul>
-              <ul>
-                {record.assessment.evidence.map((id) => {
-                  const source = record.history.find(
-                    (e) => e.document.document_number === id,
-                  );
-                  return source ? (
-                    <li key={id}>
-                      <Source
-                        href={
-                          source.document.pdf_url || source.document.html_url
-                        }
-                      >
-                        {source.label} ·{" "}
-                        {formatDate(source.document.publication_date)}
-                      </Source>
-                    </li>
-                  ) : null;
-                })}
-              </ul>
-              {record.limitations.map((line) => (
-                <p key={displayText(line)}>{displayText(line)}</p>
-              ))}
-              <p>
-                The six-month limit defines which updates appear in the listing.
-                It is not a prediction deadline.
-              </p>
-            </details>
+            <ForecastResearch record={record} />
           </section>
           <section className="change-summary">
             <div className="provenance official">

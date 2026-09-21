@@ -1,4 +1,6 @@
 import { z } from "zod";
+import type { ResearchReport } from "./research";
+import type { ForecastEvent, ForecastOutput } from "./forecast-contract";
 import { isIsoDay } from "../dates";
 const day = z.string().refine(isIsoDay);
 const officialUrl = z.url().refine((value) => {
@@ -8,7 +10,7 @@ const officialUrl = z.url().refine((value) => {
     ["www.federalregister.gov", "www.govinfo.gov"].includes(u.hostname)
   );
 });
-export const documentId = z.string().regex(/^\d{4}-[A-Z0-9]+$/i);
+export const documentId = z.string().regex(/^(?:C\d+-)?\d{4}-[A-Z0-9]+$/i);
 export const activityDocumentSchema = z.object({
   document_number: documentId,
   title: z.string(),
@@ -33,7 +35,12 @@ export const activityDocumentSchema = z.object({
     )
     .default([]),
   cfr_references: z
-    .array(z.object({ title: z.coerce.number(), part: z.string() }))
+    .array(
+      z.object({
+        title: z.coerce.number(),
+        part: z.union([z.string(), z.number()]).transform(String),
+      }),
+    )
     .default([]),
 });
 export type ActivityDocument = z.infer<typeof activityDocumentSchema>;
@@ -83,6 +90,19 @@ export type StatusAssessment = {
     input_hash?: string;
     reason?: string;
     reasons?: { text: string; evidence: string[] }[];
+    research?: ResearchReport;
+    review?: { approved: boolean; problems: string[] };
+    reviewed_forecast?: ForecastOutput;
+    prediction?: {
+      event: ForecastEvent;
+      horizon_days: number;
+      issued_at: string;
+      window_end: string;
+      horizon_basis: string;
+      counterargument: string;
+      watch_for: string[];
+      missing_evidence: string[];
+    };
   };
 };
 export type ActivityCase = {

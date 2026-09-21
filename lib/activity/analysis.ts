@@ -4,7 +4,7 @@ import {
   type ActivityEvent,
   type StatusAssessment,
 } from "./model";
-export const ACTIVITY_METHOD = "recent-activity-ai-v2";
+export const ACTIVITY_METHOD = "research-event-agent-v3";
 export function classifyDocument(d: ActivityDocument): ActivityEvent {
   // ACTION is authoritative for the purpose of this publication. Title alone
   // cannot distinguish an original rule from subsequent notices with the same title.

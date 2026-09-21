@@ -1,13 +1,13 @@
 # Regulatory monitor data model
 
-The current homepage searches recent Federal Register publications and assesses the next status change from their linked history. The agenda catalog and earlier forecast experiment remain available through retained APIs. They have different records and retention rules; none is an unused database solely because it is absent from the homepage.
+The current homepage searches recent Federal Register publications and investigates linked history and forecasts future publication events. The agenda catalog and earlier forecast experiment remain available through retained APIs. They have different records and retention rules; none is an unused database solely because it is absent from the homepage.
 
 ## Records
 
 | Table | Purpose |
 | --- | --- |
 | `activity_records` | Latest retrieved case, keyed by selected Federal Register document number. |
-| `activity_assessments` | Immutable copies of linked history and next-status assessments, keyed by a content fingerprint. |
+| `activity_assessments` | Immutable copies of linked history, research traces, and event forecasts, keyed by a content fingerprint. |
 | `rule_catalog` | Latest imported agenda entry per RIN, including agency, abstract, stage, CFR references, timetable, and edition. `is_current` indicates membership in the latest import. |
 | `catalog_import` | Metadata for the last complete import: edition, source URL, observation time, and entry count. |
 | `rules` | Latest complete snapshot for each monitored agenda rule. APOR retains `apor-contingency`; other rule IDs are lowercase RINs. |
@@ -30,7 +30,7 @@ The importer discovers the newest Reginfo XML edition. Edition dates and retriev
 ## Time windows and retention
 
 - **Current search:** publications from the past six calendar months. Linked history may be older. This is a search filter, not a forecast deadline or a database-retention policy.
-- **Activity storage:** latest cases and immutable assessments have no scheduled retention cleanup in the current migration. The service role cannot update or delete archived assessments. Fingerprints exclude retrieval time so unchanged evidence does not produce duplicate assessments.
+- **Activity storage:** latest cases and immutable assessments have no scheduled retention cleanup in the current migration. The service role cannot update or delete archived assessments. Fingerprints identify identical payloads. New forecast issue times create new immutable assessments. The JSONB payload includes model-chosen tool actions, inspected source excerpts, comparisons, a target event and window, cited reasoning, and the model review; these are not separate tables.
 - **Agenda history:** retain changed snapshots for six calendar months by observation time, with month-end clamping. Latest rule snapshots and evidence referenced by current or retained history survive independently. Source content, forecast fields (including summary text and method), and warnings can create versions; retrieval timestamps and comparison prose do not. The dashboard's official-source comparison separately excludes generated summary changes.
 - **Forecast experiment:** retain issues for 12 months and at least 30 days after their forecast window ends. Evidence and the evaluation report are embedded in each issue, independently of operational history.
 

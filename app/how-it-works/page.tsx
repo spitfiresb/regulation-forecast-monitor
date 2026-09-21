@@ -11,28 +11,28 @@ export const metadata: Metadata = {
 
 const steps = [
   {
-    label: "Retrieve",
-    title: "Official publications",
+    label: "Establish",
+    title: "Source history",
     detail:
-      "The Federal Register API supplies rules, proposals, and regulatory notices. Browse by agency and publication type across the past six months.",
+      "The server links Federal Register publications by agency, RIN, and docket. Source checks establish the current status and decide whether the history is reliable enough to investigate.",
   },
   {
-    label: "Link",
-    title: "Publication history",
+    label: "Investigate",
+    title: "Model-directed research",
     detail:
-      "RINs and docket IDs locate related documents. Agency and docket or title checks keep unrelated proceedings separate. Earlier history is included.",
+      "Gemini chooses what to read and which historical cases to search. It can inspect official document passages, follow a comparison's history, and revise its search after seeing the results. The loop allows three rounds and six source actions.",
   },
   {
-    label: "Assess",
-    title: "AI forecast",
+    label: "Forecast",
+    title: "A testable future event",
     detail:
-      "Gemini reads the linked actions, abstracts, and dates. It weighs the sequence of changes and agency explanations to propose a next status, supporting reasons, and alternatives.",
+      "The model selects a future publication event and a 90, 180, or 365 day window. It must explain why the evidence favors that event, identify a counterargument, and state what would change its view. It can abstain.",
   },
   {
-    label: "Validate",
-    title: "Evidence and record",
+    label: "Review",
+    title: "Challenge and preserve",
     detail:
-      "The server checks the response format and citation IDs, then saves the assessment with its source history, model, and prompt version.",
+      "The server validates event eligibility and citations. A second Gemini call challenges the forecast's specificity, evidence, and timing. The app saves the research trace, source excerpts, forecast window, and review together.",
   },
 ];
 
@@ -55,8 +55,8 @@ export default function HowItWorksPage() {
           to an AI forecast.
         </h1>
         <p>
-          An early MVP for tracking regulatory changes and assessing the next
-          procedural step, with the publications behind each assessment.
+          An early MVP that investigates regulatory changes and forecasts future
+          publication events, with an inspectable research trail.
         </p>
       </div>
       <ol className={styles.flow} aria-label="Forecast pipeline">
@@ -74,10 +74,10 @@ export default function HowItWorksPage() {
         <div>
           <h2>What the AI decides</h2>
           <p>
-            The model proposes a leading scenario and explains which
-            publications support it. Repeated delays, for example, can support
-            another delay; scheduled effectiveness and withdrawal remain
-            alternatives.
+            The model chooses research actions, compares retrieved evidence, and
+            proposes a future event within a stated window. A current status
+            such as “comments open” is not a forecast. “Another effective-date
+            delay within 180 days” is a claim that can be checked later.
           </p>
           <p>
             Current status and published dates come from source checks. The AI
@@ -93,8 +93,9 @@ export default function HowItWorksPage() {
             also decline to choose a scenario.
           </p>
           <p>
-            If Gemini is unavailable or its response fails validation, the
-            result is explicitly labeled as a rules-based assessment.
+            Unfinished source research, failed validation, or a rejected model
+            review also withhold the prediction. The app preserves the source
+            findings and explains the failure.
           </p>
         </div>
       </section>
@@ -102,9 +103,10 @@ export default function HowItWorksPage() {
         <div>
           <h2>System architecture</h2>
           <p>
-            Next.js serves the interface and server APIs. The server retrieves
-            Federal Register records, calls Gemini, and stores cases and
-            assessment snapshots in Supabase. Credentials stay on the server.
+            Next.js serves the interface and server APIs. The server runs the
+            bounded research loop, retrieves Federal Register records, calls
+            Gemini, and stores cases and assessment snapshots in Supabase.
+            Credentials stay on the server.
           </p>
         </div>
         <Link href="/architecture" className={styles.diagramLink}>
@@ -118,18 +120,24 @@ export default function HowItWorksPage() {
       <details className={styles.details}>
         <summary>Model inputs, validation & limitations</summary>
         <p>
-          Gemini receives public publication metadata, action text, abstracts,
-          date fields, the checked current status, and the assessment date. It
-          does not receive database credentials or unrelated stored records.
-          This is retrieval-grounded generation, not a model trained on this
-          app’s cases.
+          Gemini receives checked publication history and the results of its
+          chosen source tools. Longer documents are supplied as explicitly
+          selected passages, not silently treated as complete readings. The
+          source trace includes the exact passages inspected. This uses an
+          existing model; it does not train a new model on the app’s cases.
         </p>
         <p>
-          The model returns structured JSON with a proposed next status, concise
-          forecast, cited reasons, and alternatives. Validation requires known
-          document IDs and a citation to the latest publication, and rejects
-          numerical claims and dates in model prose. These checks do not
-          establish that every inference is correct.
+          Historical searches cover up to 15 years, within the same agency.
+          Matches are selected examples, not a representative sample. An
+          incomplete comparison cannot establish a proposal-to-final interval.
+          Discovery-only matches cannot be cited as inspected evidence.
+        </p>
+        <p>
+          Structured output requires a future event, window, cited reasons,
+          counterargument, alternatives, and signals to watch. Validation
+          rejects unknown or uninspected citations and numerical probabilities.
+          The second model call is a critique, not independent human review or
+          proof of predictive accuracy.
         </p>
         <p>
           The forecast has no measured probability or validated accuracy score.
