@@ -9,6 +9,7 @@ import {
 import { getDocument, collectRelated } from "./client";
 import { classifyDocument, assessStatus, ACTIVITY_METHOD } from "./analysis";
 import { getActivityCase, saveActivityCase } from "./repository";
+import { forecastWithAi, activityAiModel, ACTIVITY_AI_PROMPT } from "./ai";
 const pending = new Map<string, Promise<ActivityCase>>();
 export async function assessActivity(
   id: string,
@@ -26,6 +27,9 @@ export async function assessActivity(
     !force &&
     saved &&
     saved.assessment.method === ACTIVITY_METHOD &&
+    saved.assessment.ai?.model === activityAiModel() &&
+    saved.assessment.ai?.prompt_version === ACTIVITY_AI_PROMPT &&
+    saved.assessment.ai?.status !== "unavailable" &&
     saved.checked_at.slice(0, 10) === window.to &&
     Date.now() - Date.parse(saved.checked_at) < 3600000
   )
@@ -54,12 +58,13 @@ async function collect(id: string, now: Date): Promise<ActivityCase> {
         ) ||
         b.document.document_number.localeCompare(a.document.document_number),
     );
-  const assessment = assessStatus(
+  const baseline = assessStatus(
     history,
     related.complete,
     related.linkage !== "title",
     now.toISOString(),
   );
+  const assessment = await forecastWithAi(history, baseline, now.toISOString());
   // The selected update is quoted, not rewritten as a claim of current legal effect.
   const excerpt = load(selected.abstract ?? "").text();
   const payload = {

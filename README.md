@@ -6,11 +6,11 @@ A searchable regulatory forecast monitor, initially built around CFPB **RIN 3170
 
 One search over Federal Register activity published in the **past six calendar months**. Select an update to retrieve its related history, including older publications, reconstruct its status, and generate an evidence-linked assessment of the next status change. Six months is the search radius, not a prediction deadline.
 
-The **How the system works** button at the top opens a brief, four-step explanation of sources, history, assessment, and evidence.
+Search by keyword or RIN, or browse using agency and publication dropdowns. **How it works** opens `/how-it-works`, a separate explanation of the AI forecast pipeline with links to architecture and data-model views.
 
 The current flow uses `/api/activity` and `/api/activity/[document]/assess`, with server-only Supabase storage for retrieved cases and immutable assessments. Source publication dates, action descriptions, and effective dates are separate from the generated forecast. Repeated effective-date delays are no longer labeled as repeated original final rules.
 
-Forecasts are experimental deterministic assessments, not calibrated probabilities. Ambiguous relationships or incomplete history cause abstention. See [current scope and implementation](docs/recent-activity-scope.md) for coverage, linking, status rules, limitations, and storage. The previous agenda-catalog UI and six-month-forward probability experiment are legacy code and are not the homepage's product flow.
+Gemini generates evidence-linked next-status scenarios after deterministic checks establish the current status and forecast eligibility. Outputs are validated and stored with model, prompt version, input hash, and citations. AI failures use an explicitly labeled rules-based fallback. Forecasts are experimental, not calibrated probabilities. Ambiguous relationships or incomplete history cause abstention. See [current scope and implementation](docs/recent-activity-scope.md) for coverage, linking, status rules, limitations, and storage. The previous agenda-catalog UI and six-month-forward probability experiment are legacy code and are not the homepage's product flow.
 
 ## Run locally
 
@@ -60,20 +60,15 @@ Use the **server secret** key, not a publishable/anon key. No database credentia
 
 No Edge Functions, Realtime, or Storage bucket is required. See [storage, retention, and API details](docs/data-model.md).
 
-## Connect Google Gemini (legacy agenda summaries)
+## Connect Google Gemini
 
-The current activity flow quotes official abstracts and uses fixed assessment rules; it does not call Gemini.
+Set `GEMINI_API_KEY` in `.env.local` and as a Cloudflare secret for production. `GEMINI_MODEL` defaults to `gemini-3.5-flash-lite`; there is no automatic model upgrade or paid-model fallback.
 
-Set `GEMINI_API_KEY` in `.env.local`. The configurable default is **`gemini-3.5-flash-lite`**, which Google's documentation lists with free-tier input/output. Quota and account eligibility are controlled by Google; this app makes no automatic model upgrades or paid fallback calls. The earlier `gemini-2.5-flash-lite` default was replaced after Google's live API rejected it for a new account. Both standard and newer Google auth key formats are passed directly in the authentication header.
+The current activity flow sends public linked publication metadata, actions, abstracts, dates, checked status, and the assessment date to Gemini. The model returns a proposed next status, concise forecast, cited reasons, and alternatives. It cannot overwrite current status or published dates, or override source-check abstention. Validation requires the expected JSON shape, known citation IDs, and a latest-publication citation, and rejects numerical/date claims in generated prose. Citation checks do not verify every inference. Failed requests or invalid output retain the labeled deterministic assessment.
 
-```sh
-npm run gemini:check
-npm run sync
-```
+Successful AI output saves its model, prompt version, input hash, and reason-level citations in the existing case JSON; no database migration is required. The homepage detail discloses the actual method. The older `npm run gemini:check` command still checks the separate legacy abstract summarizer.
 
-Gemini only rewrites the official abstract into a brief expected-change summary. The request sends no customer data, database content, or credentials other than the API authentication header. Model output cannot populate stage, likelihood, dates, or publication evidence. Failure, quota exhaustion, or invalid output falls back to the exact official excerpt. A successful summary is reused only while the source abstract, input hash, model, and prompt version still match. For the verified initial abstract, the dashboard uses a human-reviewed plain-English explanation and team relevance note. These apply only while that exact abstract is unchanged; a revised abstract falls back to its new summary and prompts review of team impact.
-
-**Live Gemini summarization and Supabase persistence were verified on September 21, 2026 (UTC).** The browser displayed the generated summary and the per-conclusion official evidence. Credentials remain local and are not included in this repository. Mocked success, out-of-scope output, and rate-limit failure paths are also tested.
+A live Gemini forecast for DOE document `2026-13305`, using six linked publications, was verified through the current activity endpoint on September 21, 2026. Mocked tests cover valid output, invented citations, missing latest evidence, numerical claims, extra fields, incomplete responses, rate limits, and abstention. Forecast accuracy has not been measured.
 
 ## Forecast logic
 

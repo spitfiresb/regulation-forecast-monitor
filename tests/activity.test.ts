@@ -230,3 +230,27 @@ test("unlinked later publications block a status forecast; older unrelated docke
     globalThis.fetch = original;
   }
 });
+
+test("browse filters reach Federal Register and remain distinct in the search cache", async (t) => {
+  const urls: URL[] = [];
+  t.mock.method(globalThis, "fetch", async (input: unknown) => {
+    urls.push(new URL(String(input)));
+    return Response.json({ count: 0, results: [], next_page_url: null });
+  });
+  const rules = await searchActivity("", 1, new Date(now), {
+    agency: "136",
+    type: "RULE",
+  });
+  await searchActivity("", 1, new Date(now), {
+    agency: "136",
+    type: "PRORULE",
+  });
+  assert.equal(urls.length, 2);
+  assert.equal(urls[0].searchParams.get("conditions[agency_ids][]"), "136");
+  assert.deepEqual(urls[0].searchParams.getAll("conditions[type][]"), ["RULE"]);
+  assert.deepEqual(urls[1].searchParams.getAll("conditions[type][]"), [
+    "PRORULE",
+  ]);
+  assert.equal(rules.agency, "136");
+  assert.equal(rules.publication_type, "RULE");
+});

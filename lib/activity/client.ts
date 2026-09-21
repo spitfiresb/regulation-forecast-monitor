@@ -69,9 +69,10 @@ export async function searchActivity(
   query: string,
   page = 1,
   now = new Date(),
+  filters: { agency?: string; type?: string } = {},
 ): Promise<ActivitySearch> {
   const window = activityWindow(now);
-  const key = JSON.stringify([query, page, window]);
+  const key = JSON.stringify([query, page, window, filters]);
   const cached = searches.get(key);
   if (cached && Date.now() - cached.at < 60000) return cached.result;
   const params: Record<string, string> = {
@@ -83,8 +84,11 @@ export async function searchActivity(
   // Encode multiple allowed publication types, including RIN-linked notices.
   delete params["conditions[type][]"];
   if (query.trim()) params["conditions[term]"] = query.trim();
+  if (filters.agency) params["conditions[agency_ids][]"] = filters.agency;
   const url = new URL(searchUrl(params, page, 20));
-  for (const type of ["RULE", "PRORULE", "NOTICE"])
+  for (const type of filters.type
+    ? [filters.type]
+    : ["RULE", "PRORULE", "NOTICE"])
     url.searchParams.append("conditions[type][]", type);
   const data = await officialJson(url.href);
   if (!Array.isArray(data.results) && data.count !== 0)
@@ -101,6 +105,8 @@ export async function searchActivity(
     window,
     page,
     query,
+    agency: filters.agency ?? "",
+    publication_type: filters.type ?? "",
     checked_at: now.toISOString(),
     next_page: data.next_page_url ? page + 1 : null,
   };

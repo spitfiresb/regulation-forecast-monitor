@@ -6,20 +6,23 @@ import {
   type ActivityWindow,
 } from "@/lib/activity/model";
 import { formatDate } from "@/lib/dates";
-import { ChevronDown } from "lucide-react";
-import { SystemOverview } from "@/components/system-overview";
-import overviewStyles from "@/components/system-overview.module.css";
+import Link from "next/link";
+import { ArrowRight, Search } from "lucide-react";
+const commonAgencies = new Set([573, 136, 145, 188, 192, 199, 271, 466]);
+
 export function ActivityMonitor({
   initialQuery,
   initialDocument,
   initialPage,
-  initialSearch,
+  initialAgency,
+  initialType,
   window,
 }: {
   initialQuery: string;
   initialDocument: string;
   initialPage: number;
-  initialSearch: boolean;
+  initialAgency: string;
+  initialType: string;
   window: ActivityWindow;
 }) {
   const [query, setQuery] = useState(initialQuery);
@@ -29,7 +32,10 @@ export function ActivityMonitor({
   const [busy, setBusy] = useState(false);
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState("");
-  const [showOverview, setShowOverview] = useState(false);
+  const [agency, setAgency] = useState(initialAgency);
+  const [publicationType, setPublicationType] = useState(initialType);
+  const [agencies, setAgencies] = useState<{ id: number; name: string }[]>([]);
+  const [agencyError, setAgencyError] = useState(false);
   const serial = useRef(0);
   const heading = useRef<HTMLHeadingElement>(null);
   async function choose(document: string, refresh = false, push = true) {
@@ -42,7 +48,7 @@ export function ActivityMonitor({
       history.pushState(
         {},
         "",
-        `/?${new URLSearchParams({ q: query, document })}`,
+        `/?${new URLSearchParams({ q: query, document, agency, type: publicationType })}`,
       );
     try {
       const response = await fetch(
@@ -69,7 +75,21 @@ export function ActivityMonitor({
   useEffect(() => {
     const timer = setTimeout(() => {
       if (initialDocument) void choose(initialDocument, false, false);
-      else if (initialSearch) void search(initialQuery, initialPage, false);
+      else
+        void search(
+          initialQuery,
+          initialPage,
+          false,
+          initialAgency,
+          initialType,
+        );
+      void fetch("/api/activity/agencies")
+        .then((response) => {
+          if (!response.ok) throw new Error("Agencies unavailable");
+          return response.json();
+        })
+        .then(setAgencies)
+        .catch(() => setAgencyError(true));
     }, 0);
     const pop = () => location.reload();
     addEventListener("popstate", pop);
@@ -80,7 +100,13 @@ export function ActivityMonitor({
     // The initial bookmarked selection runs once; later selections are explicit.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  async function search(text = query, page = 1, push = true) {
+  async function search(
+    text = query,
+    page = 1,
+    push = true,
+    selectedAgency = "",
+    selectedType = "",
+  ) {
     const ticket = ++serial.current;
     setSearching(true);
     setBusy(false);
@@ -88,15 +114,17 @@ export function ActivityMonitor({
     setRecord(null);
     setOpen(true);
     setQuery(text);
+    setAgency(selectedAgency);
+    setPublicationType(selectedType);
     if (push)
       history.pushState(
         {},
         "",
-        `/?${new URLSearchParams({ q: text, page: String(page) })}`,
+        `/?${new URLSearchParams({ q: text, page: String(page), agency: selectedAgency, type: selectedType })}`,
       );
     try {
       const r = await fetch(
-        `/api/activity?${new URLSearchParams({ q: text, page: String(page) })}`,
+        `/api/activity?${new URLSearchParams({ q: text, page: String(page), agency: selectedAgency, type: selectedType })}`,
         { signal: AbortSignal.timeout(40000) },
       );
       const data = await r.json();
@@ -118,93 +146,105 @@ export function ActivityMonitor({
   const scopeWindow = record?.window ?? results?.window ?? window;
   return (
     <main className="record-monitor activity-monitor">
-      <header className={overviewStyles.header}>
-        <button
-          className="brand"
-          onClick={() => {
-            ++serial.current;
-            setRecord(null);
-            setResults(null);
-            setQuery("");
-            setOpen(false);
-            setBusy(false);
-            setSearching(false);
-            setError("");
-            history.pushState({}, "", "/");
+      <header className="activity-header">
+        <Link className="brand" href="/">
+          Regulatory Forecast Monitor
+        </Link>
+        <Link className="system-link" href="/how-it-works">
+          How it works <ArrowRight size={14} aria-hidden="true" />
+        </Link>
+      </header>
+      <div className="activity-discovery">
+        <form className="record-search" onSubmit={submit}>
+          <label htmlFor="activity-query">Find a regulation</label>
+          <div className="record-search-input">
+            <Search size={18} aria-hidden="true" />
+            <input
+              id="activity-query"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              maxLength={200}
+              placeholder="Search by keyword or RIN"
+              autoComplete="off"
+            />
+            <button type="submit" disabled={searching}>
+              {searching ? "Searching…" : "Search"}
+            </button>
+          </div>
+        </form>
+        <div className="browse-divider">
+          <span>or</span>
+        </div>
+        <form
+          className="activity-browse"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void search("", 1, true, agency, publicationType);
           }}
         >
-          Regulatory Forecast Monitor
-        </button>
-        <div className={overviewStyles.actions}>
-          <span className="prototype-label">Research preview</span>
-          <button
-            type="button"
-            className={overviewStyles.toggle}
-            aria-expanded={showOverview}
-            aria-controls="system-overview"
-            onClick={() => setShowOverview((shown) => !shown)}
-          >
-            How the system works
-            <ChevronDown size={16} aria-hidden="true" />
-          </button>
-        </div>
-      </header>
-      <SystemOverview hidden={!showOverview} />
-      <form className="record-search" onSubmit={submit}>
-        <label htmlFor="activity-query">
-          What changed—and what happens next?
-        </label>
-        <div className="record-search-input">
-          <input
-            id="activity-query"
-            value={query}
-            onChange={(e) => {
-              ++serial.current;
-              setSearching(false);
-              setBusy(false);
-              setOpen(false);
-              setQuery(e.target.value);
-            }}
-            maxLength={200}
-            placeholder="Topic, agency, rule name, or RIN"
-            autoComplete="off"
-          />
-          <button type="submit" disabled={searching}>
-            {searching ? "Searching…" : "Search"}
-          </button>
-        </div>
-        <p className="activity-radius">
-          Published activity in the past six months ·{" "}
-          {formatDate(scopeWindow.from)}–{formatDate(scopeWindow.to)}
-        </p>
-      </form>
-      {!record && !open && !busy && (
-        <div className="activity-start">
-          <p>
-            Choose a recent update. We’ll check its earlier history and assess
-            the next status change.
-          </p>
-          <div className="activity-examples">
-            <button onClick={() => void search("1903-AA20")}>
-              Effective-date delays
-            </button>
-            <button onClick={() => void search("mortgage")}>
-              Mortgage rules
-            </button>
-            <button onClick={() => void search("")}>Recent activity</button>
+          <div className="browse-field">
+            <label htmlFor="browse-agency">Agency</label>
+            <select
+              id="browse-agency"
+              value={agency}
+              onChange={(e) => setAgency(e.target.value)}
+            >
+              <option value="">All agencies</option>
+              {agency &&
+                !agencies.some((item) => String(item.id) === agency) && (
+                  <option value={agency}>Selected agency</option>
+                )}
+              {[
+                {
+                  label: "Common agencies",
+                  items: agencies.filter((item) => commonAgencies.has(item.id)),
+                },
+                {
+                  label: "Other agencies",
+                  items: agencies.filter(
+                    (item) => !commonAgencies.has(item.id),
+                  ),
+                },
+              ].map((group) => (
+                <optgroup key={group.label} label={group.label}>
+                  {group.items.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
           </div>
+          <div className="browse-field">
+            <label htmlFor="browse-type">Publication</label>
+            <select
+              id="browse-type"
+              value={publicationType}
+              onChange={(e) => setPublicationType(e.target.value)}
+            >
+              <option value="">All types</option>
+              <option value="RULE">Rules</option>
+              <option value="PRORULE">Proposals</option>
+              <option value="NOTICE">Related notices</option>
+            </select>
+          </div>
+          <button className="browse-submit" type="submit" disabled={searching}>
+            View changes <ArrowRight size={16} aria-hidden="true" />
+          </button>
+        </form>
+        {agencyError && (
           <p className="scope-note">
-            Rules, proposals, and related notices published in the Federal
-            Register. Agenda plans and unpublished developments do not enter
-            this search.
+            Agency options are unavailable. Search or browse all agencies.
           </p>
-        </div>
-      )}
+        )}
+      </div>
       <div role="status" aria-live="polite">
+        {searching && (
+          <p className="record-status">Loading regulatory changes…</p>
+        )}
         {busy && (
-          <p className="record-status">
-            Reading related publications, including earlier history…
-          </p>
+          <p className="record-status">Analyzing publication history…</p>
         )}
       </div>
       {error && (
@@ -220,9 +260,14 @@ export function ActivityMonitor({
       {open && results && !searching && (
         <section
           className="activity-results"
-          aria-label="Recent activity results"
+          aria-label="Recent regulatory changes"
         >
-          <p className="results-intro">Choose one published update.</p>
+          <div className="activity-results-heading">
+            <h1>
+              {results.query ? "Search results" : "Recent regulatory changes"}
+            </h1>
+            <span>Past six months</span>
+          </div>
           {results.entries.map((event) => (
             <button
               className="activity-result"
@@ -244,16 +289,24 @@ export function ActivityMonitor({
           ))}
           {!results.entries.length && (
             <p>
-              No matching regulatory activity on this results page.
+              No matching regulatory changes.
               {results.next_page
                 ? " Continue to the next page, or narrow the search."
-                : " Try a different phrase. Older agenda listings are outside this search."}
+                : " Try another search or filter."}
             </p>
           )}
           {results.page > 1 && (
             <button
               className="activity-more"
-              onClick={() => void search(results.query, results.page - 1)}
+              onClick={() =>
+                void search(
+                  results.query,
+                  results.page - 1,
+                  true,
+                  results.agency,
+                  results.publication_type,
+                )
+              }
             >
               ← Previous results
             </button>
@@ -261,19 +314,51 @@ export function ActivityMonitor({
           {results.next_page && (
             <button
               className="activity-more"
-              onClick={() => void search(results.query, results.next_page!)}
+              onClick={() =>
+                void search(
+                  results.query,
+                  results.next_page!,
+                  true,
+                  results.agency,
+                  results.publication_type,
+                )
+              }
             >
               Next results →
             </button>
           )}
           <p className="scope-note">
-            Dates are publication dates. Search is restricted to the displayed
-            six-month window.
+            Federal Register · {formatDate(scopeWindow.from)}–
+            {formatDate(scopeWindow.to)}
           </p>
         </section>
       )}
       {record && (
         <article className="single-record">
+          <button
+            className="record-back"
+            onClick={() => {
+              if (!results) {
+                void search(query, 1, true, agency, publicationType);
+                return;
+              }
+              ++serial.current;
+              setBusy(false);
+              setRecord(null);
+              setError("");
+              setOpen(true);
+              setQuery(results.query);
+              setAgency(results.agency ?? "");
+              setPublicationType(results.publication_type ?? "");
+              history.pushState(
+                {},
+                "",
+                `/?${new URLSearchParams({ q: results.query, page: String(results.page), agency: results.agency ?? "", type: results.publication_type ?? "" })}`,
+              );
+            }}
+          >
+            ← Back to results
+          </button>
           <div className="record-identity">
             <p>
               {record.selected.agencies
@@ -289,9 +374,7 @@ export function ActivityMonitor({
             </h1>
           </div>
           <div className="current-status">
-            <span className="provenance official">
-              CURRENT STATUS · FROM LINKED PUBLICATIONS
-            </span>
+            <span className="provenance official">CURRENT STATUS</span>
             <strong>{record.assessment.current_status}</strong>
             <span>
               Latest linked update:{" "}
@@ -303,10 +386,17 @@ export function ActivityMonitor({
           </div>
           <section className="generated-outlook">
             <div className="provenance inference">
-              GENERATED FORECAST · EXPERIMENTAL RULES-BASED ASSESSMENT
+              {record.assessment.ai?.status === "generated"
+                ? "AI FORECAST"
+                : record.assessment.kind === "insufficient_evidence"
+                  ? "FORECAST WITHHELD"
+                  : "RULES-BASED FORECAST"}
             </div>
             <h2>{record.assessment.next_status}</h2>
             <p>{record.assessment.forecast}</p>
+            {record.assessment.ai?.reason && (
+              <p className="forecast-fallback">{record.assessment.ai.reason}</p>
+            )}
             <ul className="activity-reasons">
               {record.assessment.basis.map((reason) => (
                 <li key={reason}>{reason}</li>
@@ -318,8 +408,18 @@ export function ActivityMonitor({
             <details>
               <summary>Evidence, alternatives & limitations</summary>
               <p>
-                This is an uncalibrated inference from the linked publication
-                history, not an official forecast or a measured probability.
+                This assessment is not calibrated against observed outcomes.
+                Source citations identify supporting publications; they do not
+                verify every inference.
+              </p>
+              {record.assessment.ai?.status === "generated" && (
+                <p>
+                  Model: {record.assessment.ai.model} · Prompt:{" "}
+                  {record.assessment.ai.prompt_version}
+                </p>
+              )}
+              <p>
+                <Link href="/how-it-works">How forecasts are generated →</Link>
               </p>
               <ul>
                 {record.assessment.alternatives.map((alternative) => (

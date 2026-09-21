@@ -17,7 +17,17 @@ export default async function Home({
     <ActivityMonitor
       initialQuery={q}
       initialDocument={document}
-      initialSearch={typeof params.q === "string"}
+      initialAgency={
+        typeof params.agency === "string" && /^\d+$/.test(params.agency)
+          ? params.agency
+          : ""
+      }
+      initialType={
+        typeof params.type === "string" &&
+        ["RULE", "PRORULE", "NOTICE"].includes(params.type)
+          ? params.type
+          : ""
+      }
       initialPage={
         typeof params.page === "string"
           ? Math.min(1000, Math.max(1, Math.floor(Number(params.page)) || 1))

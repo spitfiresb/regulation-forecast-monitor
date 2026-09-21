@@ -18,7 +18,7 @@ git push origin main
 npm run deploy:cloudflare
 ```
 
-Existing Worker secrets survive later deployments. Initial deployment requires `SUPABASE_URL`, `SUPABASE_SECRET_KEY` (or the legacy `SUPABASE_SERVICE_ROLE_KEY`), and optionally `SYNC_SECRET`. Configure these as Cloudflare secrets, never `NEXT_PUBLIC_` variables. The main activity flow does not call Gemini, so it needs no Google key. Optional legacy summarization can use a separate `GEMINI_API_KEY` secret.
+Existing Worker secrets survive later deployments. Initial deployment requires `SUPABASE_URL`, `SUPABASE_SECRET_KEY` (or the legacy `SUPABASE_SERVICE_ROLE_KEY`), and optionally `SYNC_SECRET`. Configure these as Cloudflare secrets, never `NEXT_PUBLIC_` variables. The main activity flow uses `GEMINI_API_KEY` for AI forecasts. Configure it as a Cloudflare secret. `GEMINI_MODEL` is optional and defaults to `gemini-3.5-flash-lite`. If AI is unconfigured or unavailable, the UI labels the rules-based fallback.
 
 `APP_ORIGIN` must match the exact public HTTPS origin. `REQUIRE_HOSTED_STORAGE=true` prevents a missing database configuration from falling back to ephemeral local files. All current migrations, including `202609210008_recent_activity.sql`, must be applied to Supabase.
 

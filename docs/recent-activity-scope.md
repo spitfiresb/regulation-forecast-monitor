@@ -4,14 +4,14 @@ This is the current product scope. It supersedes the agenda-catalog discovery an
 
 ## User flow
 
-1. Search Federal Register rules, proposals, and related regulatory notices **published during the past six calendar months**, inclusive through the current UTC date. A future deadline or recent retrieval timestamp cannot make an older publication eligible.
+1. Search or browse by agency and publication type across Federal Register rules, proposals, and related regulatory notices **published during the past six calendar months**, inclusive through the current UTC date. A future deadline or recent retrieval timestamp cannot make an older publication eligible.
 2. Select one dated update. The app retrieves earlier and later related publications through the present day, without applying the six-month lower bound to that history.
 3. Reconstruct the latest supported status from publication actions and dates. An effective-date delay is not another original final rule.
 4. Generate an explicitly experimental assessment of the next status, with evidence and alternatives. Six months is **not** a prediction deadline.
 
 ## Sources and coverage
 
-`GET /api/activity?q=...&page=...` queries the Federal Register API directly, with publication-date bounds. It includes Rules and Proposed Rules, plus notices with a RIN or an identifiable procedural update. Unrelated meeting/grant notices are filtered out. Pagination follows source pages, so a page may have fewer than twenty qualifying records. No total count of qualifying activity is invented. Search has a one-minute, date-keyed process cache; it does not depend on an incomplete local backfill.
+`GET /api/activity?q=...&page=...&agency=...&type=...` queries the Federal Register API directly, with publication-date bounds. It includes Rules and Proposed Rules, plus notices with a RIN or an identifiable procedural update. Unrelated meeting/grant notices are filtered out. Pagination follows source pages, so a page may have fewer than twenty qualifying records. No total count of qualifying activity is invented. Search has a one-minute, date-keyed process cache; it does not depend on an incomplete local backfill.
 
 This scope is published Federal Register activity. It does not imply complete coverage of unpublished agency actions, agenda revisions, litigation, or all current regulations. Agenda entries with no recent publication do not enter this search. The older Reginfo catalog remains available to legacy APIs but is not the homepage's search source.
 
@@ -25,7 +25,11 @@ The DOE regression fixture records one original direct final rule and five effec
 
 ## Forecast method and limits
 
-`recent-activity-status-v1` is a transparent heuristic assessment, **not a calibrated statistical model or an LLM prediction**. Successive delays promote another delay as the leading scenario while retaining scheduled effectiveness and withdrawal as alternatives. Single delayed/final publications with future dates point toward scheduled effectiveness. Proposals point toward comment review or an agency decision. Withdrawals point toward inactivity absent a restart. Incomplete or ambiguous records abstain.
+`recent-activity-ai-v2` combines deterministic status checks with Gemini scenario generation. Source checks must first permit a forecast. Gemini then receives the complete retrieved history as publication metadata, actions, abstracts, and dates (not full document bodies), plus the checked status and assessment date. It does not receive the heuristic next-status prediction. Inputs larger than 90,000 characters use a labeled rules-based fallback instead of silently truncating evidence.
+
+`lib/activity/ai.ts` uses a versioned prompt and structured JSON output. The server validates the response shape, requires known document IDs and a citation to the latest publication, and rejects numerical/date claims in model prose. Current status and timing fields are copied from source checks, never from the model. Reason-level citations, model, prompt version, and input hash are archived with the case. Citation validation is not factual entailment verification; generated reasoning can still be wrong.
+
+Incomplete or ambiguous records never reach Gemini. The model can also abstain. Missing configuration, timeout, quota failure, or invalid output returns the existing assessment with an explicit AI-unavailable label. The fallback heuristic uses repeated delays, scheduled dates, proposals, or withdrawals to suggest a procedural scenario. The user can refresh history to retry. Cached cases require the current method, model, and prompt version; unavailable AI results are retried on the next request.
 
 The model makes no claim of validated predictive accuracy, percentage confidence, or invented event dates. Recurring delays alone do not establish a numerical likelihood. The previous NPRM-only historical evaluation does not validate this broader status model and is not shown as if it did. Validation for this model requires frozen historical status assessments, subsequent observed transitions, comparisons against a status-unchanged baseline, and separate review of ambiguous/no-action cases. No new arbitrary prediction horizon has been imposed.
 

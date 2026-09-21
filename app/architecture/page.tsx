@@ -7,7 +7,7 @@ import {
 const nodes: DiagramNode[] = [
   {
     id: "search",
-    title: "Search recent activity",
+    title: "Search or browse changes",
     description:
       "Find Federal Register rules and notices published in the past six calendar months.",
     x: 25,
@@ -24,9 +24,9 @@ const nodes: DiagramNode[] = [
   },
   {
     id: "assessment",
-    title: "Assess the next status",
+    title: "Generate an AI forecast",
     description:
-      "Fixed rules read actions and dates. Incomplete or ambiguous evidence produces an unresolved assessment.",
+      "Source checks establish status. Gemini proposes a next step with cited reasons; validation checks the output. Ambiguous history withholds AI.",
     x: 725,
     y: 50,
   },
@@ -43,7 +43,7 @@ const nodes: DiagramNode[] = [
     id: "monitor",
     title: "Show the evidence",
     description:
-      "Display current status, an experimental next-step estimate, alternatives, official excerpts, and source links.",
+      "Display source status, an AI forecast or labeled rules-based fallback, alternatives, and publication links.",
     x: 375,
     y: 350,
   },
@@ -68,7 +68,7 @@ export default function ArchitecturePage() {
   return (
     <ArchitectureDiagram
       title="Current system flow"
-      description="Recent publications → linked history → evidence-backed next-status assessment. This flow uses fixed rules, not Gemini or the legacy probability experiment."
+      description="Federal Register → history and status checks → Gemini → validation → Supabase → evidence-linked forecast."
       nodes={nodes}
       edges={edges}
       width={1030}

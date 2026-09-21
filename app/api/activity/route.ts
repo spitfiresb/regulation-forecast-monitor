@@ -4,6 +4,8 @@ import { searchActivity } from "@/lib/activity/client";
 export const runtime = "nodejs";
 const query = z.object({
   q: z.string().trim().max(200).default(""),
+  agency: z.string().regex(/^\d*$/).max(8).default(""),
+  type: z.enum(["", "RULE", "PRORULE", "NOTICE"]).default(""),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 });
 export async function GET(request: Request) {
@@ -17,7 +19,10 @@ export async function GET(request: Request) {
     );
   try {
     return NextResponse.json(
-      await searchActivity(parsed.data.q, parsed.data.page),
+      await searchActivity(parsed.data.q, parsed.data.page, new Date(), {
+        agency: parsed.data.agency,
+        type: parsed.data.type,
+      }),
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch {

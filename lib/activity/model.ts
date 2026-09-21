@@ -60,6 +60,8 @@ export type ActivitySearch = {
   page: number;
   checked_at: string;
   query: string;
+  agency?: string;
+  publication_type?: string;
 };
 export type StatusAssessment = {
   method: string;
@@ -74,6 +76,14 @@ export type StatusAssessment = {
   timing: string;
   effective_date: string | null;
   effective_evidence: string | null;
+  ai?: {
+    status: "generated" | "unavailable" | "withheld";
+    model: string;
+    prompt_version: string;
+    input_hash?: string;
+    reason?: string;
+    reasons?: { text: string; evidence: string[] }[];
+  };
 };
 export type ActivityCase = {
   id: string;
