@@ -123,8 +123,10 @@ export default function HowItWorksPage() {
           Gemini receives checked publication history and the results of its
           chosen source tools. Longer documents are supplied as explicitly
           selected passages, not silently treated as complete readings. The
-          source trace includes the exact passages inspected. This uses an
-          existing model; it does not train a new model on the app’s cases.
+          source trace includes the exact passages inspected and their text URL.
+          GovInfo provides the official fallback when Federal Register text is
+          unavailable. This uses an existing model; it does not train a new
+          model on the app’s cases.
         </p>
         <p>
           Historical searches cover up to 15 years, within the same agency.

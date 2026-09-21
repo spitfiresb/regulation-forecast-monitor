@@ -470,7 +470,10 @@ test("official text redirects are rejected without following to another origin",
     globalThis,
     "fetch",
     async (url: unknown, init?: RequestInit) => {
-      if (String(url).includes("/full_text/")) {
+      if (
+        String(url).includes("/full_text/") ||
+        String(url).includes("/content/pkg/")
+      ) {
         reads++;
         assert.equal(init?.redirect, "manual");
         return new Response(null, {
@@ -489,6 +492,42 @@ test("official text redirects are rejected without following to another origin",
     tool: "read_publication",
   });
   assert.equal(step.status, "failed");
-  assert.equal(reads, 1);
+  assert.equal(reads, 2);
   assert.ok(!agent.report.sources.some((s) => s.full_text_read));
+});
+
+test("official GovInfo fallback verifies document identity and preserves text provenance", async (t) => {
+  let wrong = false;
+  t.mock.method(globalThis, "fetch", async (url: unknown) => {
+    if (String(url).includes("/content/pkg/"))
+      return new Response(
+        `<html><pre>[FR Doc No: ${wrong ? "2026-99999" : latest}]\n${"Official rule text regarding adverse comments and a delay. ".repeat(10)}</pre></html>`,
+      );
+    if (String(url).includes("/full_text/"))
+      return new Response("Unavailable", { status: 403 });
+    return Response.json({
+      raw_text_url: `https://www.federalregister.gov/documents/full_text/text/2026/07/01/${latest}.txt`,
+    });
+  });
+  const agent = createResearch(history, "2026-09-21", Date.now() + 10000);
+  const step = await agent.run({
+    ...action("read_publication", latest),
+    tool: "read_publication",
+  });
+  assert.equal(step.status, "complete");
+  assert.equal(
+    agent.report.sources.find((s) => s.id === latest)?.text_url,
+    `https://www.govinfo.gov/content/pkg/FR-2026-07-01/html/${latest}.htm`,
+  );
+  wrong = true;
+  const invalid = createResearch(history, "2026-09-21", Date.now() + 10000);
+  assert.equal(
+    (
+      await invalid.run({
+        ...action("read_publication", latest),
+        tool: "read_publication",
+      })
+    ).status,
+    "failed",
+  );
 });

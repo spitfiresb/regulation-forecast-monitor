@@ -71,6 +71,13 @@ export function ForecastResearch({ record }: { record: ActivityCase }) {
             .map((s) => (
               <details key={s.id} className="research-excerpt">
                 <summary>Inspected text · {s.id}</summary>
+                {s.text_url && (
+                  <p>
+                    <a href={s.text_url} target="_blank" rel="noreferrer">
+                      Open the inspected official text ↗
+                    </a>
+                  </p>
+                )}
                 <p className="source-passage">{displayText(s.excerpt)}</p>
               </details>
             ))}

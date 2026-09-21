@@ -26,6 +26,7 @@ export type ResearchSource = {
   role: "current_history" | "comparison";
   excerpt: string;
   full_text_read: boolean;
+  text_url?: string;
 };
 export type ResearchStep = {
   tool: ResearchAction["tool"];
@@ -99,6 +100,7 @@ export function createResearch(
     cutoff,
   };
   const bodies = new Map<string, string>();
+  const textUrls = new Map<string, string>();
   function add(d: ActivityDocument, excerpt = d.abstract ?? "", read = false) {
     known.set(d.document_number, d);
     const prior = report.sources.find((s) => s.id === d.document_number);
@@ -218,19 +220,45 @@ export function createResearch(
             redirect: "manual",
             cache: "no-store",
           });
-          if (!response.ok)
-            throw new Error("Official text could not be retrieved.");
-          body = (await response.text()).replaceAll("\u0000", "");
+          body = response.ok
+            ? (await response.text()).replaceAll("\u0000", "")
+            : "";
+          let textUrl = url.href;
           if (
-            body.length > 2000000 ||
             body.length < 100 ||
-            /^\s*<!doctype html/i.test(body)
-          )
+            body.length > 2000000 ||
+            /^\s*</.test(body)
+          ) {
+            // GovInfo publishes the same dated Federal Register document.
+            // Construct this URL from validated identity, never from model input.
+            textUrl = `https://www.govinfo.gov/content/pkg/FR-${doc.publication_date}/html/${doc.document_number}.htm`;
+            const fallback = await fetch(textUrl, {
+              signal: AbortSignal.timeout(timeout()),
+              redirect: "manual",
+              cache: "no-store",
+            });
+            if (!fallback.ok)
+              throw new Error(
+                `Official text sources unavailable (Federal Register ${response.status}; GovInfo ${fallback.status}).`,
+              );
+            const html = await fallback.text();
+            if (html.length > 3000000)
+              throw new Error("Official text exceeds the retrieval budget.");
+            body = load(html)("pre").text().replaceAll("\u0000", "");
+            if (!body.includes(`[FR Doc No: ${doc.document_number}]`))
+              throw new Error(
+                "GovInfo document identity could not be verified.",
+              );
+          }
+          if (body.length < 100 || body.length > 2000000)
             throw new Error("Official text format was unexpected.");
+          textUrls.set(doc.document_number, textUrl);
           bodies.set(doc.document_number, body);
         }
         const excerpt = excerptFor(body, action.query);
         add(doc, excerpt, true);
+        report.sources.find((s) => s.id === doc.document_number)!.text_url =
+          textUrls.get(doc.document_number);
         step.source_ids = [doc.document_number];
         step.result = `Read ${excerpt.length.toLocaleString("en-US")} characters of official text${body.length > excerpt.length ? " as selected excerpts" : ""}.`;
         report.steps.push(step);

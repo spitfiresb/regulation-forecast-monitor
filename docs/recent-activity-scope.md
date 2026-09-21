@@ -29,7 +29,7 @@ The DOE regression fixture records one original direct final rule and five effec
 
 `research-event-agent-v3` combines deterministic source-status checks with a bounded Gemini research agent. The model receives the checked current history and chooses up to two source actions per round, for three rounds maximum. Each new plan sees previous tool observations. It can:
 
-- `read_publication`: retrieve official full text for a known document ID and inspect up to about 14,000 characters of query-relevant passages. Longer documents are explicitly labeled as selected excerpts. Null formatting characters are removed for JSONB compatibility.
+- `read_publication`: retrieve official full text for a known document ID and inspect up to about 14,000 characters of query-relevant passages. Longer documents are explicitly labeled as selected excerpts. Null formatting characters are removed for JSONB compatibility. If Federal Register text is unavailable, the corresponding official GovInfo HTML is used after checking its document identifier. The exact text-source URL is archived.
 - `find_comparables`: search same-agency publications from up to 15 years ago, predating the current proceeding. Up to eight results are discovery candidates, not a representative cohort.
 - `trace_comparable`: retrieve a candidate's linked history through the assessment date. A proposal-to-final interval is computed only for complete, reliably linked history. Cases with more than 40 linked documents exceed this research budget.
 
