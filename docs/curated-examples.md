@@ -8,9 +8,9 @@ Six dated examples appear below the agency and publication filters. Five are add
 | 2026-09067 | Defense contracting and foreign influence | Connects statutory mandates with a completed historical defense rulemaking and discusses coordination risk. |
 | 2026-13347 | DOE new-construction nondiscrimination requirements | Explains the interagency dependency behind repeated effective-date postponements. |
 | 2026-13304 | DOE nondiscrimination in education | Discusses delay, withdrawal, and signals that would change the assessment. |
-| 2026-13302 | NRC low-level radioactive waste disposal | Provides a substantive AI explanation for abstention. Its menu description explicitly says it cannot yet support a prediction. |
+| 2026-13302 | NRC low-level radioactive waste disposal | Provides a substantive AI explanation for abstention. Its saved assessment explicitly says it cannot yet support a prediction. |
 | 2026-13305 | DOE general nondiscrimination requirements | Retains the original demonstrated delay forecast and its evidence. |
 
 `lib/activity/examples.ts` is the navigation index. `public/examples/*.json` contains the unchanged assessment payloads, including issue times, citations, research actions, inspected passages, review, and original fingerprints. Opening `/?example=DOCUMENT_ID` fetches this saved output without calling the model or overwriting the live case. The saved-example banner and “Status at assessment” label distinguish it from current research. “View latest assessment” and “Refresh history” leave example mode and run the normal live flow.
 
-The disclaimer remains visible below the dropdown. It explains that most records do not yet produce a strong AI summary and that these are selected outputs. Tests check all links, source coverage, approved AI provenance, forecast windows, the explicit abstention label, and original content fingerprints.
+The dropdown is a plain-text disclosure with underlined, clickable titles. The disclaimer remains visible below it and uses the user-provided wording verbatim, including its spelling. Tests check all links, source coverage, approved AI provenance, forecast windows, the explicit abstention label, and original content fingerprints.

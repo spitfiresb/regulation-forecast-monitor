@@ -279,20 +279,16 @@ export function ActivityMonitor({
                       void chooseExample(item.id);
                     }}
                   >
-                    <span className="example-agency">{item.agency}</span>
-                    <strong>{item.title}</strong>
-                    <span className="example-description">
-                      {item.description}
-                    </span>
-                    <ArrowRight size={15} aria-hidden="true" />
+                    {item.title}
                   </a>
                 </li>
               ))}
             </ul>
           </details>
           <p id="examples-disclaimer" className="examples-disclaimer">
-            * Most records do not yet produce a strong AI summary. These saved
-            examples were selected for their more informative analysis.
+            {
+              "* In this MVP, most records don't produce meaningful infomration, so I took the liberty to hand pick osme I liked. Despite this, feel free to browse around, this is all real data."
+            }
           </p>
         </div>
         {agencyError && (
