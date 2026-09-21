@@ -151,9 +151,11 @@ export default function HowItWorksPage() {
           Cases can be reused for up to an hour on the same UTC day. Refresh
           history retrieves the sources and reassesses them. Production stores
           the latest case and immutable assessment snapshots; local development
-          can use files when Supabase is unconfigured. Curated example links
-          always retrieve sources and run new AI research, bypassing the cached
-          assessment. They contain no saved forecast text.
+          can use files when Supabase is unconfigured. Curated example links use
+          the same one-hour cache and display the original check time. They
+          contain no bundled forecast text. A timed-out AI request can be
+          retried once within the research deadline. If research still fails,
+          the app displays a temporary failure with a retry button.
         </p>
       </details>
       <footer className={styles.footer}>

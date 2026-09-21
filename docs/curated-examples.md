@@ -1,6 +1,6 @@
 # Live AI examples
 
-The dropdown contains five publication links. Selecting one calls the same live assessment API as browsing, with `refresh=true`. The server retrieves the publication and linked history, runs the research agent, validates its forecast, and reviews it. Every new click bypasses the one-hour assessment cache. There are no bundled or prerecorded assessment responses, and failures never fall back to a selected past success.
+The dropdown contains five publication links. Selecting one calls the same assessment API as browsing. For small-scale use, a completed assessment can be reused for up to one hour on the same UTC day, with its original check time displayed. This includes reviewed abstentions. Unavailable responses and research rejected during review are not reused. **Refresh history** sends `refresh=true`, retrieves the publication and linked history, runs research, validates the forecast, and reviews it. There are no bundled or prerecorded assessment responses, and a failed refresh never falls back to a selected past success.
 
 | Document   | Topic                                               |
 | ---------- | --------------------------------------------------- |
@@ -10,7 +10,9 @@ The dropdown contains five publication links. Selecting one calls the same live 
 | 2026-13304 | DOE nondiscrimination in education                  |
 | 2026-13305 | DOE general nondiscrimination requirements          |
 
-`lib/activity/examples.ts` contains navigation metadata only. `/?example=DOCUMENT_ID` runs fresh research, including when opened directly or reloaded. Older valid example URLs also run live, even if they are no longer curated. The dropdown remains plain text with underlined links and the user's disclaimer, with spelling and punctuation corrected. The prior NRC abstention example and all files under `public/examples` were removed. All five selected publications have produced genuine forecasts through the live API. Repeat checks also observed model abstentions, validation rejections, and provider throttling, so these are candidates for live exploration, not guaranteed predictions. No past success is replayed.
+`lib/activity/examples.ts` contains navigation metadata only. `/?example=DOCUMENT_ID` uses the normal cache policy, including when opened directly or reloaded. Older valid example URLs use the same API, even if they are no longer curated. The dropdown remains plain text with underlined links and the user's disclaimer. All five selected publications have produced genuine forecasts through the live API. Repeat checks also observed model abstentions, validation rejections, provider throttling, and timeouts, so these are candidates for exploration, not guaranteed predictions.
+
+A timed-out model request is retried once when at least ten seconds remain in its stage budget. Completed source actions are retained during that retry; the overall request deadline still applies. Exhausted timeouts display a temporary-unavailability message and a **Try again** button, separately from evidence-based abstentions.
 
 A rejected forecast can be revised once using the review feedback and the same retrieved evidence, within the existing request budget. The revision must pass validation and a new review. Drafts, validation findings, and model reviews are preserved in the assessment's `ai.review_attempts`. This is not repeated sampling until approval. Source failure, unsupported reasoning, or a second rejected draft still produces no forecast. Success on selected records does not guarantee future model outputs or establish predictive accuracy.
 

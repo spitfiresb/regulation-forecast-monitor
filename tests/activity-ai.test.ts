@@ -307,6 +307,86 @@ test("a transient provider limit retries the live request instead of returning a
   assert.ok(result.ai.prediction);
 });
 
+test("a planning timeout retries the interrupted call without repeating completed research", async (t) => {
+  const calls = setup(t, valid, true, [
+    { ...firstPlan, ready: false },
+    { actions: [], ready: true },
+  ]);
+  const provider = globalThis.fetch;
+  let timedOut = false;
+  t.mock.method(
+    globalThis,
+    "fetch",
+    async (input: unknown, init?: RequestInit) => {
+      if (String(input).includes("generativelanguage")) {
+        const request = JSON.parse(String(init?.body));
+        const context = JSON.parse(request.contents[0].parts[0].text);
+        if (context.round === 2 && !timedOut) {
+          timedOut = true;
+          throw new DOMException("The operation timed out", "TimeoutError");
+        }
+      }
+      return provider(input as RequestInfo, init);
+    },
+  );
+  const result = await forecastWithAi(history, baseline, now);
+  assert.equal(timedOut, true);
+  assert.equal(calls(), 4);
+  assert.equal(result.ai?.status, "generated");
+  assert.equal(result.ai.research?.steps.length, 2);
+  assert.ok(result.ai.prediction);
+});
+
+test("timeout recovery includes reading the response body", async (t) => {
+  setup(t);
+  const provider = globalThis.fetch;
+  let timedOut = false;
+  t.mock.method(
+    globalThis,
+    "fetch",
+    async (input: unknown, init?: RequestInit) => {
+      if (String(input).includes("generativelanguage") && !timedOut) {
+        timedOut = true;
+        const response = Response.json({});
+        response.json = async () => {
+          throw new DOMException("The operation timed out", "TimeoutError");
+        };
+        return response;
+      }
+      return provider(input as RequestInfo, init);
+    },
+  );
+  const result = await forecastWithAi(history, baseline, now);
+  assert.equal(result.ai?.status, "generated");
+  assert.ok(result.ai.prediction);
+});
+
+test("timeout retries are bounded and preserve time for generation and review", async (t) => {
+  for (const [budget, expectedCalls] of [
+    [100000, 2],
+    [35000, 1],
+  ]) {
+    await t.test(`remaining budget ${budget}`, async (sub) => {
+      setup(sub);
+      let calls = 0;
+      sub.mock.method(globalThis, "fetch", async () => {
+        calls++;
+        throw new DOMException("The operation timed out", "TimeoutError");
+      });
+      const result = await forecastWithAi(
+        history,
+        baseline,
+        now,
+        Date.now() + budget,
+      );
+      assert.equal(calls, expectedCalls);
+      assert.equal(result.ai?.status, "unavailable");
+      assert.match(result.ai.reason ?? "", /planning timed out/);
+      assert.equal(result.ai.prediction, undefined);
+    });
+  }
+});
+
 test("research rejects unknown IDs and nonofficial text URLs, preserving failed actions", async (t) => {
   let calls = 0;
   t.mock.method(globalThis, "fetch", async () => {

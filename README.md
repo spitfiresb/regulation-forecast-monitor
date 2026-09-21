@@ -8,7 +8,7 @@ Browse publications from the past six calendar months using agency and publicati
 
 The research agent chooses official-text reads, historical searches, and comparison traces within three rounds and six source actions. It proposes a future publication event in a 90, 180, or 365 day window, with cited reasoning, a counterargument, and signals to watch. Validation and a separate model review check the result. A rejected draft may be revised once against the same evidence and reviewed again. Incomplete research or unsupported reasoning can withhold a forecast. Predictions have no validated accuracy or calibrated probabilities.
 
-The **View some nice examples** menu contains publication links only. Each click retrieves sources and runs fresh AI research, bypassing the assessment cache. No bundled forecast responses or saved-success fallback are served. Live results can differ or abstain. See [live examples](docs/curated-examples.md).
+The **View some nice examples** menu contains publication links only. Examples use the same one-hour assessment cache as normal selections and display the original check time. **Refresh history** bypasses the cache and runs fresh research. No bundled forecast responses or saved-success fallback after a failed refresh are served. Live results can differ or abstain. See [live examples](docs/curated-examples.md).
 
 Floating navigation opens Home, How it Works, and the MVP's purpose. The system architecture and data model are available from How it Works. This is a research prototype, not a finished compliance product or a customer-document applicability engine.
 
@@ -31,7 +31,7 @@ For Supabase, apply unapplied migrations in filename order and set `SUPABASE_URL
 
 The active app uses `activity_records` for latest cases and `activity_assessments` for immutable assessments, saved transactionally through `save_activity_case(jsonb)`. Records include official passages, source actions, comparisons, validation findings, model reviews, and forecast provenance. Current versions are `research-event-agent-v4` and `research-event-forecast-v7`.
 
-Normal selections may reuse a successful assessment for up to one hour on the same UTC day. Refresh and example links rerun research. The six-month browsing window is separate from the forecast horizon and storage retention.
+Normal selections and example links may reuse a completed assessment for up to one hour on the same UTC day, including a reviewed abstention. Refresh reruns research. Unavailable AI responses and research rejected during review are not reused. Timed-out model calls are retried once when at least ten seconds remain in the stage budget; the overall deadline and evidence checks still apply. The six-month browsing window is separate from the forecast horizon and storage retention.
 
 The retired agenda monitor, its routes, scripts, UI, and evaluation artifacts have been removed from the application. They remain in Git history. All nine SQL migrations and the eight historical tables are preserved; this code cleanup does not delete hosted records or alter retention jobs installed by earlier migrations.
 

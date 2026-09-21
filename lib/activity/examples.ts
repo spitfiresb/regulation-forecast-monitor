@@ -1,4 +1,4 @@
-/** Publication links only. Every example runs fresh research through the assessment API. */
+/** Publication links only. Examples use the assessment API and its one-hour cache. */
 export type CuratedExample = {
   id: string;
   title: string;

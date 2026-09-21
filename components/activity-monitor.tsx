@@ -84,7 +84,7 @@ export function ActivityMonitor({
     setSearching(false);
     if (exampleMenu.current) exampleMenu.current.open = false;
     if (push) history.pushState({}, "", `/?example=${encodeURIComponent(id)}`);
-    await choose(id, true, false);
+    await choose(id, false, false);
   }
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -265,6 +265,10 @@ export function ActivityMonitor({
               "* In this MVP, most records don't produce meaningful information, so I took the liberty to handpick some I liked. Despite this, feel free to browse around. This is all real data."
             }
           </p>
+          <p className="scope-note">
+            Completed assessments may be reused for up to one hour. Use Refresh
+            history to run fresh research.
+          </p>
         </div>
         {agencyError && (
           <p className="scope-note">
@@ -417,13 +421,15 @@ export function ActivityMonitor({
           </div>
           <section className="generated-outlook">
             <div className="provenance inference">
-              {record.assessment.ai?.status === "generated"
-                ? record.assessment.ai.prediction
-                  ? "AI FORECAST"
-                  : "AI ASSESSMENT"
-                : record.assessment.kind === "insufficient_evidence"
-                  ? "FORECAST WITHHELD"
-                  : "RULES-BASED FORECAST"}
+              {record.assessment.ai?.status === "unavailable"
+                ? "AI TEMPORARILY UNAVAILABLE"
+                : record.assessment.ai?.status === "generated"
+                  ? record.assessment.ai.prediction
+                    ? "AI FORECAST"
+                    : "AI ASSESSMENT"
+                  : record.assessment.kind === "insufficient_evidence"
+                    ? "FORECAST WITHHELD"
+                    : "RULES-BASED FORECAST"}
             </div>
             <div
               className={
@@ -432,7 +438,11 @@ export function ActivityMonitor({
                   : "forecast-text"
               }
             >
-              <h2>{displayText(record.assessment.next_status)}</h2>
+              <h2>
+                {record.assessment.ai?.status === "unavailable"
+                  ? "Research could not complete"
+                  : displayText(record.assessment.next_status)}
+              </h2>
               {record.assessment.ai?.prediction && (
                 <p className="forecast-window">
                   Next {record.assessment.ai.prediction.horizon_days} days ·
@@ -441,6 +451,14 @@ export function ActivityMonitor({
                 </p>
               )}
               <p>{displayText(record.assessment.forecast)}</p>
+              {record.assessment.ai?.status === "unavailable" && (
+                <button
+                  disabled={busy}
+                  onClick={() => void choose(record.id, true, false)}
+                >
+                  Try again
+                </button>
+              )}
               {record.assessment.ai?.reason &&
                 record.assessment.ai.reason !== record.assessment.forecast && (
                   <p
