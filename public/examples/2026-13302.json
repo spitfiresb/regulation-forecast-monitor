@@ -1,0 +1,459 @@
+{
+  "id": "2026-13302",
+  "selected": {
+    "document_number": "2026-13302",
+    "title": "Integrated Low-Level Radioactive Waste Disposal",
+    "type": "Proposed Rule",
+    "publication_date": "2026-07-01",
+    "html_url": "https://www.federalregister.gov/documents/2026/07/01/2026-13302/integrated-low-level-radioactive-waste-disposal",
+    "pdf_url": "https://www.govinfo.gov/content/pkg/FR-2026-07-01/pdf/2026-13302.pdf",
+    "action": "Proposed rule and draft guidance; public meeting; request for comment.",
+    "abstract": "The U.S. Nuclear Regulatory Commission (NRC) is proposing to amend its regulations that govern the land disposal of low-level radioactive waste to expand regulatory coverage to include certain transuranic wastes. The rule also introduces a new risk-informed framework for low-level waste disposal in which sites can develop waste acceptance criteria based on site-specific characteristics rather than using prescriptive limits. The proposed rule would allow for a graded approach: facilities that do not plan to accept significant quantities of long-lived radionuclides or Greater-Than-Class C waste will only need to meet a streamlined set of requirements, while those managing these waste streams must conduct technical assessments to ensure long- term safety. The proposed rule would also introduce new options for disposal of higher concentrations of waste, providing new alternatives for safe low-level waste management. These innovations support public health and environmental protection, as well as safe disposal of low- level radioactive waste, encourage operational efficiency, and offer greater flexibility for both current and future disposal facilities. In addition, the NRC is issuing draft implementing guidance for public comment.",
+    "dates": "Comments must be submitted electronically using https:// www.regulations.gov no later than 11:59 p.m. eastern time on August 17, 2026.",
+    "effective_on": null,
+    "comments_close_on": "2026-08-17",
+    "regulation_id_numbers": [
+      "3150-AI92"
+    ],
+    "docket_ids": [
+      "NRC-2011-0012, NRC-2015-0003, and NRC-2017-0081"
+    ],
+    "agencies": [
+      {
+        "name": "Nuclear Regulatory Commission",
+        "raw_name": "NUCLEAR REGULATORY COMMISSION",
+        "id": 383
+      }
+    ],
+    "cfr_references": [
+      {
+        "title": 10,
+        "part": "20"
+      },
+      {
+        "title": 10,
+        "part": "61"
+      },
+      {
+        "title": 10,
+        "part": "73"
+      },
+      {
+        "title": 10,
+        "part": "73"
+      },
+      {
+        "title": 10,
+        "part": "150"
+      }
+    ]
+  },
+  "history": [
+    {
+      "kind": "proposal",
+      "label": "Proposed rule",
+      "document": {
+        "document_number": "2026-13302",
+        "title": "Integrated Low-Level Radioactive Waste Disposal",
+        "type": "Proposed Rule",
+        "publication_date": "2026-07-01",
+        "html_url": "https://www.federalregister.gov/documents/2026/07/01/2026-13302/integrated-low-level-radioactive-waste-disposal",
+        "pdf_url": "https://www.govinfo.gov/content/pkg/FR-2026-07-01/pdf/2026-13302.pdf",
+        "action": "Proposed rule and draft guidance; public meeting; request for comment.",
+        "abstract": "The U.S. Nuclear Regulatory Commission (NRC) is proposing to amend its regulations that govern the land disposal of low-level radioactive waste to expand regulatory coverage to include certain transuranic wastes. The rule also introduces a new risk-informed framework for low-level waste disposal in which sites can develop waste acceptance criteria based on site-specific characteristics rather than using prescriptive limits. The proposed rule would allow for a graded approach: facilities that do not plan to accept significant quantities of long-lived radionuclides or Greater-Than-Class C waste will only need to meet a streamlined set of requirements, while those managing these waste streams must conduct technical assessments to ensure long- term safety. The proposed rule would also introduce new options for disposal of higher concentrations of waste, providing new alternatives for safe low-level waste management. These innovations support public health and environmental protection, as well as safe disposal of low- level radioactive waste, encourage operational efficiency, and offer greater flexibility for both current and future disposal facilities. In addition, the NRC is issuing draft implementing guidance for public comment.",
+        "dates": "Comments must be submitted electronically using https:// www.regulations.gov no later than 11:59 p.m. eastern time on August 17, 2026.",
+        "effective_on": null,
+        "comments_close_on": "2026-08-17",
+        "regulation_id_numbers": [
+          "3150-AI92"
+        ],
+        "docket_ids": [
+          "NRC-2011-0012, NRC-2015-0003, and NRC-2017-0081"
+        ],
+        "agencies": [
+          {
+            "name": "Nuclear Regulatory Commission",
+            "raw_name": "NUCLEAR REGULATORY COMMISSION",
+            "id": 383
+          }
+        ],
+        "cfr_references": [
+          {
+            "title": 10,
+            "part": "20"
+          },
+          {
+            "title": 10,
+            "part": "61"
+          },
+          {
+            "title": 10,
+            "part": "73"
+          },
+          {
+            "title": 10,
+            "part": "73"
+          },
+          {
+            "title": 10,
+            "part": "150"
+          }
+        ]
+      }
+    }
+  ],
+  "related_excluded": 9,
+  "history_complete": true,
+  "linkage": "rin",
+  "limitations": [
+    "9 identifier matches were not joined because their docket or agency/title did not establish the same proceeding.",
+    "Identifier searches can miss publications with absent or incorrect metadata. Court orders and unpublished agency actions are outside this source check."
+  ],
+  "assessment": {
+    "method": "research-event-agent-v3",
+    "current_status": "Published comment deadline passed",
+    "current_evidence": [
+      "2026-13302"
+    ],
+    "next_status": "No supported forecast",
+    "forecast": "The proceeding concerning Integrated Low-Level Radioactive Waste Disposal is currently between the comment deadline and review phase. Due to the complex technical nature of integrating transuranic waste, Greater-Than-Class C waste, and revised risk-informed frameworks across multiple dockets, case-specific evidence is missing to reliably distinguish whether a final rule, revised proposal, or further staff review will occur within the next 180 days.",
+    "basis": [
+      "The public comment period for the proposed rule closed on August 17, 2026, leaving the agency in the active comment review phase.",
+      "Historical low-level radioactive waste rulemakings have experienced prolonged interagency and Commission deliberation cycles without predictable short-term publication outcomes."
+    ],
+    "alternatives": [
+      "Publication of a final rule: The agency could proceed directly to drafting a final rule if public comments indicate general consensus on the risk-informed framework.",
+      "A revised or supplemental proposal: Complex technical feedback regarding Greater-Than-Class C waste disposal could prompt the agency to issue a supplemental or revised proposal."
+    ],
+    "evidence": [
+      "2026-13302",
+      "2015-06536"
+    ],
+    "kind": "insufficient_evidence",
+    "timing": "No reliable date for the agency’s decision.",
+    "effective_date": null,
+    "effective_evidence": null,
+    "ai": {
+      "model": "gemini-3.5-flash-lite",
+      "prompt_version": "research-event-forecast-v6",
+      "status": "generated",
+      "input_hash": "593443de894d6c0087b178385af83931eeeeefa2f5d7bf5edd9b73896d2aaaed",
+      "reasons": [
+        {
+          "text": "The public comment period for the proposed rule closed on August 17, 2026, leaving the agency in the active comment review phase.",
+          "evidence": [
+            "2026-13302"
+          ]
+        },
+        {
+          "text": "Historical low-level radioactive waste rulemakings have experienced prolonged interagency and Commission deliberation cycles without predictable short-term publication outcomes.",
+          "evidence": [
+            "2026-13302",
+            "2015-06536"
+          ]
+        }
+      ],
+      "research": {
+        "steps": [
+          {
+            "tool": "find_comparables",
+            "document_number": "",
+            "query": "radioactive waste disposal",
+            "purpose": "Search for historical rulemaking proceedings on radioactive waste disposal to find comparable timelines.",
+            "status": "complete",
+            "result": "4 historical candidates found. Search results are selected examples, not a representative cohort.",
+            "source_ids": [
+              "2015-06536",
+              "2020-09055",
+              "2020-27565",
+              "2020-07418"
+            ]
+          },
+          {
+            "tool": "read_publication",
+            "document_number": "2026-13302",
+            "query": "final rule schedule and comment analysis",
+            "purpose": "Read the current proposal to identify any specific agency statements regarding the final publication timeline.",
+            "status": "complete",
+            "result": "Read 13,955 characters of official text as selected excerpts.",
+            "source_ids": [
+              "2026-13302"
+            ]
+          },
+          {
+            "tool": "trace_comparable",
+            "document_number": "2015-06536",
+            "query": "",
+            "purpose": "Trace the historical companion rulemaking from proposal to final publication to determine typical interval duration.",
+            "status": "complete",
+            "result": "13 linked publications checked; no verified proposal-to-final interval.",
+            "source_ids": [
+              "2011-10711",
+              "2012-4090",
+              "2012-11160",
+              "2012-16657",
+              "2012-19774",
+              "2012-29527",
+              "2012-31704",
+              "2014-01291",
+              "2015-06536",
+              "2015-06429",
+              "2015-21169",
+              "2017-22459",
+              "2017-25341"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "id": "2026-13302",
+            "title": "Integrated Low-Level Radioactive Waste Disposal",
+            "url": "https://www.federalregister.gov/documents/2026/07/01/2026-13302/integrated-low-level-radioactive-waste-disposal",
+            "publication_date": "2026-07-01",
+            "role": "current_history",
+            "excerpt": "[Selected excerpts from a longer document. Not the full text.]\n[Federal Register Volume 91, Number 125 (Wednesday, July 1, 2026)]\n[Proposed Rules]\n[Pages 40290-40348]\nFrom the Federal Register Online via the Government Publishing Office [www.gpo.gov]\n[FR Doc No: 2026-13302]\n\n\n\n[[Page 40289]]\n\nVol. 91\n\nWednesday,\n\nNo. 125\n\nJuly 1, 2026\n\nPart IV\n\n\n\n\n\nNuclear Regulatory Commission\n\n\n\n\n\n-----------------------------------------------------------------------\n\n\n\n\n\n10 CFR Parts 20, 61, 73 et al.\n\n\n\n\n\nIntegrated Low-Level Radioactive Waste Disposal; Proposed Rule\n\nFederal Register / Vol. 91, No. 125 / Wednesday, July 1, 2026 / \nProposed Rules\n\n[[Page 40290]]\n\n\n-----------------------------------------------------------------------\n\nNUCLEAR REGULATORY COMMISSION\n\n10 CFR Parts 20, 61, 73, and 150\n\n[NRC-2011-0012, NRC-2015-0003, and NRC-2017-0081]\nRIN 3150-AI92\n\n\nIntegrated Low-Level Radioactive Waste Disposal\n\nAGENCY: Nuclear Regulatory Commission.\n\nACTION: Proposed rule and draft guidance; public meeting; request for \ncomment.\n\n-----------------------------------------------------------------------\n\nSUMMARY: The U.S. Nuclear Regulatory Commission (NRC) is proposing to \namend its regulations that govern the land disposal of low-level \nradioactive waste to expand regulatory coverage to include certain \ntransuranic wastes. The rule also introduces a new risk-informed \nframework for low-level waste disposal in which sites can develop waste \nacceptance criteria based on site-specific characteristics rather than \nusing prescriptive limits. The proposed rule would allow for a graded \napproach: facilities that do not plan to accept significant quantities \nof long-lived radionuclides or Greater-Than-Class C waste will only \nneed to meet a streamlined set of requirements, while those managing \nthese waste streams must conduct technical assessments to ensure long-\nterm safety. The proposed rule would also introduce new options for \ndisposal of higher concentrations of waste, providing new alternatives \nfor safe low-level waste management. These innovations support public \nhealth and environmental protection, as well as safe disposal of low-\nlevel radioactive waste, encourage operational efficiency, and offer \ngreater flexibility for both current and future disposal facilities. In \naddition, the NRC is issuing draft implementing guidance for \n\n[Passage 31] Any currently licensed LLW site that plans to apply to NRC for a \nlicense to dispose of GTCC waste or plans to accept significant \nquantities of long-lived radionuclides after the effective date of this \nrule or after the effective date of equivalent Agreement State \nregulations, would be required to meet the revised regulations.\n    Currently operating LLW facilities that do not plan to apply to NRC \nfor a license to dispose of GTCC waste or plan to accept significant \nquantities of long-lived radionuclides after the effective date of this \nrulemaking would not be required to adopt substantially new or revised \nrequirements. Some existing requirements that apply to these facilities \nwould be clarified.\n    Finally, the NRC has developed a draft guidance document for \ncomment, NUREG-2175, Revision 1, ``Guidance for Conducting Technical \nAnalyses for 10 CFR part 61.'' This document provides guidance on the \ndevelopment of information and analyses submitted by licensees or \nlicense applicants to demonstrate that they meet the new regulatory \nrequirements.\n\n[Passage 39]     B. Submitting Comments\nII. Executive Order 14300: Ordering the Reform of the Nuclear \nRegulatory Commission\nIII. Background\n    A. Existing Regulatory Framework\n    B. Previous Rulemaking Activities\n    C. Integration of the Rulemakings\n    D. Public Interactions During Proposed Rule Development\nIV. Discussion\n    A. Objectives of This Proposed Rule\n    B. Applicability and NRC Authority Over GTCC Disposal\n    C. Technical Areas With Proposed Revisions to Requirements\nV. Specific Request for Comment\nVI. Regulatory Flexibility Certification\nVII. Regulatory Analysis\nVIII. Backfitting and Issue Finality\nIX. Cumulative Effects of Regulation\nX. Plain Writing\nXI. National Environmental Policy Act\n    A. Introduction\n    B. Environmental Impact of the Proposed Agency Action\n    C. Summary of the Environmental Impacts of the Proposed Agency \nAction\n    D. Environmental Impacts of the Alternative to the Proposed \nAgency Action\n    E. Agencies and Persons Consulted\n    F. Draft Finding of No Significant Impact\nXII. Paperwork Reduction Act\nXIII. Executive Orders\n    A. Executive Order 12866: Regulatory Planning and Review (as \nAmended by Executive Order 14215, Ensuring Accountability for All \nAgencies)\n    B. Executive Order 14154: Unleashing American Energy\n    C. Executive Order 14192: Unleashing Prosperity Through \nDeregulation\n    D. Executive Order 14270: Zero-Based Regulatory Budgeting To \nUnleash American Energy\n    E. Executive Order 14294: Fighting Overcriminalization in \nFederal Regulations\nXIV. Criminal Penalties\nXV. Coordination With NRC Agreement States\nXVI. Compatibility of Agreement State Regulations\nXVII. Voluntary Consensus Standards\nXVIII. Availability of Guidance\nXIX. Public Meeting\nXX. Availability of Documents\n\n[Passage 51] (Class A, B, C, and Greater-Than-Class C (GTCC)); requiring the \nsegregation of unstable waste from waste that must be stable for proper \ndisposal; imposing requirements on waste form and packaging \ncharacteristics; and requiring the use of intrusion barriers for wastes \nthat will not decay to levels that represent an acceptable impact \nshould an inadvertent intruder contact the waste within 100 years.\n    The current regulations in 10 CFR part 61 cover all phases of near-\nsurface commercial LLW disposal from site selection through facility \ndesign, licensing, operations, site closure, postclosur\n\n[Passage 57] concentration from that initially considered by the 10 CFR part 61 \nregulations warranted an update to the overall regulatory framework to \nensure the protection of the public health and safety. These waste \nstreams include depleted uranium and blended LLW streams (e.g., \nblending of some types of Class B and C wastes with Class A wastes to \nproduce a Class A mixture that can be disposed of at LLW facilities \nlicensed to dispose of Class A waste) in quantities greater than \npreviously expected. In addition, new technologies, such as advanced \nreactors, might result in the generation of different LLW streams that \nhave not previously been considered.\n    In SRM-SECY-13-0075, dated February 12, 2014, the Commission \napproved publication of that proposed rule. The NRC published the \nproposed rule in the Federal Register on March 26, 2015 (80 FR 16081) \nfor public comment. The comments represented a wide variety of \nviewpoints. As a result of the comments, the NRC staff made significant \nchanges in the draft final rule. The NRC staff also had numerous \ninteractions with the Advisory Committee on Reactor Safeguards (ACRS), \nRadiation Protection and Nuclear Materials Subcommittee and full \ncommittee, before and after publication of the proposed rule. Summaries \nand transcripts of these meetings can be found at the ACRS website, \nhttps://www.nrc.gov/reading-rm/doc-collections/acrs/agenda/index.html.\n    In SECY-16-0106, ``Final Rule: Low-Level Radioactive Waste Disposal \n(10 CFR part 61) (RIN 3150-AI92),'' dated September 15, 2016, the NRC \nstaff submitted a draft final 10 CFR part 61 rule to the Commission. \nEnclosure 1 to SECY-16-0106 contains NRC responses to the public \ncomments received on that proposed rule. In SRM-SECY-16-0106, dated \nSeptember 8, 2017, the Commission directed the staff to revise the \ndraft final rule and to publish it as a supplemental proposed rule for \npublic comment. The proposed rule was merged into a parallel rulemaking \neffort, as explained in Section III.B.iii of this proposed rule.\nii. Disposal of Greater-Than-Class C and Transuranic Waste Regulatory \nBasis\n    In September 2014, the Commission directed the staff to provide a \nhistorical perspective on GTCC waste disposal in SRM-M140918, ``Staff \nRequirements--Briefing on Management of Low-Level Waste, High-Level \nWaste, and Spent Nuclear Fuel.'' Following the September 2014 \nCommission direction, on January 30, 2015, the Texas Commission on \nEnvironmental Quality (TCEQ) submitted a letter to the NRC staff \nregarding whether the State of Texas had authority to regulate the \ndisposal of GTCC waste. In response to the Commission's direction and \nTCEQ's letter, the staff submitted SECY-15-0094, dated July 17, 2015, \nto provide the Commission with a historical perspective on the disposal \nof GTCC waste and to seek Commission approval of the staff's \nrecommendation to allow the State of Texas to license the disposal of \nGTCC waste.\n    In SRM-SECY-15-0094, dated December 22, 2015, the Commission \ndirected the NRC staff to prepare a regulatory basis for the disposal \nof GTCC waste through means other than deep geologic disposal, \nincluding near-surface disposal, and to provide the regulatory basis to \nthe Commission for information within 6 months of completing the 10 CFR \npart 61 rule. The Commission further directed that the regulatory basis \nshould analyze whether, in accordance with Section 274c.(4) of the AEA, \nthe disposal of GTCC waste presents a hazard such that the NRC should \nretain authority over its disposal. The Commission directed that, if \nthe staff concluded that some or all GTCC waste is potentially suitable \nfor near-surface disposal, the staff should then proceed to develop a \nproposed rule to include disposal criteria for licensing the disposal \nof such waste under 10 CFR part 61. The Commission also affirmed that \nthe case-by-case review contemplated in 10 CFR 61.55(a)(2)(iv) is \navailable to parties who seek to dispose of GTCC waste in\n\n[Passage 121] (CER). The NRC believes that the de-regulatory impacts of this \nrulemaking activity are unlikely to cause implementation challenges for \nstakeholders. In addition, during the pendency of this rulemaking, the \nNRC is deprioritizing issuance of regulatory actions that might \ninfluence the implementation date for the new rule requirements (e.g., \norders, generic communications, license amendment requests, and \ninspection findings of a generic nature).\n    To fully understand any potential CER implications that could \nresult from this rulemaking, the NRC is asking the following questions. \nResponse to these questions is voluntary and any input will be \nconsidered during development of the final rule.\n    1. The NRC is proposing an effective date that will be 30 days \nafter the date of publication of a final rule. Does this provide \nsufficient time to implement the proposed requirements? Please provide \na rationale for your response.\n    2. Are there unintended consequences related to this rulemaking and \nhow should they be addressed? Please provide a rationale for your \nresponse.\n    3. Please comment on the NRC's cost and benefit estimates in the \nregulatory analysis that supports this proposed rule.\n\n[Passage 187]     The NRC is issuing revised draft guidance in NUREG-2175, Revision \n1, ``Guidance for Conducting Technical Analyses for 10 CFR part 61,'' \nfor implementation of the proposed requirements in this rulemaking. The \ndraft guidance is available in ADAMS as shown in the ``Availability of \nDocuments'' section of this document. When finalized, ``Guidance for \nConducting Technical Analyses for 10 CFR part 61'' will provide \nstakeholders with guidance for implementing the final requirements \ncontemplated by this proposed rule. You may submit comments on the \ndraft regulatory guidance by the methods outlined in the ADDRESSES \nsection of this document. You may obtain information and comment \nsubmissions related to the previous draft guidance document that was \nissued concurrent with the LLW disposal proposed rule in March 2015 by \nsearching on https://www.regulations.gov under Docket ID NRC-2015-0003. \nAll subsequent changes to this guidance for this rulemaking can be \nfound under Docket ID NRC-2011-0012.\n    In the draft NUREG-2175, Revision 1, the NRC provides guidance on \nconducting technical analyses (i.e., performance assessment, \ninadvertent intruder assessment, operational safety assessment, site \nstability assessment, and performance period analyses) to demonstrate \ncompliance with the performance objectives in 10 CFR part 61. This \nguidance should facilitate licensees' implementation of the amendments \nin this proposed rule as well as assist regulatory authorities in \nreviewing the technical analyses. This guidance would apply to all \nwaste streams disposed of at a land disposal facility licensed under 10 \nCFR part 61, including waste streams with significant quantities of \nlong-lived radionuclides (e.g., significant quantities of depleted \nuranium), blended waste, and GTCC waste.\n    In addition, draft NUREG-2175, Revision 1, provides detailed \nguidance in new areas, such as waste acceptance, defense-in-depth, \ndetermination of significant quantities, and GTCC waste disposal \nconsiderations both in the context of near-surface disposal and in a \nspecialized land disposal facility. This guidance discusses the use of \na graded level of effort needed to risk-inform the analyses for the \ncompliance period (1,000 or 10,000 years after disposal site closure) \nand cover the performance period analyses that should be performed for \nanalysis of long-lived waste beyond 10,000 years. Additional topics \ncovered in this document include (1) identification and screening of \nthe features, events, and processes to develop scenarios for technical \nanalyses; (2) use of the waste classification tables or the results of \nthe technical analyses to develop generic or site-specific WAC; and (3) \nuse of performance confirmation to evaluate and verify the accuracy of \ninformation used to demonstrate compliance prior to site closure.",
+            "full_text_read": true,
+            "text_url": "https://www.govinfo.gov/content/pkg/FR-2026-07-01/html/2026-13302.htm"
+          },
+          {
+            "id": "2015-06536",
+            "title": "Guidance for Conducting Technical Analyses for Low-Level Radioactive Waste Disposal",
+            "url": "https://www.federalregister.gov/documents/2015/03/26/2015-06536/guidance-for-conducting-technical-analyses-for-low-level-radioactive-waste-disposal",
+            "publication_date": "2015-03-26",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC) is issuing for public comment a draft NUREG, NUREG-2175, \"Guidance for Conducting Technical Analyses for 10 CFR part 61.\" The NRC is proposing to amend its regulations that govern low-level radioactive waste (LLRW) disposal facilities to require new and revised site-specific technical analyses, to permit the development of site-specific criteria for LLRW acceptance based on the results of these analyses, and to facilitate implementation and better align the requirements with current health and safety standards. The NRC has prepared draft guidance to address the implementation of the proposed regulations. This notice is announcing the availability of the draft guidance for public comment.",
+            "full_text_read": false
+          },
+          {
+            "id": "2020-09055",
+            "title": "Transfer of Very Low-Level Waste To Exempt Persons for Disposal",
+            "url": "https://www.federalregister.gov/documents/2020/05/08/2020-09055/transfer-of-very-low-level-waste-to-exempt-persons-for-disposal",
+            "publication_date": "2020-05-08",
+            "role": "comparison",
+            "excerpt": "On April 9, 2020, the U.S. Nuclear Regulatory Commission (NRC) extended the comment period on a proposed interpretation of its low- level radioactive waste disposal regulations that would permit licensees to dispose of waste by transfer to persons who hold specific exemptions for the purpose of disposal. The public comment period now closes on July 20, 2020. The NRC has decided to provide an additional method for members of the public to submit their comments via an email address established for this purpose.",
+            "full_text_read": false
+          },
+          {
+            "id": "2020-27565",
+            "title": "Transfer of Very Low-Level Waste To Exempt Persons for Disposal",
+            "url": "https://www.federalregister.gov/documents/2020/12/17/2020-27565/transfer-of-very-low-level-waste-to-exempt-persons-for-disposal",
+            "publication_date": "2020-12-17",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC) is withdrawing a proposed interpretation of its low-level radioactive waste disposal regulations that would permit licensees to dispose of waste by transfer to persons who hold specific exemptions for the purpose of disposal by burial. The proposal is being withdrawn based on the NRC staff's assessment that the proposed changes may not benefit the regulatory framework for the disposal of low-level radioactive waste.",
+            "full_text_read": false
+          },
+          {
+            "id": "2020-07418",
+            "title": "Transfer of Very Low-Level Waste To Exempt Persons for Disposal; Extension of Comment Period",
+            "url": "https://www.federalregister.gov/documents/2020/04/09/2020-07418/transfer-of-very-low-level-waste-to-exempt-persons-for-disposal-extension-of-comment-period",
+            "publication_date": "2020-04-09",
+            "role": "comparison",
+            "excerpt": "On March 6, 2020, the U.S. Nuclear Regulatory Commission (NRC) solicited comments on a proposed interpretation of its low-level radioactive waste disposal regulations that would permit licensees to dispose of waste by transfer to persons who hold specific exemptions for the purpose of disposal. The public comment period was originally scheduled to close on April 20, 2020. In recognition of the impacts of the current COVID-19 pandemic across the nation, the NRC has decided to extend the public comment period to allow more time for members of the public to develop and submit their comments.",
+            "full_text_read": false
+          },
+          {
+            "id": "2011-10711",
+            "title": "Site-Specific Analyses for Demonstrating Compliance With Subpart C Performance Objectives",
+            "url": "https://www.federalregister.gov/documents/2011/05/03/2011-10711/site-specific-analyses-for-demonstrating-compliance-with-subpart-c-performance-objectives",
+            "publication_date": "2011-05-03",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC) is proposing to amend its regulations to require low-level radioactive waste disposal facilities to conduct site-specific analyses to demonstrate compliance with the performance objectives. While the existing regulatory requirements are adequate to protect public health and safety, these amendments would enhance the safe disposal of low-level radioactive waste. The NRC is proposing additional changes to the regulations to reduce ambiguity, facilitate implementation, and to better align the requirements with current health and safety standards. In addition, the NRC is making available the rulemaking's associated regulatory basis documents. The NRC will conduct a public meeting on May 18, 2011, to discuss the preliminary proposed rule language and its associated regulatory basis documents. The availability of the preliminary proposed rule language and its associated regulatory basis documents are intended to inform stakeholders of the current status of the NRC's activities and solicit early public comments.",
+            "full_text_read": false
+          },
+          {
+            "id": "2012-4090",
+            "title": "Low-Level Radioactive Waste Management Issues",
+            "url": "https://www.federalregister.gov/documents/2012/02/22/2012-4090/low-level-radioactive-waste-management-issues",
+            "publication_date": "2012-02-22",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC or the Commission) plans to conduct a public meeting to discuss possible revisions to the regulatory framework for the management of commercial low-level radioactive waste (LLW). The purpose of this public meeting is to gather information and receive feedback from stakeholders and other interested members of the public concerning specific proposed revisions to the Commission's LLW regulations. Consistent with Commission direction, the NRC staff plans to hold a series of three public meetings in 2012 on the proposed revisions to Commission's LLW regulations. This is the first of those public meetings.",
+            "full_text_read": false
+          },
+          {
+            "id": "2012-11160",
+            "title": "Low-Level Radioactive Waste Management Issues",
+            "url": "https://www.federalregister.gov/documents/2012/05/08/2012-11160/low-level-radioactive-waste-management-issues",
+            "publication_date": "2012-05-08",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC or the Commission) plans to conduct a public meeting to discuss possible revisions to the regulatory framework for the management of commercial low-level radioactive waste (LLW). The purpose of this public meeting is to gather information and receive feedback from stakeholders and other interested members of the public concerning specific proposed revisions to the Commission's LLW regulations. Consistent with Commission direction, the NRC staff plans to hold a series of three public meetings in 2012 on the proposed revisions to the Commission's LLW regulations. This is the second of those public meetings.",
+            "full_text_read": false
+          },
+          {
+            "id": "2012-16657",
+            "title": "Low-Level Radioactive Waste Regulatory Management Issues",
+            "url": "https://www.federalregister.gov/documents/2012/07/11/2012-16657/low-level-radioactive-waste-regulatory-management-issues",
+            "publication_date": "2012-07-11",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC or the Commission) plans to conduct a public meeting to discuss proposed changes to its current regulatory requirements as directed by the Commission in a January 19, 2012, Staff Requirements Memorandum. Information will be gathered from invited subject matter experts, stakeholders, and other interested members of the public regarding the changes proposed by the Commission. Specifically, the NRC staff is interested in gaining a better understanding of the issues associated with specifying a regulatory time of compliance for a low-level radioactive waste disposal facility, allowing licensees the flexibility to implement waste acceptance criteria as an alternative to the current waste classification system, and revising the NRC's licensing requirements for land disposal of radioactive waste.",
+            "full_text_read": false
+          },
+          {
+            "id": "2012-19774",
+            "title": "Workshop on Performance Assessments of Near-Surface Disposal Facilities: FEPs Analysis, Scenario and Conceptual Model Development, and Code Selection",
+            "url": "https://www.federalregister.gov/documents/2012/08/13/2012-19774/workshop-on-performance-assessments-of-near-surface-disposal-facilities-feps-analysis-scenario-and",
+            "publication_date": "2012-08-13",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC or the Commission) plans to conduct a workshop on performance assessments of near-surface low-level radioactive waste (LLW) disposal facilities. The workshop has been developed to facilitate communication among Federal and State agencies, industry representatives, contractors, and members of the public on three aspects of a performance assessment: (1) Features, Events, and Processes (FEPs) analysis, (2) the development of scenarios and conceptual models, and (3) the selection of computer codes. Information gathered from invited subject matter experts, stakeholders, and other interested members of the public will be used to improve guidance on performance assessments for near-surface disposal of LLW.",
+            "full_text_read": false
+          },
+          {
+            "id": "2012-29527",
+            "title": "Low-Level Waste Disposal",
+            "url": "https://www.federalregister.gov/documents/2012/12/07/2012-29527/low-level-waste-disposal",
+            "publication_date": "2012-12-07",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC) is proposing to amend its regulations that govern low-level radioactive waste (LLRW) disposal facilities to require new and revised site-specific analyses and to permit the development of criteria for waste acceptance based on the results of these analyses. These amendments will ensure that waste streams that are significantly different in terms of radiological characteristics (e.g., half-life) from those considered in the technical basis for the current regulations can be disposed of safely and meet the performance objectives for land disposal of LLRW. These amendments will also increase the use of site-specific information to ensure that public health and safety would continue to be protected. The NRC is publishing a second version of preliminary rule language and has revised the regulatory basis document that will support this rulemaking. NRC is taking this action to inform interested stakeholders of the current status of the NRC's activities and to solicit public comments on the preliminary rule language. The regulatory basis document is being made available to inform stakeholder comments on the preliminary rule language. The NRC is not requesting comments on the regulatory basis.",
+            "full_text_read": false
+          },
+          {
+            "id": "2012-31704",
+            "title": "Low-Level Waste Disposal",
+            "url": "https://www.federalregister.gov/documents/2013/01/08/2012-31704/low-level-waste-disposal",
+            "publication_date": "2013-01-08",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC) is correcting a document appearing in the Federal Register on December 7, 2012 entitled, \"Low-Level Waste Disposal\" that announced the availability of a regulatory basis document and requested comment on preliminary rule language. This action is necessary to correct the title and number used to access the regulatory basis document in the NRC's Agencywide Documents Access and Management System (ADAMS).",
+            "full_text_read": false
+          },
+          {
+            "id": "2014-01291",
+            "title": "Low-Level Radioactive Waste Disposal Rulemaking and Strategic Assessment of Low-Level Radioactive Waste Regulatory Program",
+            "url": "https://www.federalregister.gov/documents/2014/01/24/2014-01291/low-level-radioactive-waste-disposal-rulemaking-and-strategic-assessment-of-low-level-radioactive",
+            "publication_date": "2014-01-24",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC) plans to conduct a public workshop to discuss proposed revisions to its Low-Level Radioactive Waste (LLRW) disposal regulations and gather information on an update to the NRC's 2007 Strategic Assessment of the LLRW regulatory program from stakeholders and other interested members of the public. The staff is also seeking comments on developments that would affect the LLRW regulatory program in the next 5-7 years, including changes to the national landscape in the LLRW area that would affect licensees and sited States in the context of safety, security, and the protection of the environment. The NRC will accept written comments at the public workshop and welcomes active participation from those attending.",
+            "full_text_read": false
+          },
+          {
+            "id": "2015-06429",
+            "title": "Low-Level Radioactive Waste Disposal",
+            "url": "https://www.federalregister.gov/documents/2015/03/26/2015-06429/low-level-radioactive-waste-disposal",
+            "publication_date": "2015-03-26",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC) is proposing to amend its regulations that govern low-level radioactive waste (LLRW) disposal facilities to require new and revised site-specific technical analyses, to permit the development of site-specific criteria for LLRW acceptance based on the results of these analyses, to facilitate implementation, and to better align the requirements with current health and safety standards. This proposed rule would affect LLRW disposal licensees or license applicants that are regulated by the NRC or the Agreement States.",
+            "full_text_read": false
+          },
+          {
+            "id": "2015-21169",
+            "title": "Low-Level Radioactive Waste Disposal",
+            "url": "https://www.federalregister.gov/documents/2015/08/27/2015-21169/low-level-radioactive-waste-disposal",
+            "publication_date": "2015-08-27",
+            "role": "comparison",
+            "excerpt": "On March 26, 2015, the U.S. Nuclear Regulatory Commission (NRC) requested public comment on a proposed rule that would amend its regulations that govern low-level radioactive waste (LLRW) disposal facilities. The proposed rule would require new and revised site- specific technical analyses, permit the development of site-specific criteria for LLRW acceptance based on the results of those analyses, facilitate implementation, and better align the requirements with current health and safety standards. Also on March 26, 2015, the NRC requested comment on draft guidance to address the implementation of the proposed regulations (NUREG-2175, \"Guidance for Conducting Technical Analyses for 10 CFR part 61\"). The public comment period for the proposed rule and draft guidance closed on July 24, 2015. The NRC is reopening the public comment periods for the proposed rule and draft guidance to allow more time for members of the public to develop and submit their comments.",
+            "full_text_read": false
+          },
+          {
+            "id": "2017-22459",
+            "title": "Low-Level Radioactive Waste Disposal",
+            "url": "https://www.federalregister.gov/documents/2017/10/17/2017-22459/low-level-radioactive-waste-disposal",
+            "publication_date": "2017-10-17",
+            "role": "comparison",
+            "excerpt": "The U.S. Nuclear Regulatory Commission (NRC) is requesting comment on the draft regulatory analysis, \"Draft Regulatory Analysis for Final Rule: Low-Level Radioactive Waste Disposal,\" and seeking specific cost and benefit information to better inform the updated draft regulatory analysis.",
+            "full_text_read": false
+          },
+          {
+            "id": "2017-25341",
+            "title": "Low-Level Radioactive Waste Disposal",
+            "url": "https://www.federalregister.gov/documents/2017/11/24/2017-25341/low-level-radioactive-waste-disposal",
+            "publication_date": "2017-11-24",
+            "role": "comparison",
+            "excerpt": "On October 17, 2017, the U.S. Nuclear Regulatory Commission (NRC) requested public comment on the draft regulatory analysis, \"Draft Regulatory Analysis for Final Rule: Low-Level Radioactive Waste Disposal.\" The public comment period closed on November 16, 2017. The NRC has decided to extend the public comment period until December 18, 2017, to allow more time for members of the public to develop and submit their comments.",
+            "full_text_read": false
+          }
+        ],
+        "comparisons": [
+          {
+            "document_number": "2015-06536",
+            "title": "Guidance for Conducting Technical Analyses for Low-Level Radioactive Waste Disposal",
+            "complete": true,
+            "proposal_date": "2011-05-03",
+            "final_date": null,
+            "elapsed_days": null,
+            "evidence": [
+              "2011-10711",
+              "2012-4090",
+              "2012-11160",
+              "2012-16657",
+              "2012-19774",
+              "2012-29527",
+              "2012-31704",
+              "2014-01291",
+              "2015-06536",
+              "2015-06429",
+              "2015-21169",
+              "2017-22459",
+              "2017-25341"
+            ]
+          }
+        ],
+        "cutoff": "2026-09-21"
+      },
+      "review": {
+        "approved": true,
+        "problems": []
+      },
+      "reviewed_forecast": {
+        "decision": "abstain",
+        "target_event": "no_new_publication",
+        "horizon_days": 180,
+        "forecast": "The proceeding concerning Integrated Low-Level Radioactive Waste Disposal is currently between the comment deadline and review phase. Due to the complex technical nature of integrating transuranic waste, Greater-Than-Class C waste, and revised risk-informed frameworks across multiple dockets, case-specific evidence is missing to reliably distinguish whether a final rule, revised proposal, or further staff review will occur within the next 180 days.",
+        "reasons": [
+          {
+            "text": "The public comment period for the proposed rule closed on August 17, 2026, leaving the agency in the active comment review phase.",
+            "evidence": [
+              "2026-13302"
+            ]
+          },
+          {
+            "text": "Historical low-level radioactive waste rulemakings have experienced prolonged interagency and Commission deliberation cycles without predictable short-term publication outcomes.",
+            "evidence": [
+              "2026-13302",
+              "2015-06536"
+            ]
+          }
+        ],
+        "counterargument": {
+          "text": "The NRC indicated intentions to streamline requirements and prioritize regulatory efficiency, which could theoretically accelerate the review of public comments toward a faster final action.",
+          "evidence": [
+            "2026-13302"
+          ]
+        },
+        "alternatives": [
+          {
+            "event": "final_rule",
+            "explanation": "The agency could proceed directly to drafting a final rule if public comments indicate general consensus on the risk-informed framework."
+          },
+          {
+            "event": "revised_proposal",
+            "explanation": "Complex technical feedback regarding Greater-Than-Class C waste disposal could prompt the agency to issue a supplemental or revised proposal."
+          }
+        ],
+        "horizon_basis": {
+          "text": "A 180-day window is selected to cover standard initial comment review, but exact procedural milestones depend on unobserved internal agency deliberations for which concrete temporal evidence is unavailable.",
+          "evidence": [
+            "2026-13302"
+          ]
+        },
+        "watch_for": [
+          "Publication of a supplemental proposed rule",
+          "Submissions of NRC staff evaluation reports on public comments",
+          "Commission voting records regarding the low-level radioactive waste disposal framework"
+        ],
+        "missing_evidence": [
+          "Internal NRC staff timeline estimates for reviewing public comments",
+          "Summary reports of comments received on draft guidance NUREG-2175, Revision 1",
+          "Direct indications of Commission direction following the close of the comment period"
+        ]
+      }
+    }
+  },
+  "summary": {
+    "text": "The U.S. Nuclear Regulatory Commission (NRC) is proposing to amend its regulations that govern the land disposal of low-level radioactive waste to expand regulatory coverage to include certain transuranic wastes. The rule also introduces a new risk-informed framework for low-level waste disposal in which sites can develop waste acceptance criteria based on site-specific characteristics rather than using prescriptive limits. The proposed rule would allow for a graded approach: facilities that do not plan to accept significant quantities of long-lived radionuclides or Greater-Than-Class C waste will only need to meet a streamlined set of requirements, while those managing these waste streams must conduct technical assessments to ensure long- term safety. The proposed rule would also introduce new options for disposal of higher concentrations of waste, providing new alternatives for safe low-level waste management. These innovations support public health and environmental protection, as well as safe disposal of low- level radioactive waste, encourage operational efficiency, and offer greater flexibility for both current and future disposal facilities. In addition, the NRC is issuing draft implementing guidance for public comment.",
+    "method": "official-excerpt"
+  },
+  "fingerprint": "8ebe2567b371ea624eb3f0aa2173cb49513249859cd3c8beeedf25d6952934fb",
+  "checked_at": "2026-09-21T09:06:53.478Z",
+  "window": {
+    "from": "2026-03-21",
+    "to": "2026-09-21"
+  }
+}

@@ -151,7 +151,9 @@ export default function HowItWorksPage() {
           Cases can be reused for up to an hour on the same UTC day. Refresh
           history retrieves the sources and reassesses them. Production stores
           the latest case and immutable assessment snapshots; local development
-          can use files when Supabase is unconfigured.
+          can use files when Supabase is unconfigured. Curated examples open
+          saved, dated copies of reviewed AI output. Their latest-assessment
+          button runs new research instead of changing the saved example.
         </p>
       </details>
       <footer className={styles.footer}>

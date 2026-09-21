@@ -1,4 +1,5 @@
 import { ActivityMonitor } from "@/components/activity-monitor";
+import { curatedExamples } from "@/lib/activity/examples";
 import { activityWindow, documentId } from "@/lib/activity/model";
 export const dynamic = "force-dynamic";
 export default async function Home({
@@ -15,6 +16,12 @@ export default async function Home({
   return (
     <ActivityMonitor
       initialDocument={document}
+      initialExample={
+        typeof params.example === "string" &&
+        curatedExamples.some((e) => e.id === params.example)
+          ? params.example
+          : ""
+      }
       initialAgency={
         typeof params.agency === "string" && /^\d+$/.test(params.agency)
           ? params.agency

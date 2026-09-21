@@ -8,19 +8,22 @@ import {
 } from "@/lib/activity/model";
 import { formatDate } from "@/lib/dates";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { ExpandableExcerpt } from "@/components/expandable-excerpt";
 import { displayText } from "@/lib/display-text";
+import { curatedExamples } from "@/lib/activity/examples";
 const commonAgencies = new Set([573, 136, 145, 188, 192, 199, 271, 466]);
 
 export function ActivityMonitor({
   initialDocument,
+  initialExample,
   initialPage,
   initialAgency,
   initialType,
   window,
 }: {
   initialDocument: string;
+  initialExample: string;
   initialPage: number;
   initialAgency: string;
   initialType: string;
@@ -36,15 +39,18 @@ export function ActivityMonitor({
   const [publicationType, setPublicationType] = useState(initialType);
   const [agencies, setAgencies] = useState<{ id: number; name: string }[]>([]);
   const [agencyError, setAgencyError] = useState(false);
+  const [example, setExample] = useState(initialExample);
+  const exampleMenu = useRef<HTMLDetailsElement>(null);
   const serial = useRef(0);
   const heading = useRef<HTMLHeadingElement>(null);
   async function choose(document: string, refresh = false, push = true) {
     const ticket = ++serial.current;
+    setExample("");
     setOpen(false);
     setBusy(true);
     setError("");
-    if (!refresh) setRecord(null);
-    if (push)
+    if (!refresh || example) setRecord(null);
+    if (push || example)
       history.pushState(
         {},
         "",
@@ -72,9 +78,43 @@ export function ActivityMonitor({
       if (ticket === serial.current) setBusy(false);
     }
   }
+  async function chooseExample(id: string, push = true) {
+    if (!curatedExamples.some((item) => item.id === id)) return;
+    const ticket = ++serial.current;
+    setExample(id);
+    setOpen(false);
+    setSearching(false);
+    setBusy(true);
+    setRecord(null);
+    setError("");
+    if (exampleMenu.current) exampleMenu.current.open = false;
+    if (push) history.pushState({}, "", `/?example=${encodeURIComponent(id)}`);
+    try {
+      const response = await fetch(`/examples/${encodeURIComponent(id)}.json`, {
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!response.ok)
+        throw new Error(
+          "This saved example could not be loaded. Please select it again.",
+        );
+      const data: ActivityCase = await response.json();
+      if (ticket === serial.current) {
+        setRecord(data);
+        requestAnimationFrame(() => heading.current?.focus());
+      }
+    } catch (e) {
+      if (ticket === serial.current)
+        setError(
+          e instanceof Error ? e.message : "This example could not be loaded.",
+        );
+    } finally {
+      if (ticket === serial.current) setBusy(false);
+    }
+  }
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (initialDocument) void choose(initialDocument, false, false);
+      if (initialExample) void chooseExample(initialExample, false);
+      else if (initialDocument) void choose(initialDocument, false, false);
       else void browse(initialPage, false, initialAgency, initialType);
       void fetch("/api/activity/agencies")
         .then((response) => {
@@ -103,6 +143,7 @@ export function ActivityMonitor({
   ) {
     const ticket = ++serial.current;
     setSearching(true);
+    setExample("");
     setBusy(false);
     setError("");
     setRecord(null);
@@ -213,6 +254,47 @@ export function ActivityMonitor({
             View changes <ArrowRight size={16} aria-hidden="true" />
           </button>
         </form>
+        <div className="curated-examples">
+          <details ref={exampleMenu} className="examples-menu">
+            <summary aria-describedby="examples-disclaimer">
+              View some nice examples <span aria-hidden="true">*</span>
+              <ChevronDown size={14} aria-hidden="true" />
+            </summary>
+            <ul className="examples-list">
+              {curatedExamples.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={`/?example=${item.id}`}
+                    aria-current={example === item.id ? "page" : undefined}
+                    onClick={(event) => {
+                      if (
+                        event.button !== 0 ||
+                        event.metaKey ||
+                        event.ctrlKey ||
+                        event.shiftKey ||
+                        event.altKey
+                      )
+                        return;
+                      event.preventDefault();
+                      void chooseExample(item.id);
+                    }}
+                  >
+                    <span className="example-agency">{item.agency}</span>
+                    <strong>{item.title}</strong>
+                    <span className="example-description">
+                      {item.description}
+                    </span>
+                    <ArrowRight size={15} aria-hidden="true" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+          <p id="examples-disclaimer" className="examples-disclaimer">
+            * Most records do not yet produce a strong AI summary. These saved
+            examples were selected for their more informative analysis.
+          </p>
+        </div>
         {agencyError && (
           <p className="scope-note">
             Agency options are unavailable. You can still browse all agencies.
@@ -225,7 +307,9 @@ export function ActivityMonitor({
         )}
         {busy && (
           <p className="record-status">
-            Researching publications and historical comparisons…
+            {example
+              ? "Loading saved example…"
+              : "Researching publications and historical comparisons…"}
           </p>
         )}
       </div>
@@ -323,6 +407,7 @@ export function ActivityMonitor({
               ++serial.current;
               setBusy(false);
               setRecord(null);
+              setExample("");
               setError("");
               setOpen(true);
               setAgency(results.agency ?? "");
@@ -336,6 +421,24 @@ export function ActivityMonitor({
           >
             ← Back to results
           </button>
+          {example && (
+            <div className="example-notice">
+              <p>
+                <strong>Saved example</strong> · Assessed{" "}
+                {formatDate(record.checked_at)}
+                <br />
+                This is the reviewed AI output from that date.
+              </p>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => void choose(record.id, true)}
+              >
+                View latest assessment{" "}
+                <ArrowRight size={14} aria-hidden="true" />
+              </button>
+            </div>
+          )}
           <div className="record-identity">
             <p>
               {record.selected.agencies
@@ -351,7 +454,9 @@ export function ActivityMonitor({
             </h1>
           </div>
           <div className="current-status">
-            <span className="provenance official">CURRENT STATUS</span>
+            <span className="provenance official">
+              {example ? "STATUS AT ASSESSMENT" : "CURRENT STATUS"}
+            </span>
             <strong>{displayText(record.assessment.current_status)}</strong>
             <span>
               Latest linked update:{" "}

@@ -52,7 +52,7 @@ const nodes: DiagramNode[] = [
     id: "display",
     title: "Display and refresh",
     description:
-      "Only AI-generated text is blue. Official facts stay separate. Cases are cached for up to an hour; Refresh history retrieves and assesses sources again.",
+      "Source facts stay separate from blue AI text. Live cases cache for one hour; refresh reruns research. Curated links open dated JSON snapshots instantly.",
     x: 25,
     y: 320,
   },

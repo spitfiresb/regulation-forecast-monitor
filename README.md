@@ -6,7 +6,7 @@ A regulatory change and forecast monitor, initially built around CFPB **RIN 3170
 
 Browse Federal Register activity published in the **past six calendar months**. Select an update to retrieve its related history, including older publications, reconstruct its status, and generate an evidence-linked forecast of a future publication event. Six months is the browsing window, not a prediction deadline.
 
-Browse using agency and publication dropdowns. Floating Home, How it Works, and purpose controls provide navigation. The purpose dialog explains the early MVP and future direction. `/how-it-works` explains the AI pipeline and links to the current system and data model.
+Browse using agency and publication dropdowns. A **View some nice examples** dropdown below the filters opens selected, dated AI assessments instantly. Examples use unchanged reviewed snapshots in `public/examples`, linked through `/?example=DOCUMENT_ID`, and are explicitly labeled as saved results. **View latest assessment** returns to live research. The disclaimer explains that these selected results are not representative of most records. Floating Home, How it Works, and purpose controls provide navigation. The purpose dialog explains the early MVP and future direction. `/how-it-works` explains the AI pipeline and links to the current system and data model.
 
 A centered legend identifies blue text and light-blue highlights as AI generated. Official facts and dates remain neutral. Long official excerpts have an explicit **Read full listing** control; stored source text remains intact. Native selects use progressive CSS picker styling, with motion respecting reduced-motion preferences.
 
