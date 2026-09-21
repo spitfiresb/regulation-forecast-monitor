@@ -48,3 +48,11 @@ export function targetElapsed(date: string | null, now = new Date()): boolean {
   if (date.length === 7) return date < now.toISOString().slice(0, 7);
   return date.slice(0, 10) < now.toISOString().slice(0, 10);
 }
+
+// Only unambiguous proposal-publication labels. Comment deadlines, ANPRMs,
+// supplemental proposals and companion direct-final procedures stay separate.
+export function isProposalAction(action: string): boolean {
+  return /^(nprm|proposed rule|notice of proposed rulemaking|proposed nprm)$/i.test(
+    action.trim(),
+  );
+}

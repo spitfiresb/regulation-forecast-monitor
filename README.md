@@ -1,6 +1,14 @@
-# Regulation Z Forecast Monitor
+# Regulatory Forecast Monitor
 
-A single-rule regulatory forecast monitor for CFPB **RIN 3170-AB57**, “Contingency Calculations for Determining Average Prime Offer Rate.” Built with Next.js App Router, TypeScript, Tailwind, and Supabase Postgres. All application and ingestion code lives in this repository.
+A searchable regulatory forecast monitor, initially built around CFPB **RIN 3170-AB57**, “Contingency Calculations for Determining Average Prime Offer Rate.” Built with Next.js App Router, TypeScript, Tailwind, and Supabase Postgres. All application and ingestion code lives in this repository.
+
+## Current product: recent activity and next-status assessments
+
+One search over Federal Register activity published in the **past six calendar months**. Select an update to retrieve its related history, including older publications, reconstruct its status, and generate an evidence-linked assessment of the next status change. Six months is the search radius, not a prediction deadline.
+
+The current flow uses `/api/activity` and `/api/activity/[document]/assess`, with server-only Supabase storage for retrieved cases and immutable assessments. Source publication dates, action descriptions, and effective dates are separate from the generated forecast. Repeated effective-date delays are no longer labeled as repeated original final rules.
+
+Forecasts are experimental deterministic assessments, not calibrated probabilities. Ambiguous relationships or incomplete history cause abstention. See [current scope and implementation](docs/recent-activity-scope.md) for coverage, linking, status rules, limitations, and storage. The previous agenda-catalog UI and six-month-forward probability experiment are legacy code and are not the homepage's product flow.
 
 ## Run locally
 
@@ -11,13 +19,13 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open http://127.0.0.1:3000. Requires Node 22 or newer. **No credentials are required to run the app.** It initially displays a committed, dated snapshot of real official sources. “Refresh official data” performs a live fetch and saves to `.data/latest.json` until Supabase is configured. Local data and environment files are ignored by Git.
+Open http://127.0.0.1:3000. Requires Node 22 or newer. Activity search reads the public Federal Register API directly. Configure Supabase for hosted case storage; without it, selected cases save under `.data/activity`. The committed APOR baseline and agenda import remain available only to the legacy monitor APIs. Local data and environment files are ignored by Git.
 
-## What is implemented
+## Legacy monitor capabilities (retained APIs)
 
 - Plain-English agenda summary, observed rulemaking progress, timing, and linked evidence. Adoption likelihood is explicitly unassessed.
-- Prominent elapsed-target finding, sourced team relevance, and a comparison with the previous saved check. Official source changes are separated from retrieval timestamps and AI rewording.
-- One plain page with all four answers directly visible and a working refresh button. No navigation, filters, or secondary pages.
+- Elapsed-target detection, explicit agency-date provenance, and directional outlooks even without a scheduled NPRM. No customer-specific applicability claims.
+- One search, one record, working source refresh, and inline evidence. Architecture documentation remains at `/architecture` and `/architecture/data-model`.
 - Inline “Why?” dropdowns with original wording, observation timestamps, and source links beside each conclusion.
 - `syncRule()`, `POST /api/sync`, and `GET /api/rule` in the same Next.js app.
 - Current-agenda discovery for the exact RIN, avoiding a permanently pinned agenda edition.
@@ -31,7 +39,7 @@ The initial verified record is in Proposed Rule Stage, with a **July 2026 NPRM a
 ## Connect Supabase
 
 1. Create a Supabase project.
-2. Run [`supabase/migrations/202609210001_regulation_z.sql`](supabase/migrations/202609210001_regulation_z.sql) in the project's SQL Editor (or use your normal Supabase migration workflow).
+2. Apply all files in `supabase/migrations` in order using your normal migration workflow.
 3. Set `SUPABASE_URL` and `SUPABASE_SECRET_KEY` in `.env.local`. A legacy `SUPABASE_SERVICE_ROLE_KEY` is also supported.
 4. Restart the app and refresh official data, or run `npm run sync`.
 
@@ -65,14 +73,14 @@ Gemini only rewrites the official abstract into a brief expected-change summary.
 
 ## Forecast logic
 
-| Current evidence | Displayed progress |
-| --- | --- |
-| Agenda only | Listed in the agenda |
-| Proposed Rule Stage | Proposal planned in the agenda |
-| NPRM published | Proposal published |
+| Current evidence                      | Displayed progress                |
+| ------------------------------------- | --------------------------------- |
+| Agenda only                           | Listed in the agenda              |
+| Proposed Rule Stage                   | Proposal planned in the agenda    |
+| NPRM published                        | Proposal published                |
 | Published comment deadline has passed | Published comment deadline passed |
-| Final Rule Stage | Final rule planned in the agenda |
-| Final rule published | Final rule published |
+| Final Rule Stage                      | Final rule planned in the agenda  |
+| Final rule published                  | Final rule published              |
 
 These describe observed procedure, not likelihood of adoption. The legacy database/API stage codes remain for compatibility, and the confidence field is always `Unassessed` in the current interpretation. No confidence rating is shown. Withdrawals, corrections, ambiguous additional publications, and unknown stages require manual review. Reopened comment windows take precedence over previously closed windows. The comment closing day is conservatively treated as open through that UTC calendar day because the API field contains no closing time.
 

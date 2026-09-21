@@ -84,3 +84,37 @@ test("Federal Register count-only empty responses are valid, partial pagination 
     frSearchSchema.parse({ count: 0, next_page_url: "https://example.com" }),
   );
 });
+
+test("proposal date aliases preserve dates without treating comment deadlines as publication targets", () => {
+  for (const action of [
+    "Proposed Rule",
+    "Notice of Proposed Rulemaking",
+    "Proposed NPRM",
+  ]) {
+    const parsed = parseReginfo(
+      html.replace(/>NPRM(?=&nbsp;|<)/g, `>${action}`),
+      url,
+      now,
+    );
+    assert.equal(
+      parsed.signals.find((s) => s.signal_type === "NPRM_SCHEDULED")?.date,
+      "2026-07",
+    );
+  }
+  for (const action of [
+    "NPRM Comment Period End",
+    "ANPRM",
+    "Supplemental NPRM",
+    "NPRM - Companion to Direct Final Rule",
+  ]) {
+    const parsed = parseReginfo(
+      html.replace(/>NPRM(?=&nbsp;|<)/g, `>${action}`),
+      url,
+      now,
+    );
+    assert.equal(
+      parsed.signals.some((s) => s.signal_type === "NPRM_SCHEDULED"),
+      false,
+    );
+  }
+});

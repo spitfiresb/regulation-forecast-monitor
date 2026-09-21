@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { isIsoDay } from "./dates";
-import { RIN, FR_API, type Signal } from "./model";
+import {
+  DEFAULT_RULE,
+  federalRegisterApiFor,
+  type RuleTarget,
+  type Signal,
+} from "./model";
 import { makeSignal } from "./reginfo";
 
 const day = z.string().refine(isIsoDay);
@@ -11,6 +16,8 @@ export const frDocumentSchema = z.object({
   html_url: z.url(),
   publication_date: day,
   abstract: z.string().nullable().optional(),
+  action: z.string().nullable().optional(),
+  dates: z.string().nullable().optional(),
   regulation_id_numbers: z.array(z.string()),
   comments_close_on: day.nullable().optional(),
   effective_on: day.nullable().optional(),
@@ -30,13 +37,15 @@ export const frSearchSchema = z
 export function normalizeFederalRegister(
   documents: FRDocument[],
   observedAt: string,
+  target: RuleTarget = DEFAULT_RULE,
 ): Signal[] {
   const today = observedAt.slice(0, 10);
   const docs = documents
     .map((d) => frDocumentSchema.parse(d))
     .filter(
       (d) =>
-        d.regulation_id_numbers.includes(RIN) && d.publication_date <= today,
+        d.regulation_id_numbers.includes(target.rin) &&
+        d.publication_date <= today,
     );
   const signals: Signal[] = [];
   for (const doc of docs) {
@@ -46,7 +55,7 @@ export function normalizeFederalRegister(
       !["www.federalregister.gov", "www.govinfo.gov"].includes(url.hostname)
     )
       throw new Error("Unexpected official document URL");
-    const raw = `${doc.type}: ${doc.title}. Published: ${doc.publication_date}. Document: ${doc.document_number}.${doc.abstract ? ` ${doc.abstract}` : ""}`;
+    const raw = `${doc.action ? `Action: ${doc.action}. ` : ""}${doc.type}: ${doc.title}. Published: ${doc.publication_date}. Document: ${doc.document_number}.${doc.abstract ? ` ${doc.abstract}` : ""}`;
     const signal = (
       type: Signal["signal_type"],
       title: string,
@@ -62,10 +71,11 @@ export function normalizeFederalRegister(
         date,
         "day",
         "Federal Register",
+        target,
       );
     if (
-      /withdraw|resciss|correction|delay of effective|delaying.*effective/i.test(
-        doc.title,
+      /withdraw|correction|delay of effective|delaying.*effective|extending.{0,100}effective date/i.test(
+        `${doc.action ?? ""} ${doc.title} ${doc.abstract ?? ""}`,
       )
     ) {
       signals.push(
@@ -138,12 +148,13 @@ export function normalizeFederalRegister(
     makeSignal(
       "FR_CHECK",
       "Federal Register publication check",
-      `Exact RIN lookup: ${RIN}. Matching published documents: ${docs.length}. Proposed rules: ${counts.proposed}. Final rules: ${counts.final}. This RIN lookup may miss documents without RIN metadata.`,
-      FR_API,
+      `Exact RIN lookup: ${target.rin}. Matching published documents: ${docs.length}. Proposed rules: ${counts.proposed}. Final rules: ${counts.final}. This RIN lookup may miss documents without RIN metadata.`,
+      federalRegisterApiFor(target),
       observedAt,
       today,
       "day",
       "Federal Register API",
+      target,
     ),
   );
   return signals;

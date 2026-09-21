@@ -1,7 +1,13 @@
 import { load } from "cheerio";
 import { createHash } from "node:crypto";
-import { parseAgendaDate } from "./dates";
-import { RIN, RULE_ID, type Rule, type Signal, type SignalType } from "./model";
+import { parseAgendaDate, isProposalAction } from "./dates";
+import {
+  DEFAULT_RULE,
+  type RuleTarget,
+  type Rule,
+  type Signal,
+  type SignalType,
+} from "./model";
 
 const clean = (text: string) => text.replace(/\s+/g, " ").trim();
 export function makeSignal(
@@ -13,12 +19,21 @@ export function makeSignal(
   date: string | null = null,
   precision: Signal["date_precision"] = "unknown",
   source = "Unified Agenda · Reginfo",
+  target: RuleTarget = DEFAULT_RULE,
 ): Signal {
   return {
     id: createHash("sha256")
-      .update(JSON.stringify([RULE_ID, type, raw, url, date]))
+      .update(
+        JSON.stringify([
+          target.id,
+          type,
+          raw,
+          url,
+          type === "FR_CHECK" ? null : date,
+        ]),
+      )
       .digest("hex"),
-    rule_id: RULE_ID,
+    rule_id: target.id,
     signal_type: type,
     title,
     description: raw,
@@ -30,7 +45,10 @@ export function makeSignal(
     date_precision: precision,
   };
 }
-export function discoverRuleUrl(html: string): string {
+export function discoverRuleUrl(
+  html: string,
+  target: RuleTarget = DEFAULT_RULE,
+): string {
   const $ = load(html);
   const href = $("a[href]")
     .toArray()
@@ -40,7 +58,7 @@ export function discoverRuleUrl(html: string): string {
         const url = new URL(href, "https://www.reginfo.gov");
         return (
           url.pathname === "/public/do/eAgendaViewRule" &&
-          url.searchParams.get("RIN") === RIN &&
+          url.searchParams.get("RIN") === target.rin &&
           url.hostname === "www.reginfo.gov" &&
           url.protocol === "https:"
         );
@@ -58,8 +76,21 @@ export function parseReginfo(
   html: string,
   sourceUrl: string,
   observedAt: string,
+  target: RuleTarget = DEFAULT_RULE,
 ): { rule: Rule; signals: Signal[] } {
   const $ = load(html);
+  const signal = (...args: Parameters<typeof makeSignal>) =>
+    makeSignal(
+      args[0],
+      args[1],
+      args[2],
+      args[3],
+      args[4],
+      args[5],
+      args[6],
+      args[7],
+      target,
+    );
   const field = (label: string) => {
     const element = $("b, strong")
       .filter((_, el) => clean($(el).text()) === `${label}:`)
@@ -69,7 +100,7 @@ export function parseReginfo(
     cell.find("b, strong").first().remove();
     return clean(cell.text());
   };
-  if (field("RIN") !== RIN)
+  if (field("RIN") !== target.rin)
     throw new Error(
       "Reginfo returned an unexpected RIN; existing data has been retained.",
     );
@@ -77,13 +108,13 @@ export function parseReginfo(
   const summary = field("Abstract");
   const stage = field("Agenda Stage of Rulemaking");
   const cfr: string[] = field("CFR Citation").match(/\d+\s+CFR\s+\d+/g) ?? [];
-  if (!title || !summary || !stage || !cfr.includes("12 CFR 1026"))
+  if (!title || !summary || !stage)
     throw new Error(
       "Required Reginfo fields are missing or changed; existing data has been retained.",
     );
   const rule: Rule = {
-    id: RULE_ID,
-    rin: RIN,
+    id: target.id,
+    rin: target.rin,
     title,
     summary,
     stage,
@@ -94,28 +125,28 @@ export function parseReginfo(
     legal_deadline: field("Legal Deadline") || "Not specified",
   };
   const signals = [
-    makeSignal(
+    signal(
       "AGENDA_LISTED",
       "Rulemaking listed in the Unified Agenda",
-      `RIN: ${RIN}; Publication ID: ${rule.publication_id}; Title: ${title}`,
+      `RIN: ${target.rin}; Publication ID: ${rule.publication_id}; Title: ${title}`,
       sourceUrl,
       observedAt,
     ),
-    makeSignal(
+    signal(
       "EXPECTED_CHANGE",
-      "CFPB describes the intended change",
+      "Agency describes the intended change",
       summary,
       sourceUrl,
       observedAt,
     ),
-    makeSignal(
+    signal(
       "CFR_AFFECTED",
-      "Regulation Z is affected",
+      "Affected CFR parts",
       `CFR Citation: ${cfr.join("; ")}`,
       sourceUrl,
       observedAt,
     ),
-    makeSignal(
+    signal(
       "LEGAL_DEADLINE",
       "Legal deadline",
       `Legal Deadline: ${rule.legal_deadline}`,
@@ -125,7 +156,7 @@ export function parseReginfo(
   ];
   if (stage === "Proposed Rule Stage")
     signals.push(
-      makeSignal(
+      signal(
         "PROPOSED_RULE_STAGE",
         stage,
         `Agenda Stage of Rulemaking: ${stage}`,
@@ -135,7 +166,7 @@ export function parseReginfo(
     );
   else if (stage === "Final Rule Stage")
     signals.push(
-      makeSignal(
+      signal(
         "FINAL_RULE_STAGE",
         stage,
         `Agenda Stage of Rulemaking: ${stage}`,
@@ -145,7 +176,7 @@ export function parseReginfo(
     );
   else if (stage !== "Prerule Stage")
     signals.push(
-      makeSignal(
+      signal(
         "REVIEW_REQUIRED",
         "Agenda stage needs review",
         `Agenda Stage of Rulemaking: ${stage}`,
@@ -158,10 +189,10 @@ export function parseReginfo(
     const row = $(el).closest("tr");
     const rawDate = clean(row.find("td[headers='TimetableDate']").text());
     const cite = clean(row.find("td[headers='FRC']").text());
-    if (/^NPRM$/i.test(action) && !cite) {
+    if (isProposalAction(action) && !cite) {
       const { date, precision } = parseAgendaDate(rawDate);
       signals.push(
-        makeSignal(
+        signal(
           "NPRM_SCHEDULED",
           "NPRM target in agency timetable",
           `Timetable: ${action} — ${rawDate}; FR Cite: ${cite || "not listed"}`,

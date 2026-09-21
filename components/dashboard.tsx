@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Workflow } from "lucide-react";
 import { type DashboardData, type Signal } from "@/lib/model";
 import { formatDate, targetElapsed } from "@/lib/dates";
 import { currentBrief, proceduralLabels, reviewedContext } from "@/lib/brief";
@@ -69,9 +71,14 @@ export function Dashboard({
     <main className="monitor">
       <header className="page-header">
         <h1>Regulation Z Forecast Monitor</h1>
-        <button className="button" onClick={refresh} disabled={refreshing}>
-          {refreshing ? "Refreshing…" : "Refresh official data"}
-        </button>
+        <div className="header-actions">
+          <button className="button" onClick={refresh} disabled={refreshing}>
+            {refreshing ? "Refreshing…" : "Refresh official data"}
+          </button>
+          <Link className="button architecture-link" href="/architecture">
+            <Workflow size={16} aria-hidden="true" /> Architecture
+          </Link>
+        </div>
       </header>
       <p className="meta">
         Sources last checked: {formatDate(data.synced_at, true)}

@@ -1,0 +1,304 @@
+.architecture-shell {
+  --arch-muted: #647183;
+  --arch-line: #dce2e8;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #fafbfc;
+  color: #243144;
+  overflow: hidden;
+}
+.architecture-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--arch-line);
+  background: white;
+  flex-shrink: 0;
+}
+.architecture-brand,
+.architecture-back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  text-decoration: none;
+}
+.architecture-brand {
+  font-weight: 600;
+}
+.architecture-brand-detail {
+  color: var(--arch-muted);
+  font-weight: 400;
+}
+.architecture-workspace {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+}
+.architecture-sidebar {
+  padding: 24px 12px;
+  border-right: 1px solid var(--arch-line);
+}
+.architecture-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  margin: 4px 0;
+  border-radius: 6px;
+  color: #495566;
+  font-size: 14px;
+  text-decoration: none;
+}
+.architecture-nav a:hover {
+  background: #eef1f5;
+}
+.architecture-nav a[aria-current="page"] {
+  background: #e7eef9;
+  color: #174c90;
+  font-weight: 600;
+}
+.architecture-main {
+  padding: 24px 28px 12px;
+  min-width: 0;
+  min-height: 0;
+}
+.diagram-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.diagram-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.diagram-toolbar h1 {
+  font-size: 23px;
+}
+.diagram-toolbar p {
+  font-size: 13px;
+  color: var(--arch-muted);
+  margin: 5px 0 0;
+}
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid var(--arch-line);
+  border-radius: 8px;
+  background: white;
+}
+.zoom-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 4px;
+  background: white;
+  color: #344256;
+  cursor: pointer;
+}
+.zoom-controls button:hover {
+  background: #eef2f6;
+}
+.zoom-controls button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.zoom-controls output {
+  font-size: 12px;
+  min-width: 42px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.zoom-controls .fit-button {
+  width: auto;
+  padding: 0 9px;
+  gap: 6px;
+  margin-left: 4px;
+  border-left: 1px solid var(--arch-line);
+  border-radius: 0;
+  font-size: 12px;
+}
+.diagram-viewport {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--arch-line);
+  border-radius: 10px;
+  background-color: #f5f7fa;
+  background-image: radial-gradient(#d6dee7 0.8px, transparent 0.8px);
+  background-size: 18px 18px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.diagram-viewport.is-dragging {
+  cursor: grabbing;
+}
+.diagram-world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.diagram-edges {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.diagram-edge-label {
+  font:
+    12px Arial,
+    sans-serif;
+  fill: #526c60;
+  paint-order: stroke;
+  stroke: #f0f7f3;
+  stroke-width: 8px;
+  stroke-linejoin: round;
+}
+.diagram-node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  padding: 18px 20px;
+  border: 1px solid #ccd6e1;
+  border-radius: 9px;
+  background: white;
+  color: #243144;
+  font: inherit;
+  box-shadow: 0 3px 8px #24314406;
+  cursor: zoom-in;
+}
+.diagram-node:hover {
+  border-color: #6486b2;
+  box-shadow: 0 4px 14px #24314414;
+}
+.diagram-node h2 {
+  font-size: 17px;
+  margin: 0 0 7px;
+  line-height: 1.3;
+}
+.diagram-node p {
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 0;
+  color: #566477;
+}
+.diagram-node-source {
+  border-top: 3px solid #5482bd;
+}
+.diagram-node-storage {
+  border-top: 3px solid #398974;
+}
+.diagram-node-optional {
+  border: 1px dashed #a197b6;
+  background: #fdfbff;
+}
+.diagram-keys {
+  font: 10px/1.6 monospace;
+  color: #537364;
+  border-top: 1px solid #e4ece7;
+  margin-top: 12px;
+  padding-top: 9px;
+}
+.diagram-host {
+  position: absolute;
+  inset: 10px;
+  border: 1px solid #b7d0c2;
+  border-radius: 14px;
+  background: #f0f7f3;
+  padding: 22px 28px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.diagram-host strong {
+  font-size: 21px;
+  color: #2c6651;
+}
+.diagram-host span {
+  color: #60796e;
+  font-size: 13px;
+}
+.canvas-help {
+  margin: 0;
+  font-size: 11px;
+  color: var(--arch-muted);
+  text-align: center;
+  flex-shrink: 0;
+}
+@media (max-width: 850px) {
+  .architecture-workspace {
+    grid-template-columns: 150px minmax(0, 1fr);
+  }
+  .architecture-main {
+    padding: 20px 16px 12px;
+  }
+  .diagram-toolbar {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .zoom-controls {
+    margin-left: auto;
+  }
+}
+@media (max-width: 600px) {
+  .architecture-header {
+    padding: 14px 16px;
+    gap: 10px;
+  }
+  .architecture-brand-detail {
+    display: none;
+  }
+  .architecture-workspace {
+    display: flex;
+    flex-direction: column;
+  }
+  .architecture-sidebar {
+    padding: 8px 12px;
+    border-right: none;
+    border-bottom: 1px solid var(--arch-line);
+  }
+  .architecture-nav {
+    display: flex;
+    gap: 8px;
+  }
+  .architecture-nav a {
+    margin: 0;
+    padding: 8px 10px;
+  }
+  .architecture-main {
+    flex: 1;
+    padding: 16px 12px 10px;
+  }
+  .diagram-page {
+    gap: 12px;
+  }
+  .diagram-toolbar h1 {
+    font-size: 21px;
+  }
+  .diagram-toolbar p {
+    font-size: 12px;
+  }
+  .canvas-help {
+    font-size: 10px;
+  }
+}

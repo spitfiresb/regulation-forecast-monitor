@@ -1,0 +1,781 @@
+{
+  "version": "nprm-cohort-812d7893492f",
+  "created_at": "2026-09-21T05:46:38.491Z",
+  "status": "preliminary",
+  "target": "NPRM_PUBLISHED",
+  "method": "Agency-and-stage historical cohort, smoothed toward the stage rate",
+  "enabled": false,
+  "reasons": [
+    "The publication-matching audit found a false negative caused by mismatched RIN metadata. Outcome labels need correction and review before a chance can be estimated."
+  ],
+  "counts": {
+    "training": 2017,
+    "development": 674,
+    "test": 369,
+    "test_events": 74,
+    "unresolved": 3060
+  },
+  "metrics": {
+    "brier": 0.15933659220307347,
+    "baseline_brier": 0.16210883502704646,
+    "calibration": [
+      {
+        "mean_prediction": 0.0624169563406727,
+        "event_rate": 0.10526315789473684,
+        "count": 19
+      },
+      {
+        "mean_prediction": 0.15625549003235148,
+        "event_rate": 0.19140625,
+        "count": 256
+      },
+      {
+        "mean_prediction": 0.2414569890223483,
+        "event_rate": 0.2247191011235955,
+        "count": 89
+      },
+      {
+        "mean_prediction": 0.36691126308258043,
+        "event_rate": 0.6,
+        "count": 5
+      }
+    ]
+  },
+  "cohort": {
+    "cases": 2691,
+    "events": 426,
+    "agencies": {
+      "1004": {
+        "events": 2,
+        "cases": 18
+      },
+      "1006": {
+        "events": 0,
+        "cases": 1
+      },
+      "1010": {
+        "events": 0,
+        "cases": 6
+      },
+      "1012": {
+        "events": 2,
+        "cases": 3
+      },
+      "1014": {
+        "events": 0,
+        "cases": 10
+      },
+      "1018": {
+        "events": 51,
+        "cases": 323
+      },
+      "1024": {
+        "events": 8,
+        "cases": 30
+      },
+      "1029": {
+        "events": 0,
+        "cases": 2
+      },
+      "1076": {
+        "events": 5,
+        "cases": 17
+      },
+      "1082": {
+        "events": 1,
+        "cases": 2
+      },
+      "1090": {
+        "events": 0,
+        "cases": 7
+      },
+      "1094": {
+        "events": 0,
+        "cases": 1
+      },
+      "1105": {
+        "events": 1,
+        "cases": 10
+      },
+      "1110": {
+        "events": 1,
+        "cases": 5
+      },
+      "1117": {
+        "events": 5,
+        "cases": 24
+      },
+      "1120": {
+        "events": 2,
+        "cases": 5
+      },
+      "1121": {
+        "events": 1,
+        "cases": 4
+      },
+      "1125": {
+        "events": 3,
+        "cases": 26
+      },
+      "1140": {
+        "events": 0,
+        "cases": 4
+      },
+      "1190": {
+        "events": 1,
+        "cases": 4
+      },
+      "1205": {
+        "events": 4,
+        "cases": 12
+      },
+      "1210": {
+        "events": 5,
+        "cases": 14
+      },
+      "1212": {
+        "events": 1,
+        "cases": 5
+      },
+      "1218": {
+        "events": 1,
+        "cases": 15
+      },
+      "1219": {
+        "events": 1,
+        "cases": 1
+      },
+      "1235": {
+        "events": 2,
+        "cases": 5
+      },
+      "1240": {
+        "events": 0,
+        "cases": 4
+      },
+      "1245": {
+        "events": 2,
+        "cases": 3
+      },
+      "1250": {
+        "events": 0,
+        "cases": 5
+      },
+      "1290": {
+        "events": 0,
+        "cases": 1
+      },
+      "1291": {
+        "events": 0,
+        "cases": 3
+      },
+      "1400": {
+        "events": 7,
+        "cases": 44
+      },
+      "1505": {
+        "events": 1,
+        "cases": 2
+      },
+      "1506": {
+        "events": 1,
+        "cases": 7
+      },
+      "1513": {
+        "events": 9,
+        "cases": 46
+      },
+      "1515": {
+        "events": 1,
+        "cases": 6
+      },
+      "1530": {
+        "events": 1,
+        "cases": 14
+      },
+      "1545": {
+        "events": 14,
+        "cases": 144
+      },
+      "1557": {
+        "events": 2,
+        "cases": 12
+      },
+      "1601": {
+        "events": 2,
+        "cases": 9
+      },
+      "1615": {
+        "events": 4,
+        "cases": 23
+      },
+      "1625": {
+        "events": 7,
+        "cases": 26
+      },
+      "1651": {
+        "events": 2,
+        "cases": 18
+      },
+      "1652": {
+        "events": 1,
+        "cases": 4
+      },
+      "1653": {
+        "events": 1,
+        "cases": 9
+      },
+      "1660": {
+        "events": 2,
+        "cases": 10
+      },
+      "1810": {
+        "events": 0,
+        "cases": 4
+      },
+      "1820": {
+        "events": 0,
+        "cases": 3
+      },
+      "1830": {
+        "events": 0,
+        "cases": 2
+      },
+      "1840": {
+        "events": 4,
+        "cases": 15
+      },
+      "1845": {
+        "events": 0,
+        "cases": 1
+      },
+      "1870": {
+        "events": 1,
+        "cases": 4
+      },
+      "1875": {
+        "events": 0,
+        "cases": 3
+      },
+      "1880": {
+        "events": 0,
+        "cases": 1
+      },
+      "1890": {
+        "events": 0,
+        "cases": 1
+      },
+      "1894": {
+        "events": 0,
+        "cases": 1
+      },
+      "1901": {
+        "events": 0,
+        "cases": 5
+      },
+      "1902": {
+        "events": 0,
+        "cases": 1
+      },
+      "1903": {
+        "events": 2,
+        "cases": 5
+      },
+      "1904": {
+        "events": 6,
+        "cases": 28
+      },
+      "1920": {
+        "events": 0,
+        "cases": 2
+      },
+      "1990": {
+        "events": 0,
+        "cases": 3
+      },
+      "1991": {
+        "events": 0,
+        "cases": 2
+      },
+      "1992": {
+        "events": 2,
+        "cases": 5
+      },
+      "1994": {
+        "events": 0,
+        "cases": 1
+      },
+      "2006": {
+        "events": 0,
+        "cases": 1
+      },
+      "2008": {
+        "events": 0,
+        "cases": 1
+      },
+      "2012": {
+        "events": 0,
+        "cases": 1
+      },
+      "2025": {
+        "events": 0,
+        "cases": 2
+      },
+      "2040": {
+        "events": 1,
+        "cases": 20
+      },
+      "2050": {
+        "events": 1,
+        "cases": 11
+      },
+      "2060": {
+        "events": 21,
+        "cases": 91
+      },
+      "2070": {
+        "events": 4,
+        "cases": 30
+      },
+      "2105": {
+        "events": 1,
+        "cases": 27
+      },
+      "2120": {
+        "events": 2,
+        "cases": 26
+      },
+      "2125": {
+        "events": 2,
+        "cases": 23
+      },
+      "2126": {
+        "events": 8,
+        "cases": 27
+      },
+      "2127": {
+        "events": 2,
+        "cases": 45
+      },
+      "2130": {
+        "events": 5,
+        "cases": 16
+      },
+      "2132": {
+        "events": 0,
+        "cases": 9
+      },
+      "2133": {
+        "events": 0,
+        "cases": 5
+      },
+      "2137": {
+        "events": 2,
+        "cases": 23
+      },
+      "2501": {
+        "events": 1,
+        "cases": 7
+      },
+      "2502": {
+        "events": 3,
+        "cases": 20
+      },
+      "2506": {
+        "events": 0,
+        "cases": 12
+      },
+      "2529": {
+        "events": 0,
+        "cases": 4
+      },
+      "2577": {
+        "events": 3,
+        "cases": 17
+      },
+      "2590": {
+        "events": 5,
+        "cases": 19
+      },
+      "2700": {
+        "events": 0,
+        "cases": 3
+      },
+      "2900": {
+        "events": 12,
+        "cases": 62
+      },
+      "3014": {
+        "events": 0,
+        "cases": 2
+      },
+      "3035": {
+        "events": 0,
+        "cases": 1
+      },
+      "3037": {
+        "events": 0,
+        "cases": 5
+      },
+      "3038": {
+        "events": 1,
+        "cases": 26
+      },
+      "3045": {
+        "events": 1,
+        "cases": 16
+      },
+      "3046": {
+        "events": 2,
+        "cases": 13
+      },
+      "3052": {
+        "events": 1,
+        "cases": 9
+      },
+      "3060": {
+        "events": 0,
+        "cases": 1
+      },
+      "3064": {
+        "events": 8,
+        "cases": 25
+      },
+      "3072": {
+        "events": 0,
+        "cases": 4
+      },
+      "3076": {
+        "events": 0,
+        "cases": 6
+      },
+      "3079": {
+        "events": 0,
+        "cases": 1
+      },
+      "3084": {
+        "events": 0,
+        "cases": 1
+      },
+      "3090": {
+        "events": 6,
+        "cases": 39
+      },
+      "3095": {
+        "events": 0,
+        "cases": 9
+      },
+      "3112": {
+        "events": 0,
+        "cases": 5
+      },
+      "3121": {
+        "events": 1,
+        "cases": 5
+      },
+      "3133": {
+        "events": 4,
+        "cases": 16
+      },
+      "3135": {
+        "events": 0,
+        "cases": 3
+      },
+      "3136": {
+        "events": 0,
+        "cases": 4
+      },
+      "3137": {
+        "events": 0,
+        "cases": 1
+      },
+      "3141": {
+        "events": 1,
+        "cases": 12
+      },
+      "3142": {
+        "events": 0,
+        "cases": 2
+      },
+      "3145": {
+        "events": 0,
+        "cases": 2
+      },
+      "3147": {
+        "events": 0,
+        "cases": 12
+      },
+      "3150": {
+        "events": 2,
+        "cases": 16
+      },
+      "3170": {
+        "events": 3,
+        "cases": 6
+      },
+      "3206": {
+        "events": 9,
+        "cases": 48
+      },
+      "3212": {
+        "events": 0,
+        "cases": 2
+      },
+      "3225": {
+        "events": 0,
+        "cases": 6
+      },
+      "3235": {
+        "events": 11,
+        "cases": 48
+      },
+      "3245": {
+        "events": 11,
+        "cases": 38
+      },
+      "3316": {
+        "events": 1,
+        "cases": 1
+      },
+      "9000": {
+        "events": 13,
+        "cases": 58
+      },
+      "0524": {
+        "events": 0,
+        "cases": 1
+      },
+      "0563": {
+        "events": 0,
+        "cases": 2
+      },
+      "0575": {
+        "events": 0,
+        "cases": 3
+      },
+      "0579": {
+        "events": 4,
+        "cases": 16
+      },
+      "0581": {
+        "events": 2,
+        "cases": 20
+      },
+      "0583": {
+        "events": 2,
+        "cases": 15
+      },
+      "0584": {
+        "events": 2,
+        "cases": 13
+      },
+      "0596": {
+        "events": 2,
+        "cases": 10
+      },
+      "0605": {
+        "events": 1,
+        "cases": 3
+      },
+      "0610": {
+        "events": 0,
+        "cases": 2
+      },
+      "0625": {
+        "events": 1,
+        "cases": 6
+      },
+      "0648": {
+        "events": 31,
+        "cases": 115
+      },
+      "0651": {
+        "events": 3,
+        "cases": 16
+      },
+      "0693": {
+        "events": 1,
+        "cases": 1
+      },
+      "0694": {
+        "events": 2,
+        "cases": 22
+      },
+      "0701": {
+        "events": 0,
+        "cases": 3
+      },
+      "0702": {
+        "events": 1,
+        "cases": 2
+      },
+      "0703": {
+        "events": 0,
+        "cases": 4
+      },
+      "0710": {
+        "events": 1,
+        "cases": 18
+      },
+      "0720": {
+        "events": 1,
+        "cases": 6
+      },
+      "0750": {
+        "events": 0,
+        "cases": 96
+      },
+      "0790": {
+        "events": 3,
+        "cases": 58
+      },
+      "0906": {
+        "events": 2,
+        "cases": 3
+      },
+      "0910": {
+        "events": 7,
+        "cases": 81
+      },
+      "0917": {
+        "events": 1,
+        "cases": 3
+      },
+      "0920": {
+        "events": 0,
+        "cases": 7
+      },
+      "0925": {
+        "events": 1,
+        "cases": 5
+      },
+      "0930": {
+        "events": 1,
+        "cases": 7
+      },
+      "0937": {
+        "events": 1,
+        "cases": 4
+      },
+      "0938": {
+        "events": 23,
+        "cases": 57
+      },
+      "0970": {
+        "events": 5,
+        "cases": 23
+      },
+      "0991": {
+        "events": 3,
+        "cases": 12
+      },
+      "0412": {
+        "events": 1,
+        "cases": 19
+      },
+      "0331": {
+        "events": 1,
+        "cases": 3
+      },
+      "0348": {
+        "events": 0,
+        "cases": 4
+      },
+      "0420": {
+        "events": 1,
+        "cases": 5
+      },
+      "0960": {
+        "events": 1,
+        "cases": 27
+      },
+      "0503": {
+        "events": 0,
+        "cases": 1
+      },
+      "0945": {
+        "events": 2,
+        "cases": 6
+      },
+      "0417": {
+        "events": 0,
+        "cases": 2
+      },
+      "0570": {
+        "events": 0,
+        "cases": 1
+      },
+      "0955": {
+        "events": 0,
+        "cases": 3
+      },
+      "0985": {
+        "events": 0,
+        "cases": 2
+      },
+      "0355": {
+        "events": 1,
+        "cases": 1
+      },
+      "0551": {
+        "events": 0,
+        "cases": 2
+      },
+      "0560": {
+        "events": 0,
+        "cases": 1
+      },
+      "0607": {
+        "events": 0,
+        "cases": 1
+      },
+      "0936": {
+        "events": 1,
+        "cases": 2
+      },
+      "0301": {
+        "events": 0,
+        "cases": 1
+      }
+    },
+    "k": 10
+  },
+  "periods": {
+    "training_end": "2025-02-16",
+    "test_start": "2025-09-22",
+    "test_end": "2026-03-22"
+  },
+  "sources": [
+    {
+      "url": "https://www.reginfo.gov/public/do/XMLViewFileAction?f=REGINFO_RIN_DATA_202004.xml",
+      "label": "Agenda 202004"
+    },
+    {
+      "url": "https://www.reginfo.gov/public/do/XMLViewFileAction?f=REGINFO_RIN_DATA_202104.xml",
+      "label": "Agenda 202104"
+    },
+    {
+      "url": "https://www.reginfo.gov/public/do/XMLViewFileAction?f=REGINFO_RIN_DATA_202204.xml",
+      "label": "Agenda 202204"
+    },
+    {
+      "url": "https://www.reginfo.gov/public/do/XMLViewFileAction?f=REGINFO_RIN_DATA_202210.xml",
+      "label": "Agenda 202210"
+    },
+    {
+      "url": "https://www.reginfo.gov/public/do/XMLViewFileAction?f=REGINFO_RIN_DATA_202404.xml",
+      "label": "Agenda 202404"
+    },
+    {
+      "url": "https://www.reginfo.gov/public/do/XMLViewFileAction?f=REGINFO_RIN_DATA_202504.xml",
+      "label": "Agenda 202504"
+    }
+  ],
+  "limitations": [
+    "These are preliminary retrospective results using candidate publication labels, not validated live performance.",
+    "Archived edition availability uses the later Federal Register introduction date; it does not claim the earliest online release date.",
+    "Exact-RIN matching may miss publications with absent or incorrect RIN metadata.",
+    "One origin per RIN avoids repeated versions masquerading as independent examples.",
+    "Older agency behavior may not transfer to the current administration."
+  ]
+}

@@ -13,7 +13,13 @@
     "baseline:refresh": "tsx scripts/refresh-baseline.ts",
     "gemini:check": "tsx scripts/check-gemini.ts",
     "test:db": "tsx scripts/check-database.ts",
-    "format": "prettier --write app components lib scripts tests/*.test.ts *.json *.ts *.mjs README.md .github/workflows/ci.yml"
+    "format": "prettier --write app components lib scripts tests/*.test.ts *.json *.ts *.mjs README.md .github/workflows/ci.yml",
+    "catalog:import": "tsx scripts/import-catalog.ts",
+    "history:prune": "tsx scripts/prune-history.ts",
+    "evaluation:collect": "tsx scripts/evaluation/collect.ts",
+    "evaluation:audit": "tsx scripts/evaluation/audit.ts",
+    "evaluation:run": "tsx scripts/evaluation/evaluate.ts",
+    "predictions:resolve": "tsx scripts/resolve-predictions.ts"
   },
   "keywords": [],
   "author": "",

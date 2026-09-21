@@ -1,6 +1,9 @@
 import {
-  AGENDA_INDEX,
-  FR_API,
+  DEFAULT_RULE,
+  agendaIndexFor,
+  federalRegisterApiFor,
+  ruleTargetSchema,
+  type RuleTarget,
   type DashboardData,
   type Snapshot,
 } from "./model";
@@ -11,9 +14,14 @@ import {
   normalizeFederalRegister,
 } from "./federal-register";
 import { buildForecast } from "./forecast";
-import { summarizeChange } from "./gemini";
-import { getDashboard, saveSnapshot } from "./repository";
+import {
+  summarizeChange,
+  SUMMARY_PROMPT_VERSION,
+  summaryInputHash,
+} from "./gemini";
+import { getSnapshot, saveSnapshot } from "./repository";
 import { compareSnapshots } from "./comparison";
+import { getCatalogEntry } from "./catalog";
 
 async function fetchOfficial(url: string): Promise<Response> {
   const response = await fetch(url, {
@@ -28,14 +36,31 @@ async function fetchOfficial(url: string): Promise<Response> {
     throw new Error(`Official source returned HTTP ${response.status}`);
   return response;
 }
-async function readAgenda(observedAt: string) {
-  const index = await (await fetchOfficial(AGENDA_INDEX)).text();
-  const url = discoverRuleUrl(index);
-  return parseReginfo(await (await fetchOfficial(url)).text(), url, observedAt);
+async function readAgenda(observedAt: string, target: RuleTarget) {
+  const index = await (await fetchOfficial(agendaIndexFor(target))).text();
+  let url: string;
+  try {
+    url = discoverRuleUrl(index, target);
+  } catch {
+    // Completed and long-term entries are not in the active index. The imported
+    // edition is explicitly identified in the UI; absence never means withdrawal.
+    const entry = await getCatalogEntry(target.rin);
+    if (!entry)
+      throw new Error(
+        "This rule is absent from the active index and imported catalog.",
+      );
+    url = `https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=${encodeURIComponent(target.rin)}&pubId=${entry.publication_id}`;
+  }
+  return parseReginfo(
+    await (await fetchOfficial(url)).text(),
+    url,
+    observedAt,
+    target,
+  );
 }
-async function readFederalRegister(observedAt: string) {
+async function readFederalRegister(observedAt: string, target: RuleTarget) {
   const search = frSearchSchema.parse(
-    await (await fetchOfficial(FR_API)).json(),
+    await (await fetchOfficial(federalRegisterApiFor(target))).json(),
   );
   if (search.count > 30)
     throw new Error("Unexpectedly many publications; source review required.");
@@ -52,13 +77,22 @@ async function readFederalRegister(observedAt: string) {
     );
     documents.push(...batch);
   }
-  return normalizeFederalRegister(documents, observedAt);
+  return normalizeFederalRegister(documents, observedAt, target);
 }
-export async function collectSnapshot(previous?: Snapshot): Promise<Snapshot> {
+export async function collectSnapshot(
+  previous?: Snapshot,
+  target: RuleTarget = DEFAULT_RULE,
+): Promise<Snapshot> {
+  ruleTargetSchema.parse(target);
+  if (
+    previous &&
+    (previous.rule.id !== target.id || previous.rule.rin !== target.rin)
+  )
+    throw new Error("Previous snapshot belongs to another rule");
   const observedAt = new Date().toISOString();
   const [agenda, register] = await Promise.allSettled([
-    readAgenda(observedAt),
-    readFederalRegister(observedAt),
+    readAgenda(observedAt, target),
+    readFederalRegister(observedAt, target),
   ]);
   if (agenda.status === "rejected")
     throw new Error(
@@ -81,14 +115,22 @@ export async function collectSnapshot(previous?: Snapshot): Promise<Snapshot> {
   if (
     process.env.GEMINI_API_KEY &&
     previous?.rule.summary === agenda.value.rule.summary &&
-    previous.forecast.summary_method === "gemini"
+    previous.forecast.summary_method === "gemini" &&
+    previous.forecast.summary_metadata?.prompt_version ===
+      SUMMARY_PROMPT_VERSION &&
+    previous.forecast.summary_metadata?.model ===
+      (process.env.GEMINI_MODEL || "gemini-3.5-flash-lite") &&
+    previous.forecast.summary_metadata?.input_hash ===
+      summaryInputHash(agenda.value.rule.summary)
   ) {
     forecast.expected_change = previous.forecast.expected_change;
     forecast.summary_method = "gemini";
+    forecast.summary_metadata = previous.forecast.summary_metadata;
   } else {
     const summary = await summarizeChange(agenda.value.rule.summary);
     forecast.expected_change = summary.text;
     forecast.summary_method = summary.method;
+    forecast.summary_metadata = summary.metadata;
     if (summary.warning) warnings.push(summary.warning);
   }
   const snapshot: Snapshot = {
@@ -107,19 +149,24 @@ export async function collectSnapshot(previous?: Snapshot): Promise<Snapshot> {
   return snapshot;
 }
 
-let inFlight: Promise<DashboardData> | null = null;
-async function performSync(): Promise<DashboardData> {
-  const previous = await getDashboard();
-  const snapshot = await collectSnapshot(previous);
-  if (previous.storage === "snapshot") snapshot.comparison = null;
+const inFlight = new Map<string, Promise<DashboardData>>();
+async function performSync(target: RuleTarget): Promise<DashboardData> {
+  const previous = await getSnapshot(target.id);
+  const snapshot = await collectSnapshot(previous ?? undefined, target);
   const storage = await saveSnapshot(snapshot);
   return { ...snapshot, storage, as_of: Date.now() };
 }
-export function syncRule(): Promise<DashboardData> {
-  // Coalesce concurrent refreshes in this process; database writes are serialized too.
-  if (!inFlight)
-    inFlight = performSync().finally(() => {
-      inFlight = null;
+export function syncRule(
+  target: RuleTarget = DEFAULT_RULE,
+): Promise<DashboardData> {
+  ruleTargetSchema.parse(target);
+  const key = JSON.stringify([target.id, target.rin, target.agency_code]);
+  let pending = inFlight.get(key);
+  if (!pending) {
+    pending = performSync(target).finally(() => {
+      inFlight.delete(key);
     });
-  return inFlight;
+    inFlight.set(key, pending);
+  }
+  return pending;
 }

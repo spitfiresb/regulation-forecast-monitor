@@ -44,7 +44,7 @@ export function buildForecast(
     likelihood = "HIGH SIGNAL";
     next = "Not listed in the checked evidence";
     reason =
-      "A published proposal's comment deadline has passed. CFPB may consider comments before its next action; this does not guarantee a final rule.";
+      "A published proposal's comment deadline has passed. The agency may consider comments before its next action; this does not guarantee a final rule.";
   }
   if (has("FINAL_RULE_STAGE")) {
     likelihood = "VERY HIGH SIGNAL";

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Regulation Z Forecast Monitor",
+  title: "Regulatory Forecast Monitor",
   description:
-    "An evidence-backed view of CFPB’s APOR contingency rulemaking: the expected change, procedural signals, timing, and original government sources.",
+    "Search rulemakings, inspect official evidence, and explore experimental forecasts of regulatory publication events.",
   robots: { index: false, follow: false },
 };
 export default function RootLayout({
