@@ -6,93 +6,75 @@ import {
 
 const nodes: DiagramNode[] = [
   {
-    id: "refresh",
-    title: "Refresh",
+    id: "search",
+    title: "Search recent activity",
     description:
-      "A manual refresh checks official sources for the latest rulemaking evidence.",
+      "Find Federal Register rules and notices published in the past six calendar months.",
     x: 25,
-    y: 140,
+    y: 50,
   },
   {
-    id: "agenda",
-    title: "Reginfo",
+    id: "history",
+    title: "Link publication history",
     description:
-      "The current agenda supplies the rule’s abstract, stage, and planned dates.",
-    x: 325,
-    y: 30,
+      "Select an update. Match related publications by identifiers, agency, and docket or title, including older history.",
+    x: 375,
+    y: 50,
     tone: "source",
   },
   {
-    id: "register",
-    title: "Federal Register",
+    id: "assessment",
+    title: "Assess the next status",
     description:
-      "An exact-RIN search finds published proposals, comment windows, and final rules.",
-    x: 325,
-    y: 250,
-    tone: "source",
-  },
-  {
-    id: "forecast",
-    title: "Forecast engine",
-    description:
-      "Evidence determines procedural progress and timing, with a source for each conclusion.",
-    x: 625,
-    y: 140,
-  },
-  {
-    id: "summary",
-    title: "Gemini summary",
-    description:
-      "Optional AI simplifies the abstract, falling back to official wording when unavailable.",
-    x: 925,
-    y: 140,
-    tone: "optional",
-  },
-  {
-    id: "comparison",
-    title: "Compare & validate",
-    description:
-      "Compare official changes with the previous check and validate the complete snapshot.",
-    x: 925,
-    y: 430,
+      "Fixed rules read actions and dates. Incomplete or ambiguous evidence produces an unresolved assessment.",
+    x: 725,
+    y: 50,
   },
   {
     id: "storage",
-    title: "Supabase",
+    title: "Save case and assessment",
     description:
-      "Save current records and snapshot history together, using a local file when unconfigured.",
-    x: 625,
-    y: 430,
+      "Supabase saves the latest case and immutable assessment together. Local files are the development fallback.",
+    x: 725,
+    y: 350,
     tone: "storage",
   },
   {
-    id: "dashboard",
-    title: "Monitor",
+    id: "monitor",
+    title: "Show the evidence",
     description:
-      "Display the saved forecast, changes, and linked evidence, with warnings for stale or failed checks.",
-    x: 325,
-    y: 430,
+      "Display current status, an experimental next-step estimate, alternatives, official excerpts, and source links.",
+    x: 375,
+    y: 350,
+  },
+  {
+    id: "recheck",
+    title: "Check again",
+    description:
+      "Saved cases can be reused briefly. An explicit recheck fetches source history again; identical evidence is deduplicated.",
+    x: 25,
+    y: 350,
   },
 ];
 const edges: DiagramEdge[] = [
-  { path: "M265 210 H295 V100 H325" },
-  { path: "M295 210 V320 H325" },
-  { path: "M565 100 H595 V210 H625" },
-  { path: "M565 320 H595 V210" },
-  { path: "M865 210 H925" },
-  { path: "M1045 280 V430" },
-  { path: "M925 500 H865" },
-  { path: "M625 500 H565" },
+  { path: "M305 140 H375" },
+  { path: "M655 140 H725" },
+  { path: "M865 230 V350" },
+  { path: "M725 440 H655" },
+  { path: "M375 440 H305" },
+  { path: "M165 350 V280 H515 V230" },
 ];
 export default function ArchitecturePage() {
   return (
     <ArchitectureDiagram
-      title="System flow"
-      description="From official sources to an evidence-backed forecast."
+      title="Current system flow"
+      description="Recent publications → linked history → evidence-backed next-status assessment. This flow uses fixed rules, not Gemini or the legacy probability experiment."
       nodes={nodes}
       edges={edges}
-      width={1200}
-      height={600}
+      width={1030}
+      height={570}
+      nodeWidth={280}
+      nodeHeight={180}
     />
   );
 }

@@ -17,7 +17,7 @@ export function historyCutoff(now = new Date()): string {
 // Retrieval timestamps, comparison text, and date-bearing explanatory prose do
 // not constitute a new version. Actual signals, forecast outcomes and source
 // availability do. Keep this projection in sync with snapshot_content SQL.
-export function snapshotContent(snapshot: Snapshot) {
+function snapshotContent(snapshot: Snapshot) {
   const f = snapshot.forecast;
   return {
     rule: snapshot.rule,

@@ -6,11 +6,15 @@ The `kobalt-interview` Worker runs Next.js through OpenNext. Supabase remains th
 
 ## Deploy
 
-Use Node 22 and the Cloudflare account that owns the domain:
+Deploy from the single Desktop checkout using Node 22 and the Cloudflare account that owns the domain. Commit and push the intended source to GitHub main first; do not deploy an old checkout or unreviewed local changes:
 
 ```sh
+cd /Users/zainsaeed/Desktop/regulation-z-forecast-monitor
+nvm use
 npm ci
-npx wrangler login
+npx wrangler login  # only if not already authenticated
+git status --short  # must be clean
+git push origin main
 npm run deploy:cloudflare
 ```
 

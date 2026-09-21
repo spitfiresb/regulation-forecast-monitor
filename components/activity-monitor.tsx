@@ -6,6 +6,9 @@ import {
   type ActivityWindow,
 } from "@/lib/activity/model";
 import { formatDate } from "@/lib/dates";
+import { ChevronDown } from "lucide-react";
+import { SystemOverview } from "@/components/system-overview";
+import overviewStyles from "@/components/system-overview.module.css";
 export function ActivityMonitor({
   initialQuery,
   initialDocument,
@@ -26,6 +29,7 @@ export function ActivityMonitor({
   const [busy, setBusy] = useState(false);
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState("");
+  const [showOverview, setShowOverview] = useState(false);
   const serial = useRef(0);
   const heading = useRef<HTMLHeadingElement>(null);
   async function choose(document: string, refresh = false, push = true) {
@@ -114,7 +118,7 @@ export function ActivityMonitor({
   const scopeWindow = record?.window ?? results?.window ?? window;
   return (
     <main className="record-monitor activity-monitor">
-      <header>
+      <header className={overviewStyles.header}>
         <button
           className="brand"
           onClick={() => {
@@ -131,8 +135,21 @@ export function ActivityMonitor({
         >
           Regulatory Forecast Monitor
         </button>
-        <span className="prototype-label">Research preview</span>
+        <div className={overviewStyles.actions}>
+          <span className="prototype-label">Research preview</span>
+          <button
+            type="button"
+            className={overviewStyles.toggle}
+            aria-expanded={showOverview}
+            aria-controls="system-overview"
+            onClick={() => setShowOverview((shown) => !shown)}
+          >
+            How the system works
+            <ChevronDown size={16} aria-hidden="true" />
+          </button>
+        </div>
       </header>
+      <SystemOverview hidden={!showOverview} />
       <form className="record-search" onSubmit={submit}>
         <label htmlFor="activity-query">
           What changed—and what happens next?

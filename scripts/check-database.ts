@@ -1,7 +1,7 @@
 // Runs the actual migration in a disposable local PostgreSQL cluster.
 // No existing database, Supabase account, network listener, or secrets are used.
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import assert from "node:assert/strict";
@@ -111,23 +111,22 @@ try {
   );
 
   // Upgrade a populated database, not just an empty schema.
-  sql(
-    readFileSync(
-      "supabase/migrations/202609210002_general_rule_catalog.sql",
-      "utf8",
-    ),
+  // Discover all migrations so newly recovered cleanup migrations are tested too.
+  for (const file of readdirSync("supabase/migrations")
+    .filter(
+      (name) => name.endsWith(".sql") && name > "202609210001_regulation_z.sql",
+    )
+    .sort())
+    sql(readFileSync(join("supabase/migrations", file), "utf8"));
+  assert.equal(
+    sql("select to_regclass('public.sync_runs_rule_latest_idx') is null"),
+    "t",
   );
-  sql(
-    readFileSync(
-      "supabase/migrations/202609210003_history_retention_schedule.sql",
-      "utf8",
+  assert.match(
+    sql(
+      "begin; drop index sync_runs_latest_idx; set local enable_seqscan = off; explain select snapshot from sync_runs where rule_id = 'apor-contingency' order by synced_at desc limit 10; rollback;",
     ),
-  );
-  sql(
-    readFileSync(
-      "supabase/migrations/202609210004_catalog_safe_update.sql",
-      "utf8",
-    ),
+    /Index Scan Backward using sync_runs_rule_id_synced_at_key/,
   );
   assert.equal(
     sql("select latest_snapshot->'rule'->>'rin' from rules"),
@@ -262,21 +261,6 @@ try {
       ),
       "f",
     );
-  sql(
-    readFileSync(
-      "supabase/migrations/202609210005_prediction_ledger.sql",
-      "utf8",
-    ),
-  );
-  sql(
-    readFileSync(
-      "supabase/migrations/202609210006_search_relevance.sql",
-      "utf8",
-    ),
-  );
-  sql(
-    readFileSync("supabase/migrations/202609210007_catalog_browse.sql", "utf8"),
-  );
   assert.equal(
     sql(
       "set role service_role; select count(*) from browse_rule_catalog('',null,10,0,ARRAY['20'])",
@@ -335,12 +319,6 @@ try {
       "set role service_role; select total from search_rule_catalog('',null,10,0) limit 1",
     ),
     "1",
-  );
-  sql(
-    readFileSync(
-      "supabase/migrations/202609210008_recent_activity.sql",
-      "utf8",
-    ),
   );
   const activity = { id: "2026-13305", fingerprint: "b".repeat(64) };
   sql(

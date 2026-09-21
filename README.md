@@ -6,20 +6,26 @@ A searchable regulatory forecast monitor, initially built around CFPB **RIN 3170
 
 One search over Federal Register activity published in the **past six calendar months**. Select an update to retrieve its related history, including older publications, reconstruct its status, and generate an evidence-linked assessment of the next status change. Six months is the search radius, not a prediction deadline.
 
+The **How the system works** button at the top opens a brief, four-step explanation of sources, history, assessment, and evidence.
+
 The current flow uses `/api/activity` and `/api/activity/[document]/assess`, with server-only Supabase storage for retrieved cases and immutable assessments. Source publication dates, action descriptions, and effective dates are separate from the generated forecast. Repeated effective-date delays are no longer labeled as repeated original final rules.
 
 Forecasts are experimental deterministic assessments, not calibrated probabilities. Ambiguous relationships or incomplete history cause abstention. See [current scope and implementation](docs/recent-activity-scope.md) for coverage, linking, status rules, limitations, and storage. The previous agenda-catalog UI and six-month-forward probability experiment are legacy code and are not the homepage's product flow.
 
 ## Run locally
 
+**Only local checkout:** `/Users/zainsaeed/Desktop/regulation-z-forecast-monitor`, served at **http://127.0.0.1:3000**. [GitHub main](https://github.com/spitfiresb/regulation-z-forecast-monitor) is the shared source; [kobaltinterview.party](https://kobaltinterview.party) runs its deployed build. Earlier duplicate checkouts were consolidated. See [the recovery audit](docs/cleanup-audit.md).
+
+
 ```sh
+cd /Users/zainsaeed/Desktop/regulation-z-forecast-monitor
 nvm use
 npm ci
 cp .env.example .env.local
 npm run dev
 ```
 
-Open http://127.0.0.1:3000. Requires Node 22 or newer. Activity search reads the public Federal Register API directly. Configure Supabase for hosted case storage; without it, selected cases save under `.data/activity`. The committed APOR baseline and agenda import remain available only to the legacy monitor APIs. Local data and environment files are ignored by Git.
+Open http://127.0.0.1:3000. The dev/start scripts explicitly use port 3000 and fail if it is occupied instead of silently opening a second port. Requires Node 22 or newer. Activity search reads the public Federal Register API directly. Configure Supabase for hosted case storage; without it, selected cases save under `.data/activity`. The committed APOR baseline and agenda import remain available only to the legacy monitor APIs. Local data and environment files are ignored by Git.
 
 ## Legacy monitor capabilities (retained APIs)
 
@@ -39,26 +45,24 @@ The initial verified record is in Proposed Rule Stage, with a **July 2026 NPRM a
 ## Connect Supabase
 
 1. Create a Supabase project.
-2. Apply all files in `supabase/migrations` in order using your normal migration workflow.
+2. Apply files in `supabase/migrations` in filename order, applying only migrations not already recorded. See [the data model](docs/data-model.md) for the full sequence and the recovered index-cleanup migration.
 3. Set `SUPABASE_URL` and `SUPABASE_SECRET_KEY` in `.env.local`. A legacy `SUPABASE_SERVICE_ROLE_KEY` is also supported.
-4. Restart the app and refresh official data, or run `npm run sync`.
+4. Restart the app and select a recent activity result to save its case and assessment. `npm run sync` refreshes the legacy APOR monitor.
 
-Use the **server secret** key, not a publishable/anon key. No database credential is sent to the browser. All four tables have row-level security enabled and no anonymous/authenticated policies. The server writes through a single transaction, `save_rule_snapshot(jsonb)`.
+Use the **server secret** key, not a publishable/anon key. No database credential is sent to the browser. All ten application tables use row-level security with server-only access. The current activity flow saves its latest case and immutable assessment through `save_activity_case(jsonb)`; the retained agenda monitor uses `save_rule_snapshot(jsonb)`.
 
-**No Edge Functions, Realtime, Storage bucket, or separate backend are needed.**
+| Storage | Purpose |
+| --- | --- |
+| `activity_records`, `activity_assessments` | Current product: latest retrieved cases and immutable evidence-backed assessments. |
+| `rule_catalog`, `catalog_import` | Imported Unified Agenda entries and import metadata, retained for catalog APIs. |
+| `rules`, `signals`, `forecasts`, `sync_runs` | Legacy monitored rules, source evidence, latest assessments, and six-month change history. |
+| `prediction_issues`, `prediction_resolutions` | Retained forecast experiment and observed outcomes; not the homepage's prediction method. |
 
-Tables:
+No Edge Functions, Realtime, or Storage bucket is required. See [storage, retention, and API details](docs/data-model.md).
 
-| Table       | Purpose                                                           |
-| ----------- | ----------------------------------------------------------------- |
-| `rules`     | Latest official rule fields                                       |
-| `signals`   | Deduplicated evidence with raw wording and first/last observation |
-| `forecasts` | Latest deterministic forecast and per-conclusion evidence IDs     |
-| `sync_runs` | Complete successful snapshots for consistent reads and history    |
+## Connect Google Gemini (legacy agenda summaries)
 
-History is preserved but not blindly fed into the current forecast. Each snapshot contains the currently applicable signals. A failed Federal Register check may carry forward earlier signals with their original timestamps and an explicit warning.
-
-## Connect Google Gemini
+The current activity flow quotes official abstracts and uses fixed assessment rules; it does not call Gemini.
 
 Set `GEMINI_API_KEY` in `.env.local`. The configurable default is **`gemini-3.5-flash-lite`**, which Google's documentation lists with free-tier input/output. Quota and account eligibility are controlled by Google; this app makes no automatic model upgrades or paid fallback calls. The earlier `gemini-2.5-flash-lite` default was replaced after Google's live API rejected it for a new account. Both standard and newer Google auth key formats are passed directly in the authentication header.
 
@@ -67,7 +71,7 @@ npm run gemini:check
 npm run sync
 ```
 
-Gemini only rewrites the official abstract into a brief expected-change summary. The request sends no customer data, database content, or credentials other than the API authentication header. Model output cannot populate stage, likelihood, dates, or publication evidence. Failure, quota exhaustion, or invalid output falls back to the exact official excerpt. A successful summary is reused while the source abstract remains identical. For the verified initial abstract, the dashboard uses a human-reviewed plain-English explanation and team relevance note. These apply only while that exact abstract is unchanged; a revised abstract falls back to its new summary and prompts review of team impact.
+Gemini only rewrites the official abstract into a brief expected-change summary. The request sends no customer data, database content, or credentials other than the API authentication header. Model output cannot populate stage, likelihood, dates, or publication evidence. Failure, quota exhaustion, or invalid output falls back to the exact official excerpt. A successful summary is reused only while the source abstract, input hash, model, and prompt version still match. For the verified initial abstract, the dashboard uses a human-reviewed plain-English explanation and team relevance note. These apply only while that exact abstract is unchanged; a revised abstract falls back to its new summary and prompts review of team impact.
 
 **Live Gemini summarization and Supabase persistence were verified on September 21, 2026 (UTC).** The browser displayed the generated summary and the per-conclusion official evidence. Credentials remain local and are not included in this repository. Mocked success, out-of-scope output, and rate-limit failure paths are also tested.
 
@@ -118,4 +122,4 @@ The public demo has API request limits (60 reads and 10 writes per minute per IP
 - [Google model documentation](https://ai.google.dev/gemini-api/docs/models) · [Google pricing](https://ai.google.dev/gemini-api/docs/pricing)
 - [Supabase server API keys](https://supabase.com/docs/guides/getting-started/api-keys)
 
-The source record also lists Regulation C / 12 CFR 1003. That cross-reference is retained faithfully in the evidence, while this product's focus and title are Regulation Z.
+The source record also lists Regulation C / 12 CFR 1003. That cross-reference is retained faithfully in the evidence, as part of the retained APOR baseline. The current homepage covers recent regulatory activity across agencies.

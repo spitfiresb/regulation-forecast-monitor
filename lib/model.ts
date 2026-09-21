@@ -1,12 +1,7 @@
 import { z } from "zod";
 
-export const RIN = "3170-AB57";
+const RIN = "3170-AB57";
 export const RULE_ID = "apor-contingency";
-export const AGENDA_INDEX =
-  "https://www.reginfo.gov/public/do/eAgendaMain?agencyCd=3170&currentPub=true&operation=OPERATION_GET_AGENCY_RULE_LIST&showStage=active";
-export const FR_API =
-  "https://www.federalregister.gov/api/v1/documents.json?conditions%5Bregulation_id_number%5D=3170-AB57&per_page=100&order=newest";
-
 export const HISTORY_MONTHS = 6;
 export const ruleIdSchema = z
   .string()
@@ -36,7 +31,7 @@ export function federalRegisterApiFor(target: RuleTarget): string {
   return `https://www.federalregister.gov/api/v1/documents.json?conditions%5Bregulation_id_number%5D=${target.rin}&per_page=100&order=newest`;
 }
 
-export const signalTypes = [
+const signalTypes = [
   "AGENDA_LISTED",
   "EXPECTED_CHANGE",
   "CFR_AFFECTED",
@@ -67,7 +62,7 @@ export const signalSchema = z.object({
   observed_at: z.iso.datetime(),
 });
 export type Signal = z.infer<typeof signalSchema>;
-export const ruleSchema = z.object({
+const ruleSchema = z.object({
   id: ruleIdSchema,
   rin: rinSchema,
   title: z.string(),
@@ -80,7 +75,7 @@ export const ruleSchema = z.object({
   legal_deadline: z.string(),
 });
 export type Rule = z.infer<typeof ruleSchema>;
-export const forecastLevels = [
+const forecastLevels = [
   "EARLY",
   "DEVELOPING",
   "STRONG",
@@ -89,7 +84,7 @@ export const forecastLevels = [
   "FINALIZED",
   "REVIEW REQUIRED",
 ] as const;
-export const forecastSchema = z.object({
+const forecastSchema = z.object({
   id: z.string(),
   rule_id: z.string(),
   likelihood: z.enum(forecastLevels),
@@ -116,7 +111,7 @@ export const forecastSchema = z.object({
   }),
 });
 export type Forecast = z.infer<typeof forecastSchema>;
-export const comparisonSchema = z.object({
+const comparisonSchema = z.object({
   previous_checked_at: z.iso.datetime(),
   incomplete: z.boolean(),
   changes: z.array(

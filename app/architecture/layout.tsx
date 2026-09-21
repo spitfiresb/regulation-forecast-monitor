@@ -5,9 +5,9 @@ import { ArchitectureNav } from "@/components/architecture-nav";
 import "./architecture.css";
 
 export const metadata: Metadata = {
-  title: "Architecture | Regulation Z Forecast Monitor",
+  title: "Architecture | Regulatory Forecast Monitor",
   description:
-    "System flow and Supabase data model for the Regulation Z Forecast Monitor.",
+    "System flow and Supabase data model for the Regulatory Forecast Monitor.",
 };
 
 export default function ArchitectureLayout({
@@ -21,7 +21,7 @@ export default function ArchitectureLayout({
         <div className="architecture-brand">
           <Workflow size={21} aria-hidden="true" />
           <span>
-            Regulation Z{" "}
+            Regulatory Monitor{" "}
             <span className="architecture-brand-detail">/ Architecture</span>
           </span>
         </div>

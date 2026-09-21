@@ -12,8 +12,7 @@ import {
 } from "./model";
 import { atomicJson, localDirectory, supabase } from "./storage";
 
-export const CATALOG_INDEX =
-  "https://www.reginfo.gov/public/do/eAgendaXmlReport";
+const CATALOG_INDEX = "https://www.reginfo.gov/public/do/eAgendaXmlReport";
 const clean = (text: string) => text.replace(/\s+/g, " ").trim();
 export function discoverCatalogUrl(html: string): string {
   const $ = load(html);
