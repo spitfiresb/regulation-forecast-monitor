@@ -262,7 +262,7 @@ export function ActivityMonitor({
           </details>
           <p id="examples-disclaimer" className="examples-disclaimer">
             {
-              "* In this MVP, most records don't produce meaningful infomration, so I took the liberty to hand pick osme I liked. Despite this, feel free to browse around, this is all real data."
+              "* In this MVP, most records don't produce meaningful information, so I took the liberty to handpick some I liked. Despite this, feel free to browse around. This is all real data."
             }
           </p>
         </div>
