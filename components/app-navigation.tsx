@@ -17,7 +17,7 @@ export function AppNavigation() {
         </p>
         <a
           className="repository-link"
-          href="https://github.com/spitfiresb/regulation-z-forecast-monitor"
+          href="https://github.com/spitfiresb/regulation-forecast-monitor"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="View source on GitHub (opens in a new tab)"

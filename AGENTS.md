@@ -1,7 +1,7 @@
 # One canonical checkout
 
 Work only in `/Users/zainsaeed/Desktop/regulation-z-forecast-monitor`.
-GitHub: `https://github.com/spitfiresb/regulation-z-forecast-monitor` (`main`).
+GitHub: `https://github.com/spitfiresb/regulation-forecast-monitor` (`main`).
 Local app: `http://127.0.0.1:3000`. Production: `https://kobaltinterview.party`.
 
 The former home-folder checkout and obsolete Desktop version have been consolidated into this directory. Do not create another checkout or start a second app on another port. Preserve concurrent changes. Read the current activity-based implementation before editing. The retired agenda monitor is available only in Git history; preserve the SQL migration chain.

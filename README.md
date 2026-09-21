@@ -53,7 +53,7 @@ For opt-in live checks, run `npx tsx scripts/check-examples.ts`. Pass the produc
 
 ## Deployment
 
-[GitHub main](https://github.com/spitfiresb/regulation-z-forecast-monitor) is the source for [kobaltinterview.party](https://kobaltinterview.party). Commit and push the exact source, ensure the checkout is clean, then run:
+[GitHub main](https://github.com/spitfiresb/regulation-forecast-monitor) is the source for [kobaltinterview.party](https://kobaltinterview.party). Commit and push the exact source, ensure the checkout is clean, then run:
 
 ```sh
 npm run deploy:cloudflare
