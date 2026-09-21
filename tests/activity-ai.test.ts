@@ -463,3 +463,32 @@ test("source text normalization removes null characters that JSONB cannot store"
   assert.equal(source.full_text_read, true);
   assert.ok(!source.excerpt.includes("\u0000"));
 });
+
+test("official text redirects are rejected without following to another origin", async (t) => {
+  let reads = 0;
+  t.mock.method(
+    globalThis,
+    "fetch",
+    async (url: unknown, init?: RequestInit) => {
+      if (String(url).includes("/full_text/")) {
+        reads++;
+        assert.equal(init?.redirect, "manual");
+        return new Response(null, {
+          status: 302,
+          headers: { Location: "https://example.com/redirect" },
+        });
+      }
+      return Response.json({
+        raw_text_url: `https://www.federalregister.gov/documents/full_text/text/2026/07/01/${latest}.txt`,
+      });
+    },
+  );
+  const agent = createResearch(history, "2026-09-21", Date.now() + 10000);
+  const step = await agent.run({
+    ...action("read_publication", latest),
+    tool: "read_publication",
+  });
+  assert.equal(step.status, "failed");
+  assert.equal(reads, 1);
+  assert.ok(!agent.report.sources.some((s) => s.full_text_read));
+});

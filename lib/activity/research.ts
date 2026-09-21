@@ -166,6 +166,8 @@ export function createResearch(
         url.searchParams.set("order", "relevance");
         url.searchParams.set("per_page", "8");
         const data = await officialJson(url.href, timeout());
+        if (!Array.isArray(data.results) && data.count !== 0)
+          throw new Error("Historical search returned an invalid result.");
         const docs = z
           .array(activityDocumentSchema)
           .parse(data.results ?? [])
@@ -213,7 +215,7 @@ export function createResearch(
             throw new Error("Official document text URL is unavailable.");
           const response = await fetch(url, {
             signal: AbortSignal.timeout(timeout()),
-            redirect: "error",
+            redirect: "manual",
             cache: "no-store",
           });
           if (!response.ok)
