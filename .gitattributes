@@ -1,0 +1,2 @@
+# Preserve government HTML fixtures exactly, including their source whitespace.
+tests/fixtures/*.html -whitespace

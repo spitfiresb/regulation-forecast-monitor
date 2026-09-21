@@ -1,0 +1,146 @@
+{
+  "rule": {
+    "id": "apor-contingency",
+    "rin": "3170-AB57",
+    "title": "Contingency Calculations for Determining Average Prime Offer Rate",
+    "summary": "Regulation Z, which implements the Truth in Lending Act (TILA), and Regulation C, which implements the Home Mortgage Disclosure Act (HMDA), provide for comparison of a mortgage loan’s annual percentage rate (APR) to the average prime offer rate (APOR) for purposes of determining the mortgage loan’s status and for reporting purposes. APOR tables are updated and published weekly by the Consumer Financial Protection Bureau. The Bureau is considering authorizing the use of contingency calculations to determine APOR values in instances when the Bureau does not publish weekly APOR tables.",
+    "stage": "Proposed Rule Stage",
+    "cfr_citation": [
+      "12 CFR 1003",
+      "12 CFR 1026"
+    ],
+    "agency": "Consumer Financial Protection Bureau(CFPB)",
+    "source_url": "https://www.reginfo.gov/public/do/eAgendaViewRule?pubId=202510&RIN=3170-AB57",
+    "publication_id": "2026",
+    "legal_deadline": "None"
+  },
+  "signals": [
+    {
+      "id": "e411583ac2ea9360cce821d7b16b53ebab8ca6251a04b1076b7238a454e90d34",
+      "rule_id": "apor-contingency",
+      "signal_type": "AGENDA_LISTED",
+      "title": "Rulemaking listed in the Unified Agenda",
+      "description": "RIN: 3170-AB57; Publication ID: 2026; Title: Contingency Calculations for Determining Average Prime Offer Rate",
+      "raw_wording": "RIN: 3170-AB57; Publication ID: 2026; Title: Contingency Calculations for Determining Average Prime Offer Rate",
+      "source_url": "https://www.reginfo.gov/public/do/eAgendaViewRule?pubId=202510&RIN=3170-AB57",
+      "source_name": "Unified Agenda · Reginfo",
+      "observed_at": "2026-09-21T04:00:13.059Z",
+      "date": null,
+      "date_precision": "unknown"
+    },
+    {
+      "id": "fa07a4d7f2de3c3bcc46a6e127011f7fcdf86a1c0d158078d193cdf5ac7317ca",
+      "rule_id": "apor-contingency",
+      "signal_type": "EXPECTED_CHANGE",
+      "title": "CFPB describes the intended change",
+      "description": "Regulation Z, which implements the Truth in Lending Act (TILA), and Regulation C, which implements the Home Mortgage Disclosure Act (HMDA), provide for comparison of a mortgage loan’s annual percentage rate (APR) to the average prime offer rate (APOR) for purposes of determining the mortgage loan’s status and for reporting purposes. APOR tables are updated and published weekly by the Consumer Financial Protection Bureau. The Bureau is considering authorizing the use of contingency calculations to determine APOR values in instances when the Bureau does not publish weekly APOR tables.",
+      "raw_wording": "Regulation Z, which implements the Truth in Lending Act (TILA), and Regulation C, which implements the Home Mortgage Disclosure Act (HMDA), provide for comparison of a mortgage loan’s annual percentage rate (APR) to the average prime offer rate (APOR) for purposes of determining the mortgage loan’s status and for reporting purposes. APOR tables are updated and published weekly by the Consumer Financial Protection Bureau. The Bureau is considering authorizing the use of contingency calculations to determine APOR values in instances when the Bureau does not publish weekly APOR tables.",
+      "source_url": "https://www.reginfo.gov/public/do/eAgendaViewRule?pubId=202510&RIN=3170-AB57",
+      "source_name": "Unified Agenda · Reginfo",
+      "observed_at": "2026-09-21T04:00:13.059Z",
+      "date": null,
+      "date_precision": "unknown"
+    },
+    {
+      "id": "fb1fc173c9a84898f27fc9a383b4fd9be22c64b3e3e746927bf56d33caea8395",
+      "rule_id": "apor-contingency",
+      "signal_type": "CFR_AFFECTED",
+      "title": "Regulation Z is affected",
+      "description": "CFR Citation: 12 CFR 1003; 12 CFR 1026",
+      "raw_wording": "CFR Citation: 12 CFR 1003; 12 CFR 1026",
+      "source_url": "https://www.reginfo.gov/public/do/eAgendaViewRule?pubId=202510&RIN=3170-AB57",
+      "source_name": "Unified Agenda · Reginfo",
+      "observed_at": "2026-09-21T04:00:13.059Z",
+      "date": null,
+      "date_precision": "unknown"
+    },
+    {
+      "id": "6d73914503fb35951bfcdb0a3e53922f494ce1a79774613c3e894833e798bab0",
+      "rule_id": "apor-contingency",
+      "signal_type": "LEGAL_DEADLINE",
+      "title": "Legal deadline",
+      "description": "Legal Deadline: None",
+      "raw_wording": "Legal Deadline: None",
+      "source_url": "https://www.reginfo.gov/public/do/eAgendaViewRule?pubId=202510&RIN=3170-AB57",
+      "source_name": "Unified Agenda · Reginfo",
+      "observed_at": "2026-09-21T04:00:13.059Z",
+      "date": null,
+      "date_precision": "unknown"
+    },
+    {
+      "id": "b430466f75debaee4660bf900be9337085738a958126fcc4ad43a7590bbfb84b",
+      "rule_id": "apor-contingency",
+      "signal_type": "PROPOSED_RULE_STAGE",
+      "title": "Proposed Rule Stage",
+      "description": "Agenda Stage of Rulemaking: Proposed Rule Stage",
+      "raw_wording": "Agenda Stage of Rulemaking: Proposed Rule Stage",
+      "source_url": "https://www.reginfo.gov/public/do/eAgendaViewRule?pubId=202510&RIN=3170-AB57",
+      "source_name": "Unified Agenda · Reginfo",
+      "observed_at": "2026-09-21T04:00:13.059Z",
+      "date": null,
+      "date_precision": "unknown"
+    },
+    {
+      "id": "ca8c1e9f11807a0ef33da19f6d0c32f5fba3c220082698ea2d4eedc39717ccf6",
+      "rule_id": "apor-contingency",
+      "signal_type": "NPRM_SCHEDULED",
+      "title": "NPRM target in agency timetable",
+      "description": "Timetable: NPRM — 07/00/2026; FR Cite: not listed",
+      "raw_wording": "Timetable: NPRM — 07/00/2026; FR Cite: not listed",
+      "source_url": "https://www.reginfo.gov/public/do/eAgendaViewRule?pubId=202510&RIN=3170-AB57",
+      "source_name": "Unified Agenda · Reginfo",
+      "observed_at": "2026-09-21T04:00:13.059Z",
+      "date": "2026-07",
+      "date_precision": "month"
+    },
+    {
+      "id": "f34f1267d8b5fbe27f218744fe8dea70804b79355d5b168a12c6235a62831d8e",
+      "rule_id": "apor-contingency",
+      "signal_type": "FR_CHECK",
+      "title": "Federal Register publication check",
+      "description": "Exact RIN lookup: 3170-AB57. Matching published documents: 0. Proposed rules: 0. Final rules: 0. This RIN lookup may miss documents without RIN metadata.",
+      "raw_wording": "Exact RIN lookup: 3170-AB57. Matching published documents: 0. Proposed rules: 0. Final rules: 0. This RIN lookup may miss documents without RIN metadata.",
+      "source_url": "https://www.federalregister.gov/api/v1/documents.json?conditions%5Bregulation_id_number%5D=3170-AB57&per_page=100&order=newest",
+      "source_name": "Federal Register API",
+      "observed_at": "2026-09-21T04:00:13.059Z",
+      "date": "2026-09-21",
+      "date_precision": "day"
+    }
+  ],
+  "forecast": {
+    "id": "forecast-apor-contingency",
+    "rule_id": "apor-contingency",
+    "likelihood": "DEVELOPING",
+    "confidence": "Medium",
+    "expected_change": "The Bureau is considering authorizing the use of contingency calculations to determine APOR values in instances when the Bureau does not publish weekly APOR tables.",
+    "summary_method": "official-excerpt",
+    "next_action": "Proposed rule (NPRM)",
+    "expected_action_date": "2026-07",
+    "final_rule_date": null,
+    "effective_date": null,
+    "reasoning": [
+      "The action is officially in Proposed Rule Stage and CFPB has described its intended change. This is evidence of development, not a commitment to finalize.",
+      "No matching proposed or final rule was found in the exact-RIN Federal Register lookup checked 2026-09-21. Documents without RIN metadata may be missed."
+    ],
+    "updated_at": "2026-09-21T04:00:13.059Z",
+    "evidence": {
+      "change": [
+        "fa07a4d7f2de3c3bcc46a6e127011f7fcdf86a1c0d158078d193cdf5ac7317ca",
+        "fb1fc173c9a84898f27fc9a383b4fd9be22c64b3e3e746927bf56d33caea8395"
+      ],
+      "likelihood": [
+        "e411583ac2ea9360cce821d7b16b53ebab8ca6251a04b1076b7238a454e90d34",
+        "b430466f75debaee4660bf900be9337085738a958126fcc4ad43a7590bbfb84b",
+        "f34f1267d8b5fbe27f218744fe8dea70804b79355d5b168a12c6235a62831d8e"
+      ],
+      "timing": [
+        "6d73914503fb35951bfcdb0a3e53922f494ce1a79774613c3e894833e798bab0",
+        "ca8c1e9f11807a0ef33da19f6d0c32f5fba3c220082698ea2d4eedc39717ccf6",
+        "f34f1267d8b5fbe27f218744fe8dea70804b79355d5b168a12c6235a62831d8e"
+      ]
+    }
+  },
+  "synced_at": "2026-09-21T04:00:13.059Z",
+  "federal_register_checked_at": "2026-09-21T04:00:13.059Z",
+  "warnings": []
+}
