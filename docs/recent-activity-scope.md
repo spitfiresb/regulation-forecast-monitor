@@ -15,7 +15,7 @@ This is the current product scope. It supersedes the agenda-catalog discovery an
 
 `GET /api/activity?q=...&page=...&agency=...&type=...` queries the Federal Register API directly, with publication-date bounds. It includes Rules and Proposed Rules, plus notices with a RIN or an identifiable procedural update. Unrelated meeting/grant notices are filtered out. Pagination follows source pages, so a page may have fewer than twenty qualifying records. No total count of qualifying activity is invented. Search has a one-minute, date-keyed process cache; it does not depend on an incomplete local backfill.
 
-This scope is published Federal Register activity. It does not imply complete coverage of unpublished agency actions, agenda revisions, litigation, or all current regulations. Agenda entries with no recent publication do not enter this search. The older Reginfo catalog remains available to legacy APIs but is not the homepage's search source.
+This scope is published Federal Register activity. It does not imply complete coverage of unpublished agency actions, agenda revisions, litigation, or all current regulations. Agenda entries with no recent publication do not enter this search. The older Reginfo catalog and its API routes have been retired; their implementation remains in Git history.
 
 ## Linking and current status
 
@@ -50,4 +50,4 @@ Migration `202609210008_recent_activity.sql` adds:
 
 Both tables use RLS and server-only access. The service role can update the latest record but cannot update or delete archived assessments. Search eligibility is calculated from publication dates on every query, independently of stored-record retention. Existing six-month operational snapshot cleanup does not delete selected older source context from these records.
 
-The old six-month-forward probability experiment and legacy pages remain in the repository for reference; the new main flow does not use their forecast window or displayed percentages.
+The old probability experiment and agenda pages have been removed from application source and remain available in Git history. Their SQL migrations are preserved.

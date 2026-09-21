@@ -1,16 +1,3 @@
-export function parseAgendaDate(raw: string): {
-  date: string | null;
-  precision: "day" | "month" | "unknown";
-} {
-  const match = raw.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if (!match) return { date: null, precision: "unknown" };
-  const [, month, day, year] = match;
-  if (+month < 1 || +month > 12) return { date: null, precision: "unknown" };
-  if (day === "00") return { date: `${year}-${month}`, precision: "month" };
-  const date = `${year}-${month}-${day}`;
-  if (!isIsoDay(date)) return { date: null, precision: "unknown" };
-  return { date, precision: "day" };
-}
 export function isIsoDay(value: string): boolean {
   return (
     /^\d{4}-\d{2}-\d{2}$/.test(value) &&
@@ -42,17 +29,4 @@ export function formatDate(value: string | null, withTime = false): string {
         }
       : {}),
   }).format(date);
-}
-export function targetElapsed(date: string | null, now = new Date()): boolean {
-  if (!date) return false;
-  if (date.length === 7) return date < now.toISOString().slice(0, 7);
-  return date.slice(0, 10) < now.toISOString().slice(0, 10);
-}
-
-// Only unambiguous proposal-publication labels. Comment deadlines, ANPRMs,
-// supplemental proposals and companion direct-final procedures stay separate.
-export function isProposalAction(action: string): boolean {
-  return /^(nprm|proposed rule|notice of proposed rulemaking|proposed nprm)$/i.test(
-    action.trim(),
-  );
 }

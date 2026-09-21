@@ -12,7 +12,6 @@ import {
   sameProceeding,
 } from "../lib/activity/analysis";
 import { searchActivity, collectRelated } from "../lib/activity/client";
-import { normalizeFederalRegister } from "../lib/federal-register";
 const docs = documents.map((d) => activityDocumentSchema.parse(d));
 const now = "2026-09-21T12:00:00Z";
 const history = docs.map(classifyDocument);
@@ -124,21 +123,6 @@ test("a shared RIN alone does not join different dockets", () => {
     false,
   );
   assert.equal(sameProceeding(docs[0], docs[1]), true);
-});
-test("legacy normalization no longer counts delay notices as final-rule publications", () => {
-  const signals = normalizeFederalRegister(docs, now, {
-    id: "1903-aa20",
-    rin: "1903-AA20",
-    agency_code: "1903",
-  });
-  assert.equal(
-    signals.filter((s) => s.signal_type === "FINAL_RULE_PUBLISHED").length,
-    1,
-  );
-  assert.equal(
-    signals.filter((s) => s.signal_type === "REVIEW_REQUIRED").length,
-    5,
-  );
 });
 test("search sends date bounds to the source and rejects out-of-window returned documents", async () => {
   const original = globalThis.fetch;

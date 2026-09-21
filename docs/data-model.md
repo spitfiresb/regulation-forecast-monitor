@@ -1,86 +1,58 @@
 # Regulatory monitor data model
 
-The current homepage searches recent Federal Register publications and investigates linked history and forecasts future publication events. The agenda catalog and earlier forecast experiment remain available through retained APIs. They have different records and retention rules; none is an unused database solely because it is absent from the homepage.
+The active application investigates recent Federal Register publications and forecasts future publication events. The retired agenda monitor's application code and API routes have been removed. Its database objects remain in the preserved migration chain.
 
-## Records
+## Active records
 
-| Table | Purpose |
-| --- | --- |
-| `activity_records` | Latest retrieved case, keyed by selected Federal Register document number. |
-| `activity_assessments` | Immutable copies of linked history, research traces, and event forecasts, keyed by a content fingerprint. |
-| `rule_catalog` | Latest imported agenda entry per RIN, including agency, abstract, stage, CFR references, timetable, and edition. `is_current` indicates membership in the latest import. |
-| `catalog_import` | Metadata for the last complete import: edition, source URL, observation time, and entry count. |
-| `rules` | Latest complete snapshot for each monitored agenda rule. APOR retains `apor-contingency`; other rule IDs are lowercase RINs. |
-| `signals` | Deduplicated source evidence with original wording, dates, source links, and observation timestamps. |
-| `forecasts` | Latest legacy procedural assessment; stage labels are not adoption probabilities. |
-| `sync_runs` | Changed legacy snapshots from the past six calendar months, not every successful check. |
-| `prediction_issues` | Immutable evidence and results from the retained publication-forecast experiment. |
-| `prediction_resolutions` | Append-only observed outcomes for those issues. |
+| Table                  | Purpose                                                                                                                                |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `activity_records`     | Latest case keyed by selected Federal Register document number. Includes publication date, check time, and the complete JSONB payload. |
+| `activity_assessments` | Immutable assessment payloads keyed by content fingerprint, linked to the selected publication.                                        |
 
-All ten tables have row-level security and server-only access. `save_activity_case(jsonb)` writes the latest case and assessment together and rejects stale writes. `save_rule_snapshot(jsonb)` transactionally writes legacy rule records and evidence. See [the current activity method](recent-activity-scope.md) and [the earlier forecast evaluation](forecast-evaluation.md).
+`save_activity_case(jsonb)` writes both records in one transaction, rejects stale writes, and deduplicates identical fingerprints. Row-level security restricts access to the server; the service role cannot update or delete archived assessments. Browser clients receive only the application API response.
 
-## Catalog import and identity
+A case contains the selected publication, linked history, excluded-match count, linkage and completeness findings, official excerpt, assessment, check time, and browsing window. AI provenance includes model and prompt versions, input hash, research actions, inspected passages, comparisons, cited reasoning, target event, forecast window, and review. When revision occurs, `ai.review_attempts` preserves drafts, validation errors, and model reviews. These are JSONB fields, not separate tables.
 
-Catalog imports are validated before saving; failed downloads or invalid data leave the previous catalog intact. Supabase imports use one transaction through `save_rule_catalog(jsonb)`. Entries absent from a later edition remain with `is_current=false`; absence does not mean withdrawal. Search includes only current entries. The local adapter atomically replaces `catalog.json` and does not retain absent entries. Both adapters reject stale imports.
+Source metadata remains unchanged. An unambiguous explicit new date in a delay notice's DATES text may supersede conflicting structured metadata in the assessment, with `effective_date_note` disclosing the discrepancy. Ambiguous or invalid new dates remain unresolved.
 
-Catalog import does not check publications, create forecasts, or backfill historical observations. No foreign key requires a monitored rule to appear in the current catalog. CFR parts are references, not child rulemakings. Full eCFR section browsing is outside this import.
+## Windows, cache, and retention
 
-The importer discovers the newest Reginfo XML edition. Edition dates and retrieval timestamps remain separate. Legacy rule refresh first checks the active-agenda index, then falls back to the imported edition for completed or long-term entries; it separately checks Federal Register publications.
+The browsing window covers six calendar months of publication dates. Supporting history may be older. Forecast horizons are independently selected as 90, 180, or 365 days.
 
-## Time windows and retention
+Ordinary selections can reuse a successful current-version assessment for up to one hour on the same UTC day. Example links and refresh bypass this cache. Unavailable or reviewed-withheld results are not reused as successful research. There are no bundled example-response files or fallback to an old successful forecast.
 
-- **Current search:** publications from the past six calendar months. Linked history may be older. This is a search filter, not a forecast deadline or a database-retention policy.
-- **Activity storage:** latest cases and immutable assessments have no scheduled retention cleanup in the current migration. The service role cannot update or delete archived assessments. Fingerprints identify identical payloads. New forecast issue times create new immutable assessments. The JSONB payload includes model-chosen tool actions, inspected source excerpts, comparisons, a target event and window, cited reasoning, and the model review, including validation findings and both attempts when a draft is revised; these are not separate tables. The assessment can also include an effective-date discrepancy note, while the publication retains its original metadata.
-- **Agenda history:** retain changed snapshots for six calendar months by observation time, with month-end clamping. Latest rule snapshots and evidence referenced by current or retained history survive independently. Source content, forecast fields (including summary text and method), and warnings can create versions; retrieval timestamps and comparison prose do not. The dashboard's official-source comparison separately excludes generated summary changes.
-- **Forecast experiment:** retain issues for 12 months and at least 30 days after their forecast window ends. Evidence and the evaluation report are embedded in each issue, independently of operational history.
+Active cases and assessments have no scheduled retention cleanup in the current migrations. A new issue time can create a new immutable assessment. Local development uses `.data/activity` and `.data/activity-assessments` when Supabase is unconfigured. Hosted deployments set `REQUIRE_HOSTED_STORAGE=true`.
 
-Legacy rule writes prune that rule's expired history. `npm run catalog:import` also runs global history cleanup. Migration 003 schedules it at 03:30 UTC when `pg_cron` is available; migration 005 separately schedules prediction cleanup at 03:45 UTC. Without `pg_cron`, schedule the relevant cleanup externally. `npm run history:prune` handles agenda history, not activity assessments or prediction-ledger retention. History reads exclude expired versions between cleanup runs.
+## Preserved historical schema
 
-## Migrations and operations
+Eight tables belong to the retired monitor: `rule_catalog`, `catalog_import`, `rules`, `signals`, `forecasts`, `sync_runs`, `prediction_issues`, and `prediction_resolutions`. Their functions, data, and migration-installed retention schedules are preserved. Current application code does not read or write these tables. The retired implementation is available in Git history.
 
-Apply unapplied migrations in filename order:
+Apply only unapplied migrations, in filename order:
 
-| Suffix after `20260921` | Migration |
-| --- | --- |
-| `0001_regulation_z.sql` | Original monitored rules, evidence, forecasts, and snapshots. |
-| `0002_general_rule_catalog.sql` | General catalog, current snapshots, and change-only history. |
-| `0003_history_retention_schedule.sql` | Scheduled agenda-history retention when cron is available. |
-| `0004_catalog_safe_update.sql` | Catalog updates compatible with safe-update checks. |
-| `0005_prediction_ledger.sql` | Immutable forecast ledger and ranked catalog search. |
-| `0006_search_relevance.sql` | Search relevance fixes. |
-| `0007_catalog_browse.sql` | Agency-category filtering in catalog search. |
-| `0008_recent_activity.sql` | Current activity records, assessments, and transactional saves. |
+| Suffix after `20260921`                   | Migration                                                        |
+| ----------------------------------------- | ---------------------------------------------------------------- |
+| `0001_regulation_z.sql`                   | Original monitored rules, evidence, forecasts, and snapshots.    |
+| `0002_general_rule_catalog.sql`           | General catalog, current snapshots, and change-only history.     |
+| `0003_history_retention_schedule.sql`     | Scheduled agenda-history retention when cron is available.       |
+| `0004_catalog_safe_update.sql`            | Catalog updates compatible with safe-update checks.              |
+| `0005_prediction_ledger.sql`              | Immutable forecast ledger and ranked catalog search.             |
+| `0006_search_relevance.sql`               | Search relevance fixes.                                          |
+| `0007_catalog_browse.sql`                 | Agency-category filtering in catalog search.                     |
+| `0008_recent_activity.sql`                | Current activity records, assessments, and transactional saves.  |
 | `0009_remove_redundant_history_index.sql` | Recovered cleanup: removes the duplicate per-rule history index. |
 
-The obsolete Desktop checkout called the index cleanup `202609210005_remove_redundant_history_index.sql`. That version collides with the canonical prediction-ledger migration, so the recovered file is **009**. Its `DROP INDEX IF EXISTS` is safe if the old cleanup already removed the index. Do not replace or skip the prediction-ledger migration based on the obsolete checkout's numbering. Inspect migration history before applying anything to an existing database.
+Migration 009 preserves the recovered redundant-index cleanup without colliding with migration 005, the prediction ledger. Do not renumber or remove earlier migrations. This application cleanup adds no migration and deletes no hosted data.
 
-The unique `(rule_id, synced_at)` index still supports newest-first history reads. The timestamp-only index remains for global pruning. Recovery did not execute hosted migrations or delete hosted data.
+## Active API
 
-```sh
-npm run catalog:import           # import the latest agenda; does not bulk-refresh rules
-npm run sync                     # refresh the legacy APOR monitor
-npm run sync -- 3170-AB57         # refresh an exact RIN from the imported catalog
-npm run history:prune            # prune expired legacy history
-```
+| Interface                                      | Purpose                                                                                                               |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `GET /api/activity?agency=...&type=...&page=1` | Browse recent publications with agency and publication-type filters.                                                  |
+| `GET /api/activity/agencies`                   | Agency options for the native dropdown.                                                                               |
+| `POST /api/activity/[document]/assess`         | Retrieve linked history, research a forecast, and save the assessment. `?refresh=true` bypasses the assessment cache. |
 
-Configure server credentials as described in [`.env.example`](../.env.example). Without Supabase, local files under `.data` store the catalog, per-rule latest/history, activity cases, activity assessments, and forecast issues. The original `.data/latest.json` remains readable for APOR. Local storage is for a single persistent process; hosted deployments requiring durable storage set `REQUIRE_HOSTED_STORAGE=true`.
-
-## Current and retained interfaces
-
-| Interface | Purpose |
-| --- | --- |
-| `GET /api/activity?q=...&page=1` | Current homepage search over recent published activity. |
-| `POST /api/activity/[document]/assess` | Retrieve linked history and save a next-status assessment; `?refresh=true` forces a new check. |
-| `GET /api/rules?q=...&category=...&agency=...&limit=25&offset=0` | Retained ranked catalog search, current import metadata, and previously checked IDs. Category IDs come from `lib/browse.ts`; these are curated agency groups, not official subject classifications. |
-| `GET /api/rules/[rin]` | Retained catalog entry, saved snapshot, and earlier publication-forecast assessment. |
-| `POST /api/rules/[rin]/refresh` | Refresh a selected agenda rule and its earlier forecast assessment. |
-| `GET /api/rule?id=apor-contingency` | Legacy saved monitor snapshot. Unmonitored non-default IDs return 404. |
-| `POST /api/sync` | Legacy APOR refresh only, with a 30-second cooldown. |
-| `GET /api/forecasts/[id]/evidence` | Immutable issue, source evidence, and original evaluation report. |
-| `GET /api/evaluations/[version]` | Public evaluation report for the earlier experiment. |
-
-Write routes require same-origin or bearer-token authorization. The deployed Worker adds its own request limits; see [deployment](cloudflare-deployment.md). `getHistory(ruleId)` and `syncRule(target)` are server functions, not extra HTTP endpoints.
+Assessment writes require the configured same-origin request or a server bearer token. Cloudflare adds request limits. Retired `/api/rule`, `/api/rules`, `/api/sync`, `/api/forecasts`, and `/api/evaluations` routes are no longer served.
 
 ## Verification
 
-Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run test:db`. The database test upgrades a populated, disposable PostgreSQL cluster through all migration files and checks catalog search, immutable ledgers, activity transactions, retention, RLS, rollback, stale writes, and the remaining history index. It does not connect to the hosted database.
+`npm run test:db` applies all migrations to a disposable local PostgreSQL cluster and verifies active transaction behavior, RLS, immutable assessments, deduplication, rollback, and stale-write rejection. It does not connect to hosted Supabase. See [research scope](recent-activity-scope.md) and [deployment](cloudflare-deployment.md).

@@ -18,22 +18,19 @@ git push origin main
 npm run deploy:cloudflare
 ```
 
-Existing Worker secrets survive later deployments. Initial deployment requires `SUPABASE_URL`, `SUPABASE_SECRET_KEY` (or the legacy `SUPABASE_SERVICE_ROLE_KEY`), and optionally `SYNC_SECRET`. Configure these as Cloudflare secrets, never `NEXT_PUBLIC_` variables. The main activity flow uses `GEMINI_API_KEY` for AI forecasts. Configure it as a Cloudflare secret. `GEMINI_MODEL` is optional and defaults to `gemini-3.5-flash-lite`. If AI is unconfigured or unavailable, the UI labels the rules-based fallback.
+Existing Worker secrets survive later deployments. Initial deployment requires `SUPABASE_URL`, `SUPABASE_SECRET_KEY` (or the legacy `SUPABASE_SERVICE_ROLE_KEY`), and optionally `SYNC_SECRET`. Configure these as Cloudflare secrets, never `NEXT_PUBLIC_` variables. The main activity flow uses `GEMINI_API_KEY` for AI forecasts. Configure it as a Cloudflare secret. `GEMINI_MODEL` is optional and defaults to `gemini-3.5-flash-lite`. If AI is unconfigured or unavailable, no generated prediction is issued. There is no rules-based or saved-success prediction fallback.
 
 `APP_ORIGIN` must match the exact public HTTPS origin. `REQUIRE_HOSTED_STORAGE=true` prevents a missing database configuration from falling back to ephemeral local files. All current migrations, including `202609210008_recent_activity.sql`, must be applied to Supabase.
 
 The build script removes OpenNext's generated local environment defaults and checks artifacts for local credential values. Production resolves secrets at runtime. Always deploy via the package scripts; do not bypass this sanitization with a raw OpenNext build.
 
-## Preview and verify
+## Verify
 
-```sh
-npm run build:cloudflare
-npm run preview:cloudflare
-```
+Use the existing localhost app on port 3000 for development. `npm run build:cloudflare` validates the Worker bundle without starting another server.
 
-For local Worker testing, put the Supabase values in the ignored `.dev.vars` file. Wrangler rewrites local request origins to the configured route hostname: with this configuration and HTTP preview, set local `APP_ORIGIN=http://kobaltinterview.party`. Production remains HTTPS.
+After deployment, verify the homepage, agency options, browsing results, and a live example through `/api/activity/[document]/assess?refresh=true`. Confirm the response has a new check time and inspect its actual AI status and review; an abstention is not a forecast. A POST with an unrelated Origin must return 403. Retired routes and removed `/examples/*.json` assets must return 404.
 
-Verify the homepage, `/api/activity?q=1903-AA20`, and selecting a result in the browser. Source refresh must persist through Supabase. A POST with an unrelated Origin must return 403. API requests beyond their budget return 429 with a retry message.
+`npx tsx scripts/check-examples.ts https://kobaltinterview.party 1` runs one live pass through the examples. It calls real services, reports every outcome, and never installs the results as product fixtures.
 
 ## Public access and limits
 
