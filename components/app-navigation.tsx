@@ -10,10 +10,21 @@ export function AppNavigation() {
   const dialog = useRef<HTMLDialogElement>(null);
   return (
     <>
-      <p className="ai-legend">
-        <span aria-hidden="true">*</span> Text highlighted in light blue or
-        shown in blue is AI generated.
-      </p>
+      <div className="site-topbar">
+        <p className="ai-legend">
+          <span aria-hidden="true">*</span> Text highlighted in light blue or
+          shown in blue is AI generated.
+        </p>
+        <a
+          className="repository-link"
+          href="https://github.com/spitfiresb/regulation-z-forecast-monitor"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View source on GitHub (opens in a new tab)"
+        >
+          GitHub <span aria-hidden="true">↗</span>
+        </a>
+      </div>
       <nav className="floating-nav" aria-label="Main navigation">
         <Link
           href="/"

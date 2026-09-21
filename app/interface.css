@@ -4,7 +4,29 @@
   --ui-ink: #283540;
   --ui-line: #dce3e8;
 }
+.site-topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+}
+.repository-link {
+  grid-column: 3;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 24px;
+  padding: 5px 0;
+  color: var(--ui-ink);
+  font-size: 12px;
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+.repository-link:hover {
+  text-decoration: underline;
+}
 .ai-legend {
+  grid-column: 2;
   margin: 0;
   padding: 13px 20px 5px;
   text-align: center;
@@ -446,6 +468,18 @@
   }
 }
 @media (max-width: 760px) {
+  .site-topbar {
+    grid-template-columns: 1fr auto;
+  }
+  .repository-link {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 8px 20px 0 0;
+  }
+  .site-topbar .ai-legend {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
   .app-content {
     margin-left: 0;
     padding-bottom: 82px;
