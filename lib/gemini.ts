@@ -14,7 +14,7 @@ export async function summarizeChange(
   };
   const key = process.env.GEMINI_API_KEY;
   if (!key) return fallback;
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
+  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
   if (!/^[a-z0-9.-]+$/.test(model))
     return {
       ...fallback,

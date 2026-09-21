@@ -51,7 +51,7 @@ History is preserved but not blindly fed into the current forecast. Each snapsho
 
 ## Connect Google Gemini
 
-Set `GEMINI_API_KEY` in `.env.local`. The configurable default is **`gemini-2.5-flash-lite`**, which Google's documentation lists with free-tier input/output. Quota and account eligibility are controlled by Google; this app makes no automatic model upgrades or paid fallback calls.
+Set `GEMINI_API_KEY` in `.env.local`. The configurable default is **`gemini-3.5-flash-lite`**, which Google's documentation lists with free-tier input/output. Quota and account eligibility are controlled by Google; this app makes no automatic model upgrades or paid fallback calls. The earlier `gemini-2.5-flash-lite` default was replaced after Google's live API rejected it for a new account. Both standard and newer Google auth key formats are passed directly in the authentication header.
 
 ```sh
 npm run gemini:check
@@ -60,7 +60,7 @@ npm run sync
 
 Gemini only rewrites the official abstract into a brief expected-change summary. The request sends no customer data, database content, or credentials other than the API authentication header. Model output cannot populate stage, likelihood, dates, or publication evidence. Failure, quota exhaustion, or invalid output falls back to the exact official excerpt. A successful summary is reused while the source abstract remains identical.
 
-**The real Gemini call remains untested until a key is supplied.** Mocked success, malformed/out-of-scope output, and rate-limit failure paths are tested.
+**Live Gemini summarization and Supabase persistence were verified on September 21, 2026 (UTC).** The browser displayed the generated summary and the per-conclusion official evidence. Credentials remain local and are not included in this repository. Mocked success, out-of-scope output, and rate-limit failure paths are also tested.
 
 ## Forecast logic
 
@@ -95,7 +95,7 @@ GitHub Actions runs lint, tests, and the production build on pushes and pull req
 
 ## Deployment
 
-Deploy this **native Next.js** app to a Node-compatible host such as Vercel. Configure Supabase for durable storage; the local JSON adapter is for development or a single Node process with a persistent filesystem. It is not shared storage for multiple instances. No live Supabase project or hosted deployment has been provisioned by this repository.
+Deploy this **native Next.js** app to a Node-compatible host such as Vercel. Configure Supabase for durable storage; the local JSON adapter is for development or a single Node process with a persistent filesystem. It is not shared storage for multiple instances. The current local installation is connected to the Kobalt Interview Supabase project, with the migration applied and live writes verified. No hosted website deployment has been provisioned.
 
 Set `APP_ORIGIN` to the exact deployed origin (for example, `https://your-monitor.example.com`, without a trailing slash). The browser's refresh request must match it. Optional automation can use `Authorization: Bearer <SYNC_SECRET>`. Refresh requests have a short cooldown, and simultaneous requests in one process are coalesced. The stored last-sync time also avoids redundant refreshes across instances after completion.
 
@@ -106,7 +106,7 @@ There is no application sign-in flow in this MVP. Keep the deployment behind the
 - [Current CFPB Unified Agenda](https://www.reginfo.gov/public/do/eAgendaMain?agencyCd=3170&currentPub=true&operation=OPERATION_GET_AGENCY_RULE_LIST&showStage=active)
 - [Initial rule record](https://www.reginfo.gov/public/do/eAgendaViewRule?RIN=3170-AB57&pubId=202510)
 - [Federal Register RIN API lookup](https://www.federalregister.gov/api/v1/documents.json?conditions%5Bregulation_id_number%5D=3170-AB57&per_page=100&order=newest)
-- [Gemini Flash-Lite model](https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash-lite) · [Google pricing](https://ai.google.dev/gemini-api/docs/pricing)
+- [Google model documentation](https://ai.google.dev/gemini-api/docs/models) · [Google pricing](https://ai.google.dev/gemini-api/docs/pricing)
 - [Supabase server API keys](https://supabase.com/docs/guides/getting-started/api-keys)
 
 The source record also lists Regulation C / 12 CFR 1003. That cross-reference is retained faithfully in the evidence, while this product's focus and title are Regulation Z.
