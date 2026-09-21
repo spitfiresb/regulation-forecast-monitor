@@ -7,7 +7,11 @@ export function supabase() {
   const url = process.env.SUPABASE_URL;
   const key =
     process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url && !key) return null;
+  if (!url && !key) {
+    if (process.env.REQUIRE_HOSTED_STORAGE === "true")
+      throw new Error("Supabase must be configured for this deployment.");
+    return null;
+  }
   if (!url || !key)
     throw new Error(
       "Supabase configuration is incomplete. Both the project URL and server secret key are required.",

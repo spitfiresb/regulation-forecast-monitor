@@ -19,12 +19,16 @@
     "evaluation:collect": "tsx scripts/evaluation/collect.ts",
     "evaluation:audit": "tsx scripts/evaluation/audit.ts",
     "evaluation:run": "tsx scripts/evaluation/evaluate.ts",
-    "predictions:resolve": "tsx scripts/resolve-predictions.ts"
+    "predictions:resolve": "tsx scripts/resolve-predictions.ts",
+    "build:cloudflare": "opennextjs-cloudflare build && node scripts/sanitize-worker-env.mjs",
+    "preview:cloudflare": "wrangler dev --port 8787",
+    "deploy:cloudflare": "npm run build:cloudflare && opennextjs-cloudflare deploy"
   },
   "keywords": [],
   "author": "",
   "dependencies": {
     "@next/env": "^16.3.5",
+    "@opennextjs/cloudflare": "^1.20.6",
     "@supabase/supabase-js": "^2.116.0",
     "cheerio": "^1.2.0",
     "lucide-react": "^1.47.0",
@@ -44,7 +48,8 @@
     "prettier": "^3.9.8",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "wrangler": "^4.135.0"
   },
   "private": true,
   "type": "module",

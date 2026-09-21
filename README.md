@@ -106,11 +106,9 @@ GitHub Actions runs lint, tests, and the production build on pushes and pull req
 
 ## Deployment
 
-Deploy this **native Next.js** app to a Node-compatible host such as Vercel. Configure Supabase for durable storage; the local JSON adapter is for development or a single Node process with a persistent filesystem. It is not shared storage for multiple instances. The current local installation is connected to the Kobalt Interview Supabase project, with the migration applied and live writes verified. No hosted website deployment has been provisioned.
+Deploy to Cloudflare Workers with OpenNext using `npm run deploy:cloudflare`. The domain is **https://kobaltinterview.party**. Supabase provides durable storage, and server credentials are configured as Cloudflare secrets. The build strips local environment defaults from Worker artifacts.
 
-Set `APP_ORIGIN` to the exact deployed origin (for example, `https://your-monitor.example.com`, without a trailing slash). The browser's refresh request must match it. Optional automation can use `Authorization: Bearer <SYNC_SECRET>`. Refresh requests have a short cooldown, and simultaneous requests in one process are coalesced. The stored last-sync time also avoids redundant refreshes across instances after completion.
-
-There is no application sign-in flow in this MVP. Keep the deployment behind the host's private-access control if it must stay private; GitHub repository privacy does not control website access. The origin check prevents cross-site browser writes, not requests by arbitrary API clients. If this becomes a public service, add authenticated refresh access and a distributed rate limiter.
+The public demo has API request limits (60 reads and 10 writes per minute per IP per Cloudflare location), with no sign-in. Forecasts remain experimental. See [deployment, secrets, preview, and verification instructions](docs/cloudflare-deployment.md).
 
 ## Official references
 

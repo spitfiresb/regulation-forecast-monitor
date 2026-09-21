@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "kobalt-interview",
+  "account_id": "b3d94e62cce86cd83b252200d9da61b0",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-09-21",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "kobalt-interview" }],
+  "routes": [{ "pattern": "kobaltinterview.party", "custom_domain": true }],
+  "vars": {
+    "APP_ORIGIN": "https://kobaltinterview.party",
+    "REQUIRE_HOSTED_STORAGE": "true"
+  },
+  "ratelimits": [
+    { "name": "API_READ_LIMIT", "namespace_id": "2026092101", "simple": { "limit": 60, "period": 60 } },
+    { "name": "API_WRITE_LIMIT", "namespace_id": "2026092102", "simple": { "limit": 10, "period": 60 } }
+  ],
+  "observability": { "enabled": true }
+}
