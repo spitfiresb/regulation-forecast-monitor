@@ -39,18 +39,20 @@ export function ActivityMonitor({
   const [publicationType, setPublicationType] = useState(initialType);
   const [agencies, setAgencies] = useState<{ id: number; name: string }[]>([]);
   const [agencyError, setAgencyError] = useState(false);
-  const [example, setExample] = useState(initialExample);
+  const [selectedDocument, setSelectedDocument] = useState(
+    initialExample || initialDocument,
+  );
   const exampleMenu = useRef<HTMLDetailsElement>(null);
   const serial = useRef(0);
   const heading = useRef<HTMLHeadingElement>(null);
   async function choose(document: string, refresh = false, push = true) {
     const ticket = ++serial.current;
-    setExample("");
+    setSelectedDocument(document);
     setOpen(false);
     setBusy(true);
     setError("");
-    if (!refresh || example) setRecord(null);
-    if (push || example)
+    setRecord(null);
+    if (push)
       history.pushState(
         {},
         "",
@@ -79,37 +81,10 @@ export function ActivityMonitor({
     }
   }
   async function chooseExample(id: string, push = true) {
-    if (!curatedExamples.some((item) => item.id === id)) return;
-    const ticket = ++serial.current;
-    setExample(id);
-    setOpen(false);
     setSearching(false);
-    setBusy(true);
-    setRecord(null);
-    setError("");
     if (exampleMenu.current) exampleMenu.current.open = false;
     if (push) history.pushState({}, "", `/?example=${encodeURIComponent(id)}`);
-    try {
-      const response = await fetch(`/examples/${encodeURIComponent(id)}.json`, {
-        signal: AbortSignal.timeout(15000),
-      });
-      if (!response.ok)
-        throw new Error(
-          "This saved example could not be loaded. Please select it again.",
-        );
-      const data: ActivityCase = await response.json();
-      if (ticket === serial.current) {
-        setRecord(data);
-        requestAnimationFrame(() => heading.current?.focus());
-      }
-    } catch (e) {
-      if (ticket === serial.current)
-        setError(
-          e instanceof Error ? e.message : "This example could not be loaded.",
-        );
-    } finally {
-      if (ticket === serial.current) setBusy(false);
-    }
+    await choose(id, true, false);
   }
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -143,7 +118,7 @@ export function ActivityMonitor({
   ) {
     const ticket = ++serial.current;
     setSearching(true);
-    setExample("");
+    setSelectedDocument("");
     setBusy(false);
     setError("");
     setRecord(null);
@@ -265,7 +240,7 @@ export function ActivityMonitor({
                 <li key={item.id}>
                   <a
                     href={`/?example=${item.id}`}
-                    aria-current={example === item.id ? "page" : undefined}
+                    aria-current={record?.id === item.id ? "page" : undefined}
                     onClick={(event) => {
                       if (
                         event.button !== 0 ||
@@ -303,17 +278,15 @@ export function ActivityMonitor({
         )}
         {busy && (
           <p className="record-status">
-            {example
-              ? "Loading saved example…"
-              : "Researching publications and historical comparisons…"}
+            Researching publications and historical comparisons…
           </p>
         )}
       </div>
       {error && (
         <p role="alert" className="record-error">
           {error}
-          {!record && initialDocument && (
-            <button onClick={() => void choose(initialDocument, true, false)}>
+          {!record && selectedDocument && (
+            <button onClick={() => void choose(selectedDocument, true, false)}>
               Retry source check
             </button>
           )}
@@ -403,7 +376,7 @@ export function ActivityMonitor({
               ++serial.current;
               setBusy(false);
               setRecord(null);
-              setExample("");
+              setSelectedDocument("");
               setError("");
               setOpen(true);
               setAgency(results.agency ?? "");
@@ -417,24 +390,6 @@ export function ActivityMonitor({
           >
             ← Back to results
           </button>
-          {example && (
-            <div className="example-notice">
-              <p>
-                <strong>Saved example</strong> · Assessed{" "}
-                {formatDate(record.checked_at)}
-                <br />
-                This is the reviewed AI output from that date.
-              </p>
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => void choose(record.id, true)}
-              >
-                View latest assessment{" "}
-                <ArrowRight size={14} aria-hidden="true" />
-              </button>
-            </div>
-          )}
           <div className="record-identity">
             <p>
               {record.selected.agencies
@@ -450,9 +405,7 @@ export function ActivityMonitor({
             </h1>
           </div>
           <div className="current-status">
-            <span className="provenance official">
-              {example ? "STATUS AT ASSESSMENT" : "CURRENT STATUS"}
-            </span>
+            <span className="provenance official">CURRENT STATUS</span>
             <strong>{displayText(record.assessment.current_status)}</strong>
             <span>
               Latest linked update:{" "}
@@ -510,6 +463,11 @@ export function ActivityMonitor({
               <strong>Published timing:</strong>{" "}
               {displayText(record.assessment.timing)}
             </p>
+            {record.assessment.effective_date_note && (
+              <p className="forecast-fallback">
+                {record.assessment.effective_date_note}
+              </p>
+            )}
             <ForecastResearch record={record} />
           </section>
           <section className="change-summary">
@@ -573,7 +531,7 @@ export function ActivityMonitor({
                     <p>{displayText(event.document.action)}</p>
                     {event.document.effective_on && (
                       <p>
-                        Published effective date:{" "}
+                        Effective date in metadata:{" "}
                         {formatDate(event.document.effective_on)}
                       </p>
                     )}

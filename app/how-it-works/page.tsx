@@ -32,7 +32,7 @@ const steps = [
     label: "Review",
     title: "Challenge and preserve",
     detail:
-      "The server validates event eligibility and citations. A second Gemini call challenges the forecast's specificity, evidence, and timing. The app saves the research trace, source excerpts, forecast window, and review together.",
+      "The server validates event eligibility and citations. A separate Gemini call challenges the forecast's specificity, evidence, and timing. A rejected draft may be revised once against the feedback and reviewed again. The app saves the research trace, source excerpts, forecast window, and review together.",
   },
 ];
 
@@ -138,8 +138,8 @@ export default function HowItWorksPage() {
           Structured output requires a future event, window, cited reasons,
           counterargument, alternatives, and signals to watch. Validation
           rejects unknown or uninspected citations and numerical probabilities.
-          The second model call is a critique, not independent human review or
-          proof of predictive accuracy.
+          The review call is a critique, not independent human review or proof
+          of predictive accuracy.
         </p>
         <p>
           The forecast has no measured probability or validated accuracy score.
@@ -151,9 +151,9 @@ export default function HowItWorksPage() {
           Cases can be reused for up to an hour on the same UTC day. Refresh
           history retrieves the sources and reassesses them. Production stores
           the latest case and immutable assessment snapshots; local development
-          can use files when Supabase is unconfigured. Curated examples open
-          saved, dated copies of reviewed AI output. Their latest-assessment
-          button runs new research instead of changing the saved example.
+          can use files when Supabase is unconfigured. Curated example links
+          always retrieve sources and run new AI research, bypassing the cached
+          assessment. They contain no saved forecast text.
         </p>
       </details>
       <footer className={styles.footer}>

@@ -1,16 +1,21 @@
-# Curated AI examples
+# Live AI examples
 
-Six dated examples appear below the agency and publication filters. Five are additional examples; `2026-13305` is the original DOE demonstration. All were assessed on September 21, 2026 and selected for substantive AI text, cited reasoning, an inspected official source, and a passed model review. Selection does not demonstrate forecast accuracy or typical coverage.
+The dropdown contains five publication links. Selecting one calls the same live assessment API as browsing, with `refresh=true`. The server retrieves the publication and linked history, runs the research agent, validates its forecast, and reviews it. Every new click bypasses the one-hour assessment cache. There are no bundled or prerecorded assessment responses, and failures never fall back to a selected past success.
 
-| Document | Topic | Why it is included |
-| --- | --- | --- |
-| 2026-19072 | EPA power plant greenhouse gas rules | Distinguishes remaining rulemaking from a partial repeal and inspects a historical proposal-to-final interval. |
-| 2026-09067 | Defense contracting and foreign influence | Connects statutory mandates with a completed historical defense rulemaking and discusses coordination risk. |
-| 2026-13347 | DOE new-construction nondiscrimination requirements | Explains the interagency dependency behind repeated effective-date postponements. |
-| 2026-13304 | DOE nondiscrimination in education | Discusses delay, withdrawal, and signals that would change the assessment. |
-| 2026-13302 | NRC low-level radioactive waste disposal | Provides a substantive AI explanation for abstention. Its saved assessment explicitly says it cannot yet support a prediction. |
-| 2026-13305 | DOE general nondiscrimination requirements | Retains the original demonstrated delay forecast and its evidence. |
+| Document   | Topic                                               |
+| ---------- | --------------------------------------------------- |
+| 2026-19072 | EPA power plant greenhouse gas rules                |
+| 2026-09067 | Defense contracting and foreign influence           |
+| 2026-13347 | DOE new-construction nondiscrimination requirements |
+| 2026-13304 | DOE nondiscrimination in education                  |
+| 2026-13305 | DOE general nondiscrimination requirements          |
 
-`lib/activity/examples.ts` is the navigation index. `public/examples/*.json` contains the unchanged assessment payloads, including issue times, citations, research actions, inspected passages, review, and original fingerprints. Opening `/?example=DOCUMENT_ID` fetches this saved output without calling the model or overwriting the live case. The saved-example banner and “Status at assessment” label distinguish it from current research. “View latest assessment” and “Refresh history” leave example mode and run the normal live flow.
+`lib/activity/examples.ts` contains navigation metadata only. `/?example=DOCUMENT_ID` runs fresh research, including when opened directly or reloaded. Older valid example URLs also run live, even if they are no longer curated. The dropdown remains plain text with underlined links and the user's exact disclaimer. The prior NRC abstention example and all files under `public/examples` were removed. All five selected publications have produced genuine forecasts through the live API. Repeat checks also observed model abstentions, validation rejections, and provider throttling, so these are candidates for live exploration, not guaranteed predictions. No past success is replayed.
 
-The dropdown is a plain-text disclosure with underlined, clickable titles. The disclaimer remains visible below it and uses the user-provided wording verbatim, including its spelling. Tests check all links, source coverage, approved AI provenance, forecast windows, the explicit abstention label, and original content fingerprints.
+A rejected forecast can be revised once using the review feedback and the same retrieved evidence, within the existing request budget. The revision must pass validation and a new review. Drafts, validation findings, and model reviews are preserved in the assessment's `ai.review_attempts`. This is not repeated sampling until approval. Source failure, unsupported reasoning, or a second rejected draft still produces no forecast. Success on selected records does not guarantee future model outputs or establish predictive accuracy.
+
+Run `npx tsx scripts/check-examples.ts` for two fresh passes through every example on localhost. Pass `https://kobaltinterview.party` to check production. This check calls real services, prints every outcome, and fails on any missing, rejected, stale, or reused prediction. It does not save responses as product fixtures.
+
+An additional screened DOE loan notice (`2026-17381`) has conflicting date fields: structured metadata points to the original publication date while the DATES paragraph explicitly postpones effectiveness until December 24, 2026. The status layer accepts only an unambiguous present-tense postponement in DATES, preserves the raw metadata, and discloses the discrepancy. It does not infer dates from historical recitals or select among conflicting new dates.
+
+The OPM ALJ withdrawal (`2026-06445`) was excluded: its announced replacement proposal is already published under a different RIN (`2026-19222`), beyond the original linked proceeding. It must not be showcased as an outstanding restart forecast.

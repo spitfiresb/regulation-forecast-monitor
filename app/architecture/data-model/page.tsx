@@ -19,7 +19,7 @@ const nodes: DiagramNode[] = [
     id: "assessments",
     title: "activity_assessments",
     description:
-      "Immutable assessment snapshots. A content fingerprint deduplicates identical cases. Each assessment belongs to one selected publication.",
+      "Immutable assessment snapshots, including research, validation findings, and model reviews. A content fingerprint deduplicates identical cases. Each assessment belongs to one selected publication.",
     keys: "PK fingerprint · FK document_number",
     x: 445,
     y: 100,

@@ -1,86 +1,97 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
-import { readFile, readdir } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, rm, readdir } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { curatedExamples } from "../lib/activity/examples";
 import {
+  documentId,
+  activityWindow,
   activityDocumentSchema,
-  type ActivityCase,
 } from "../lib/activity/model";
-import { forecastEnd } from "../lib/activity/forecast-contract";
+import { assessActivity } from "../lib/activity/service";
+import {
+  ACTIVITY_METHOD,
+  assessStatus,
+  classifyDocument,
+} from "../lib/activity/analysis";
+import { ACTIVITY_AI_PROMPT, activityAiModel } from "../lib/activity/ai";
+import documents from "./fixtures/activity/doe-delay.json";
 
-const directory = new URL("../public/examples/", import.meta.url);
-
-test("curated links have complete, unchanged reviewed AI snapshots", async () => {
+test("examples contain publication links and no served assessment snapshots", async () => {
   assert.ok(curatedExamples.length >= 5 && curatedExamples.length <= 10);
   assert.equal(
     new Set(curatedExamples.map((e) => e.id)).size,
     curatedExamples.length,
   );
-  assert.deepEqual(
-    (await readdir(directory)).sort(),
-    curatedExamples.map((e) => `${e.id}.json`).sort(),
-  );
-  for (const example of curatedExamples) {
-    const record: ActivityCase = JSON.parse(
-      await readFile(new URL(`${example.id}.json`, directory), "utf8"),
-    );
-    assert.equal(record.id, example.id);
-    assert.equal(record.selected.document_number, example.id);
-    activityDocumentSchema.parse(record.selected);
-    assert.equal(record.history_complete, true);
-    assert.equal(record.assessment.ai?.status, "generated");
-    assert.equal(record.assessment.ai?.review?.approved, true);
-    assert.ok(record.assessment.basis.length >= 2);
-    assert.ok(
-      record.assessment.ai?.research?.sources.some((s) => s.full_text_read),
-    );
-    const known = new Set(
-      record.assessment.ai?.research?.sources.map((s) => s.id),
-    );
-    for (const id of record.assessment.evidence)
-      assert.ok(known.has(id), `${example.id}: missing cited source ${id}`);
-    const prediction = record.assessment.ai?.prediction;
-    if (prediction) {
-      assert.equal(record.assessment.kind, "forecast");
-      assert.equal(
-        prediction.window_end,
-        forecastEnd(prediction.issued_at, prediction.horizon_days),
-      );
-    } else {
-      assert.equal(record.assessment.kind, "insufficient_evidence");
-      assert.match(example.description, /cannot yet support a prediction/);
+  for (const example of curatedExamples) documentId.parse(example.id);
+  const files = await readdir(
+    new URL("../public/examples/", import.meta.url),
+  ).catch((e) => {
+    if (e.code === "ENOENT") return [];
+    throw e;
+  });
+  assert.deepEqual(files, []);
+});
+
+test("forced assessment bypasses a valid cached success and never falls back when live sources fail", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "live-example-test-"));
+  const keys = [
+    "LOCAL_DATA_DIR",
+    "SUPABASE_URL",
+    "SUPABASE_SECRET_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "REQUIRE_HOSTED_STORAGE",
+  ];
+  const prior = new Map(keys.map((key) => [key, process.env[key]]));
+  for (const key of keys) delete process.env[key];
+  process.env.LOCAL_DATA_DIR = directory;
+  t.after(async () => {
+    for (const [key, value] of prior) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
     }
-    const {
-      id,
-      selected,
-      history,
-      related_excluded,
-      history_complete,
-      linkage,
-      limitations,
-      assessment,
-      summary,
-    } = record;
-    const fingerprint = createHash("sha256")
-      .update(
-        JSON.stringify({
-          id,
-          selected,
-          history,
-          related_excluded,
-          history_complete,
-          linkage,
-          limitations,
-          assessment,
-          summary,
-        }),
-      )
-      .digest("hex");
-    assert.equal(
-      record.fingerprint,
-      fingerprint,
-      `${id}: snapshot differs from the original assessment`,
-    );
-  }
+    await rm(directory, { recursive: true, force: true });
+  });
+  const now = new Date().toISOString();
+  const history = documents.map((d) =>
+    classifyDocument(activityDocumentSchema.parse(d)),
+  );
+  const selected = {
+    ...history[0].document,
+    publication_date: now.slice(0, 10),
+  };
+  const cached = {
+    id: selected.document_number,
+    selected,
+    history,
+    checked_at: now,
+    window: activityWindow(),
+    assessment: {
+      ...assessStatus(history, true, true, now),
+      method: ACTIVITY_METHOD,
+      ai: {
+        status: "generated",
+        model: activityAiModel(),
+        prompt_version: ACTIVITY_AI_PROMPT,
+      },
+    },
+  };
+  await mkdir(join(directory, "activity"));
+  await writeFile(
+    join(directory, "activity", `${cached.id}.json`),
+    JSON.stringify(cached),
+  );
+  let requests = 0;
+  t.mock.method(globalThis, "fetch", async () => {
+    requests++;
+    throw new Error("Live source unavailable in this test");
+  });
+  assert.equal((await assessActivity(cached.id)).checked_at, now);
+  assert.equal(requests, 0);
+  await assert.rejects(
+    assessActivity(cached.id, true),
+    /Live source unavailable/,
+  );
+  assert.equal(requests, 1);
 });

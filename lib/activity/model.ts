@@ -83,6 +83,7 @@ export type StatusAssessment = {
   timing: string;
   effective_date: string | null;
   effective_evidence: string | null;
+  effective_date_note?: string;
   ai?: {
     status: "generated" | "unavailable" | "withheld";
     model: string;
@@ -93,6 +94,11 @@ export type StatusAssessment = {
     research?: ResearchReport;
     review?: { approved: boolean; problems: string[] };
     reviewed_forecast?: ForecastOutput;
+    review_attempts?: {
+      forecast: ForecastOutput;
+      validation_errors: string[];
+      review?: { approved: boolean; problems: string[] };
+    }[];
     prediction?: {
       event: ForecastEvent;
       horizon_days: number;

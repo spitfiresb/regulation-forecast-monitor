@@ -129,7 +129,10 @@ export function ForecastResearch({ record }: { record: ActivityCase }) {
             {ai.review.approved
               ? "passed evidence and specificity checks"
               : "forecast withheld"}
-            . This is a second model call, not independent human verification.
+            . This is a separate model call, not independent human verification.
+            {ai.review_attempts &&
+              ai.review_attempts.length > 1 &&
+              " The first draft failed review. The model revised it once against the feedback and the same retrieved evidence."}
           </p>
         )}
         <p>

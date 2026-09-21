@@ -1,10 +1,43 @@
-import { formatDate } from "../dates";
+import { formatDate, isIsoDay } from "../dates";
 import {
   type ActivityDocument,
   type ActivityEvent,
   type StatusAssessment,
 } from "./model";
-export const ACTIVITY_METHOD = "research-event-agent-v3";
+export const ACTIVITY_METHOD = "research-event-agent-v4";
+// Only an explicit present-tense change in DATES can supersede metadata.
+// Earlier dates in a notice's chronological recital are not new effective dates.
+export function publishedEffectiveDate(event: ActivityEvent) {
+  const doc = event.document;
+  const metadata = doc.effective_on ?? null;
+  if (event.kind !== "delay") return { date: metadata, note: undefined };
+  const text = (doc.dates ?? "").replace(/\s+/g, " ");
+  const months =
+    "January February March April May June July August September October November December".split(
+      " ",
+    );
+  const pattern =
+    /\b(?:is|are)\s+(?:(?:further|again)\s+)?(?:delayed|postponed|extended)\s+(?:until|to)\s+(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}), (\d{4})/gi;
+  const matches = [...text.matchAll(pattern)];
+  if (!matches.length) return { date: metadata, note: undefined };
+  const dates = matches.map(
+    (match) =>
+      `${match[3]}-${String(months.findIndex((m) => m.toLowerCase() === match[1].toLowerCase()) + 1).padStart(2, "0")}-${match[2].padStart(2, "0")}`,
+  );
+  if (dates.some((date) => !isIsoDay(date)) || new Set(dates).size !== 1)
+    return {
+      date: null,
+      note: "The publication's DATES text contains conflicting or invalid effective dates. No date was selected.",
+    };
+  return {
+    date: dates[0],
+    note:
+      metadata && metadata !== dates[0]
+        ? "The structured effective-date metadata conflicts with the publication's DATES text. The explicit new date in DATES is used here."
+        : undefined,
+  };
+}
+
 export function classifyDocument(d: ActivityDocument): ActivityEvent {
   // ACTION is authoritative for the purpose of this publication. Title alone
   // cannot distinguish an original rule from subsequent notices with the same title.
@@ -160,11 +193,13 @@ export function assessStatus(
         "The update may leave the prior status unchanged or modify it.",
       ],
     };
-  const effective = ["delay", "final"].includes(latest.kind)
-    ? (doc.effective_on ?? null)
-    : null;
+  const published = ["delay", "final"].includes(latest.kind)
+    ? publishedEffectiveDate(latest)
+    : { date: null, note: undefined };
+  const effective = published.date;
   const dates = {
     effective_date: effective,
+    effective_date_note: published.note,
     effective_evidence: effective ? doc.document_number : null,
   };
   if (latest.kind === "delay") {

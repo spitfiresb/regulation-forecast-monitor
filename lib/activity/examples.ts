@@ -1,4 +1,4 @@
-/** Reviewed, dated AI outputs. These links never trigger a new model run. */
+/** Publication links only. Every example runs fresh research through the assessment API. */
 export type CuratedExample = {
   id: string;
   title: string;
@@ -33,13 +33,6 @@ export const curatedExamples: CuratedExample[] = [
     agency: "Department of Energy",
     description:
       "An assessment of further delay, possible withdrawal, and the signals to watch.",
-  },
-  {
-    id: "2026-13302",
-    title: "Low-level radioactive waste disposal",
-    agency: "Nuclear Regulatory Commission",
-    description:
-      "A detailed AI analysis explaining why the evidence cannot yet support a prediction.",
   },
   {
     id: "2026-13305",

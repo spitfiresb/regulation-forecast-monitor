@@ -62,8 +62,14 @@ const firstPlan = {
   ],
   ready: true,
 };
-function setup(t: TestContext, output: unknown = valid, approved = true) {
+function setup(
+  t: TestContext,
+  output: unknown = valid,
+  approved: boolean | boolean[] = true,
+  plans = [firstPlan],
+) {
   let calls = 0;
+  let reviews = 0;
   t.mock.method(
     globalThis,
     "fetch",
@@ -78,6 +84,18 @@ function setup(t: TestContext, output: unknown = valid, approved = true) {
           assert.equal(input.current_status, baseline.current_status);
           assert.equal("next_status" in input, false);
         }
+        if (input.previous_forecast) {
+          assert.deepEqual(input.previous_forecast, output);
+          assert.ok(input.review_feedback.length > 0);
+          assert.ok(
+            input.research.sources.some((s: { id: string }) => s.id === latest),
+          );
+          assert.match(input.revision_instruction, /Abstain/);
+        }
+        const isReview =
+          !!request.generationConfig.responseJsonSchema.properties.approved;
+        const approval = Array.isArray(approved) ? approved[reviews] : approved;
+        if (isReview) reviews++;
         return Response.json({
           candidates: [
             {
@@ -86,13 +104,15 @@ function setup(t: TestContext, output: unknown = valid, approved = true) {
                 parts: [
                   {
                     text: JSON.stringify(
-                      calls === 1
-                        ? firstPlan
-                        : calls === 2
+                      request.generationConfig.responseJsonSchema.properties
+                        .actions
+                        ? plans.shift()
+                        : request.generationConfig.responseJsonSchema.properties
+                              .decision
                           ? output
                           : {
-                              approved,
-                              problems: approved
+                              approved: approval,
+                              problems: approval
                                 ? []
                                 : ["This is only a current-stage summary."],
                             },
@@ -145,6 +165,26 @@ test("agent reads official text, searches cases, forecasts and reviews without c
   assert.deepEqual(result.evidence, [latest]);
 });
 
+test("a premature ready plan must still read the latest publication", async (t) => {
+  const calls = setup(t, valid, true, [
+    {
+      actions: [action("find_comparables", "", "direct final rules")],
+      ready: true,
+    },
+    {
+      actions: [action("read_publication", latest, "adverse comments")],
+      ready: true,
+    },
+  ]);
+  const result = await forecastWithAi(history, baseline, now);
+  assert.equal(calls(), 4);
+  assert.equal(result.ai?.status, "generated");
+  assert.equal(
+    result.ai?.research?.sources.find((s) => s.id === latest)?.full_text_read,
+    true,
+  );
+});
+
 test("uncited, stale-stage, uncalibrated and malformed outputs abstain without a heuristic fallback", async (t) => {
   for (const bad of [
     {
@@ -170,7 +210,7 @@ test("uncited, stale-stage, uncalibrated and malformed outputs abstain without a
       setup(sub, bad);
       const result = await forecastWithAi(history, baseline, now);
       assert.equal(result.kind, "insufficient_evidence");
-      assert.equal(result.ai?.status, "unavailable");
+      assert.ok(["unavailable", "withheld"].includes(result.ai?.status ?? ""));
       assert.notEqual(result.forecast, baseline.forecast);
       assert.equal(result.ai?.prediction, undefined);
     });
@@ -182,6 +222,26 @@ test("review can reject a schema-valid but generic prediction", async (t) => {
   assert.equal(result.ai?.status, "withheld");
   assert.equal(result.ai?.review?.approved, false);
   assert.equal(result.ai?.prediction, undefined);
+});
+
+test("a rejected draft gets one evidence-bound revision and another review", async (t) => {
+  const calls = setup(t, valid, [false, true]);
+  const result = await forecastWithAi(history, baseline, now);
+  assert.equal(calls(), 5);
+  assert.equal(result.ai?.status, "generated");
+  assert.deepEqual(
+    result.ai?.review_attempts?.map((a) => a.review?.approved),
+    [false, true],
+  );
+});
+
+test("a second rejection withholds the forecast without further retries", async (t) => {
+  const calls = setup(t, valid, false);
+  const result = await forecastWithAi(history, baseline, now);
+  assert.equal(calls(), 5);
+  assert.equal(result.ai?.status, "withheld");
+  assert.equal(result.ai?.prediction, undefined);
+  assert.equal(result.ai?.review_attempts?.length, 2);
 });
 
 test("source checks block the agent and the model may explicitly abstain", async (t) => {
@@ -212,11 +272,39 @@ test("missing configuration and provider failure do not issue deterministic pred
   );
   process.env.GEMINI_API_KEY = "test-only";
   t.mock.method(globalThis, "fetch", async () =>
-    Response.json({ error: "rate limited" }, { status: 429 }),
+    Response.json(
+      { error: "rate limited" },
+      { status: 429, headers: { "Retry-After": "0" } },
+    ),
   );
   const result = await forecastWithAi(history, baseline, now);
   assert.equal(result.ai?.status, "unavailable");
+  assert.match(result.ai.reason ?? "", /rate limiting/);
   assert.equal(result.ai?.prediction, undefined);
+});
+
+test("a transient provider limit retries the live request instead of returning a saved forecast", async (t) => {
+  setup(t);
+  const provider = globalThis.fetch;
+  let limited = false;
+  t.mock.method(
+    globalThis,
+    "fetch",
+    async (input: string | URL | Request, init?: RequestInit) => {
+      if (!limited && String(input).includes("generativelanguage")) {
+        limited = true;
+        return Response.json(
+          { error: "rate limited" },
+          { status: 429, headers: { "Retry-After": "0" } },
+        );
+      }
+      return provider(input, init);
+    },
+  );
+  const result = await forecastWithAi(history, baseline, now);
+  assert.equal(limited, true);
+  assert.equal(result.ai?.status, "generated");
+  assert.ok(result.ai.prediction);
 });
 
 test("research rejects unknown IDs and nonofficial text URLs, preserving failed actions", async (t) => {

@@ -35,7 +35,7 @@ const nodes: DiagramNode[] = [
     id: "validation",
     title: "Forecast and challenge",
     description:
-      "Generate a future event and 90, 180, or 365 day window. Validate citations and eligibility; a second model call reviews reasoning. Failed checks withhold predictions.",
+      "Generate a future event and 90, 180, or 365 day window. Validate citations and eligibility; a separate model call reviews reasoning. One evidence-bound revision is allowed after rejection. A failed final review withholds the prediction.",
     x: 725,
     y: 320,
   },
@@ -52,7 +52,7 @@ const nodes: DiagramNode[] = [
     id: "display",
     title: "Display and refresh",
     description:
-      "Source facts stay separate from blue AI text. Live cases cache for one hour; refresh reruns research. Curated links open dated JSON snapshots instantly.",
+      "Source facts stay separate from blue AI text. Live cases cache for one hour; refresh reruns research. Curated links always bypass the assessment cache and run fresh source research and AI review.",
     x: 25,
     y: 320,
   },
